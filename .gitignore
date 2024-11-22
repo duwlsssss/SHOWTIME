@@ -24,3 +24,13 @@ dist-ssr
 *.sw?
 
 *.ps1
+
+# TypeScript build info
+tsconfig.tsbuildinfo
+tsconfig.*.tsbuildinfo
+
+# Build output
+build/
+
+# ESLint cache
+.eslintcache
