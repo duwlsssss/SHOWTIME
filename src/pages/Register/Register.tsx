@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useFirestoreUserRegistration } from '@/hooks/useFirestoreUserRegistration';
 import { useNavigate } from 'react-router-dom';
-import styled from 'styled-components';
+import * as S from './Register.styles';
 
+export function Register() {
 const RegisterPage = styled.div.attrs({ className: 'page-content' })``;
 
-function Register() {
 	const { registerWithUserId } = useFirestoreUserRegistration();
 	const [userId, setUserId] = useState('');
 	const [password, setPassword] = useState('');
@@ -29,7 +29,7 @@ function Register() {
 	};
 
 	return (
-		<RegisterPage>
+		<S.RegisterContainer>
 			<h2>Register</h2>
 			{error && <p style={{ color: 'red' }}>{error}</p>}
 			<input
@@ -45,8 +45,6 @@ function Register() {
 				onChange={(e) => setPassword(e.target.value)}
 			/>
 			<button onClick={handleRegister}>Register</button>
-		</RegisterPage>
+		</S.RegisterContainer>
 	);
 }
-
-export default Register;

@@ -1,13 +1,8 @@
 import { useState } from 'react';
 import { useCustomLogin } from '@/hooks/useFirebaseCustomLogin';
-import styled from 'styled-components';
+import * as S from './Login.styles';
 
-// 기본 .page-content 클래스를 확장하면서 추가 스타일 적용
-const LoginPage = styled.div.attrs({ className: 'page-content' })`
-	// 필요한 경우에만 추가 스타일 적용
-`;
-
-function Login() {
+export function Login() {
 	const { user, loginWithUserId, logout } = useCustomLogin();
 	const [userId, setUserId] = useState('');
 	const [password, setPassword] = useState('');
@@ -17,7 +12,7 @@ function Login() {
 	};
 
 	return (
-		<LoginPage>
+		<S.LoginContainer>
 			<h2>Login</h2>
 			{user ? (
 				<div>
@@ -41,8 +36,6 @@ function Login() {
 					<button onClick={handleLogin}>Login</button>
 				</div>
 			)}
-		</LoginPage>
+		</S.LoginContainer>
 	);
 }
-
-export default Login;

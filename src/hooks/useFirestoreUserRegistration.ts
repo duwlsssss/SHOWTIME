@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { db } from '@/firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -24,7 +25,6 @@ export function useFirestoreUserRegistration() {
 			const userDocRef = doc(db, 'users', userId);
 			const userDoc = await getDoc(userDocRef);
 
-			if (userDoc.exists()) {
 				return {
 					success: false,
 					error: 'User ID already exists',
