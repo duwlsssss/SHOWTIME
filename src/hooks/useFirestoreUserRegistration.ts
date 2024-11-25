@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { db } from '@/firebaseConfig';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
 
@@ -12,7 +11,7 @@ interface UserRegistrationData {
 // 등록 결과 인터페이스
 interface RegistrationResult {
 	success: boolean;
-	error?: string;
+	error: string;
 }
 
 export function useFirestoreUserRegistration() {
@@ -25,6 +24,7 @@ export function useFirestoreUserRegistration() {
 			const userDocRef = doc(db, 'users', userId);
 			const userDoc = await getDoc(userDocRef);
 
+			if (userDoc.exists()) {
 				return {
 					success: false,
 					error: 'User ID already exists',
@@ -41,7 +41,7 @@ export function useFirestoreUserRegistration() {
 			// Firestore에 저장
 			await setDoc(userDocRef, userData);
 
-			return { success: true };
+			return { success: true, error: '' };
 		} catch (error) {
 			const errorMessage = error instanceof Error ? error.message : 'Registration failed';
 			return {

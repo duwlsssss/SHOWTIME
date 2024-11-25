@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import * as S from './Register.styles';
 
 export function Register() {
-const RegisterPage = styled.div.attrs({ className: 'page-content' })``;
-
 	const { registerWithUserId } = useFirestoreUserRegistration();
 	const [userId, setUserId] = useState('');
 	const [password, setPassword] = useState('');
