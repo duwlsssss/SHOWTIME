@@ -3,10 +3,7 @@ import { useFirestoreUserRegistration } from '@/hooks/useFirestoreUserRegistrati
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 
-// 기본 스타일 사용
-const RegisterPage = styled.div.attrs({ className: 'page-content' })`
-	// 필요한 경우에만 추가 스타일 적용
-`;
+const RegisterPage = styled.div.attrs({ className: 'page-content' })``;
 
 function Register() {
 	const { registerWithUserId } = useFirestoreUserRegistration();
@@ -16,12 +13,18 @@ function Register() {
 	const navigate = useNavigate();
 
 	const handleRegister = async () => {
-		const isRegistered = await registerWithUserId(userId, password);
-		if (isRegistered) {
+		if (!userId || !password) {
+			setError('Please fill in all fields');
+			return;
+		}
+
+		const result = await registerWithUserId(userId, password);
+
+		if (result.success) {
 			console.log('Registration successful!');
 			navigate('/login');
 		} else {
-			setError('User ID already exists. Please choose another one.');
+			setError(result.error || 'Registration failed');
 		}
 	};
 
