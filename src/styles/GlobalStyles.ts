@@ -18,6 +18,11 @@ const GlobalStyles = createGlobalStyle`
 
   * {
     box-sizing: border-box;
+<<<<<<< HEAD
+  //   margin: 0;
+  // padding: 0;
+=======
+>>>>>>> f1415c0ea47a83a8d43838b83e8c5e1d4c4d2e9c
   }
 
   a{
