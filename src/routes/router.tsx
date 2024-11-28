@@ -7,7 +7,7 @@ import {
 	Profile,
 	SalaryDetails,
 	CorrectionRequest,
-	Calendar,
+	ScheduleManagement,
 	NotFound,
 } from '../pages';
 
@@ -23,7 +23,7 @@ export const router = createBrowserRouter([
 			{ path: '/profile', element: <Profile /> },
 			{ path: '/salary-details', element: <SalaryDetails /> },
 			{ path: '/correction-request', element: <CorrectionRequest /> },
-			{ path: '/calendar', element: <Calendar /> },
+			{ path: '/schedule-management', element: <ScheduleManagement /> },
 		],
 	},
 ]);

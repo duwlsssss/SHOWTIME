@@ -4,5 +4,5 @@ export { Register } from './Register/Register';
 export { Profile } from './Profile/Profile';
 export { SalaryDetails } from './salary-details/SalaryDetails';
 export { CorrectionRequest } from './correction-request/CorrectionRequest';
-export { Calendar } from './Calendar/Calendar';
+export { ScheduleManagement } from './schedule-management/ScheduleManagement';
 export { NotFound } from './not-found/NotFound';

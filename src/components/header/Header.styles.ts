@@ -13,4 +13,5 @@ export const HeaderContainer = styled.header`
 	align-items: center;
 	padding: 0 var(--space-medium);
 	border-bottom: 1px solid var(--color-light-gray);
+	background-color: var(--color-white);
 `;
