@@ -1,12 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { RegisterForm } from '@/components/Register/RegisterForm';
-import { useRegister, RegisterData } from '@/hooks/useRegister';
+import { RegisterForm, useRegister, FormData } from '@/pages';
 
 export function Register() {
 	const navigate = useNavigate();
 	const { register, isLoading, error } = useRegister();
 
-	const handleRegister = async (formData: RegisterData) => {
+	const handleRegister = async (formData: FormData): Promise<void> => {
 		try {
 			await register(formData);
 			alert('회원가입이 완료되었습니다.');

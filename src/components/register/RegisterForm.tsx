@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import * as S from '@/pages/Register/Register.styles';
-import { RegisterData } from '@/hooks/useRegister';
 import {
 	FormData,
 	FormErrors,
-	validateForm,
+	RegisterFormProps,
 	ROLE_OPTIONS,
 	POSITION_OPTIONS,
 	GENDER_OPTIONS,
-} from './FormValidation';
-
-interface RegisterFormProps {
-	onSubmit: (data: RegisterData) => Promise<void>;
-	isSubmitting: boolean;
-	submitError: string | null;
-}
+	validateForm,
+} from '@/pages';
 
 export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFormProps) {
 	const [formData, setFormData] = useState<FormData>({

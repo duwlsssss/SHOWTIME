@@ -1,4 +1,4 @@
-import { TScheduleTimeCategory } from '@/types/Schedule';
+import { TScheduleTimeCategory } from '@/types/schedule';
 
 const calculateScheduleTimeCategory = (start_time: Date): TScheduleTimeCategory => {
 	const hours = start_time.getHours();

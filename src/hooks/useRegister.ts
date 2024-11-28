@@ -2,36 +2,7 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
-
-export interface RegisterData {
-	email: string;
-	password: string;
-	role: string;
-	gender: string;
-	age: string;
-	position: string;
-	workingHours: string;
-}
-
-// Firebase Auth에서 반환되는 에러 코드
-type AuthErrorCode =
-	| 'auth/email-already-in-use'
-	| 'auth/invalid-email'
-	| 'auth/weak-password'
-	| 'permission-denied'
-	| 'unavailable'
-	| 'default';
-
-// 에러 메시지 맵핑
-// Record는 키와 값의 쌍으로 이루어진 객체를 생성하는 유틸리티 타입
-const AUTH_ERROR_MESSAGES: Record<AuthErrorCode, string> = {
-	'auth/email-already-in-use': '이미 사용 중인 이메일입니다.',
-	'auth/invalid-email': '유효하지 않은 이메일 형식입니다.',
-	'auth/weak-password': '비밀번호는 6글자 이상이어야 합니다.',
-	'permission-denied': '데이터 저장 권한이 없습니다.',
-	unavailable: '서비스에 연결할 수 없습니다.',
-	default: '회원가입 중 오류가 발생했습니다.',
-} as const;
+import { RegisterData, AuthErrorCode, AUTH_ERROR_MESSAGES } from '@/pages';
 
 export const useRegister = () => {
 	const [isLoading, setIsLoading] = useState(false);
