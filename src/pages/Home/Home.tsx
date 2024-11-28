@@ -5,9 +5,12 @@ import * as S from './Home.styles';
 import { Button } from '@/components';
 import CheckboxGroup from '@/components/checkbox/CheckboxGroup';
 import { Button, Error, Loading } from '@/components';
+import ModalPortal from '@/components/modal/ModalPortal';
+import ScheduleModal from '@/components/modal/ScheduleModal';
 
 
 export function Home() {
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 	useEffect(() => {
 		const testFirebaseConnection = async () => {
 			try {
@@ -37,6 +40,13 @@ export function Home() {
 
 			{status.isError && <Error>오류 발생</Error>}
 			{status.isLoading && <Loading size={40} />}
+			<button onClick={() => setIsOpen(!isOpen)}>open</button>
+			{isOpen && (
+				<ModalPortal>
+					<ScheduleModal />
+				</ModalPortal>
+			)}
+
 			{/* 홈 페이지 내용 */}
 		</S.HomeContainer>
 	);
