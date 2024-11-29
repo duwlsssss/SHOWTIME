@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { db } from '@/firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import * as S from './Home.styles';
-// import CheckboxGroup from '@/components/checkbox/CheckboxGroup';
 import { Button, Error, Loading } from '@/components';
 import ModalPortal from '@/components/modal/ModalPortal';
 import ScheduleModal from '@/components/modal/ScheduleModal';
+import { Link } from 'react-router-dom';
 
 export function Home() {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+
 	useEffect(() => {
 		const testFirebaseConnection = async () => {
 			try {
@@ -45,6 +46,11 @@ export function Home() {
 				</ModalPortal>
 			)}
 
+			<Link to="/salary/admin">
+				<Button color="regular-gray" shape="line">
+					이동
+				</Button>
+			</Link>
 			{/* 홈 페이지 내용 */}
 		</S.HomeContainer>
 	);
