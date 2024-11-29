@@ -1,11 +1,18 @@
 import * as S from './ScheduleManagement.styles';
-import { CalendarComponent, ScheduleList } from '@/components';
+import { CalendarComponent, ScheduleList, Loading } from '@/components';
+import { useAppSelector } from '@/hooks/useRedux';
 
 export function ScheduleManagement() {
+	const isLoading = useAppSelector((state) => state.schedule.isLoading);
+
+	if (isLoading) {
+		return <Loading />;
+	}
+
 	return (
 		<S.ScheduleManagementContainer>
-			<CalendarComponent isManagementPage={true} state="user" />
-			<ScheduleList state="user" />
+			<CalendarComponent isManagementPage={true} />
+			<ScheduleList />
 		</S.ScheduleManagementContainer>
 	);
 }

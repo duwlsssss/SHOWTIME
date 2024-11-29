@@ -1,21 +1,20 @@
 import { Timestamp } from 'firebase/firestore';
 
 export type TScheduleCategory = '매표' | '매점' | '플로어';
-export type TScheduleTimeCategory = '오픈' | '미들' | '마감' | null;
-export type TScheduleRepeatCycle = '매일' | '매주' | '매월' | null;
+export type TScheduleTimeCategory = '오픈' | '미들' | '마감';
+export type TScheduleRepeatCycle = '매일' | '매주' | '매월';
 
 export interface TSchedule {
 	schedule_id: string;
-	user_id: string;
 	category: TScheduleCategory;
-	start_time: Timestamp | Date; // firestore에서는 Timestamp로 저장됨
+	start_date_time: Date | Timestamp; // firestore에서는 Timestamp로 저장됨
 	time: string;
-	end_time?: Timestamp | Date; // 계산된 종료 시간
-	ScheduleTimeCategory?: TScheduleTimeCategory; // 계산된 오픈, 미들, 마감
-	repeat: TScheduleRepeatCycle;
-	repeat_end_date: Timestamp | Date | null;
-	created_at: Timestamp | Date;
-	description: string | null;
+	end_date_time?: Date | Timestamp; // 계산된 종료 시간
+	scheduleTimeCategory?: TScheduleTimeCategory; // 계산된 오픈, 미들, 마감
+	repeat?: TScheduleRepeatCycle;
+	repeat_end_date?: Date | Timestamp;
+	created_at: Date | Timestamp;
+	description?: string;
 }
 
 export interface TSchedules {
@@ -23,8 +22,9 @@ export interface TSchedules {
 }
 
 export interface TCalendarState {
-	selectedDate: Date | null;
+	selectedDate: Date | Timestamp;
 	filteredSchedules: TSchedule[];
+	isLoading: boolean;
 }
 
 export type TScheduleState = TSchedules & TCalendarState;
@@ -37,6 +37,7 @@ import {
 	REMOVE_SCHEDULES,
 	SELECT_DATE,
 	FILTERED_SCHEDULES,
+	SET_LOADING,
 } from '@/redux/actionTypes';
 
 export interface GetSchedulesAction {
@@ -69,10 +70,22 @@ export interface FilteredSchedulesAction {
 	payload: TSchedule[];
 }
 
+export interface SetLoadingAction {
+	type: typeof SET_LOADING;
+	payload: boolean;
+}
+
 export type ScheduleActionTypes =
 	| GetSchedulesAction
 	| AddSchedulesAction
 	| EditSchedulesAction
 	| RemoveSchedulesAction
 	| SelectDateAction
-	| FilteredSchedulesAction;
+	| FilteredSchedulesAction
+	| SetLoadingAction;
+
+export interface scheduleApiResponse<T> {
+	success: boolean;
+	message: string;
+	data?: T;
+}

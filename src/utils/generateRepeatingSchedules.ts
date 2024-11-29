@@ -1,34 +1,35 @@
-import { v4 as uuidv4 } from 'uuid';
 import { TSchedule } from '@/types/schedule';
 import calculateEndDateTime from './calculateEndDateTime';
-import { Timestamp } from 'firebase/firestore';
+import { convertUTCToKST, toDate } from './dateFormatter';
+import { v4 as uuidv4 } from 'uuid';
+import calculateScheduleTimeCategory from './calculateScheduleTimeCategory';
 
-// UTC → KST 변환 함수
-function convertUTCToKST(date: Date): Date {
-	const kstOffset = 9 * 60 * 60 * 1000; // 9시간을 밀리초로 변환해
-	return new Date(date.getTime() - kstOffset);
-}
-
-// Timestamp → Date 변환 함수
-export function toDate(input: Timestamp | Date): Date {
-	return input instanceof Timestamp ? input.toDate() : input;
-}
 // 반복 주기에 따라 스케줄을 생성하는 함수
 function generateRepeatingSchedules(schedule: TSchedule): TSchedule[] {
 	const schedules: TSchedule[] = [];
-	const { repeat, repeat_end_date, start_time, time } = schedule;
+	const { repeat, repeat_end_date, start_date_time, time } = schedule;
 
-	if (!repeat || !repeat_end_date) return [schedule];
+	let currDate = convertUTCToKST(toDate(start_date_time)); // 시작 날짜 및 시간
 
-	let currDate = convertUTCToKST(toDate(start_time)); // 시작 날짜 및 시간
+	// 반복 설정이 없으면 해당 스케줄만 반환
+	if (!repeat || !repeat_end_date) {
+		return [
+			{
+				...schedule,
+				end_date_time: calculateEndDateTime(new Date(currDate), time),
+				scheduleTimeCategory: calculateScheduleTimeCategory(new Date(currDate)),
+			},
+		];
+	}
+
 	const endDate = convertUTCToKST(toDate(repeat_end_date)); // 반복 종료 날짜
 
 	while (currDate <= endDate) {
 		schedules.push({
 			...schedule,
-			schedule_id: uuidv4(), // 각 스케줄마다 고유 ID 생성
-			start_time: new Date(currDate),
-			end_time: calculateEndDateTime(new Date(currDate), time),
+			schedule_id: uuidv4(),
+			start_date_time: new Date(currDate),
+			end_date_time: calculateEndDateTime(new Date(currDate), schedule.time), // 종료 시간 계산
 		});
 
 		switch (repeat) {
@@ -41,6 +42,8 @@ function generateRepeatingSchedules(schedule: TSchedule): TSchedule[] {
 			case '매월':
 				currDate = new Date(currDate.setMonth(currDate.getMonth() + 1));
 				break;
+			default:
+				throw new Error('반복 주기 설정이 잘못되었습니다.');
 		}
 	}
 

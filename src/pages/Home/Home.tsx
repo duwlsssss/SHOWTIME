@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { db } from '@/firebaseConfig';
 import { doc, setDoc } from 'firebase/firestore';
 import * as S from './Home.styles';
+// import CheckboxGroup from '@/components/checkbox/CheckboxGroup';
 import { Button, Error, Loading } from '@/components';
 import ModalPortal from '@/components/modal/ModalPortal';
 import ScheduleModal from '@/components/modal/ScheduleModal';

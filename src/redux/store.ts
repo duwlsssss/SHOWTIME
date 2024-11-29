@@ -1,14 +1,15 @@
 import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { thunk } from 'redux-thunk';
+import { thunk, ThunkAction, ThunkDispatch } from 'redux-thunk';
+import { AnyAction } from 'redux';
 import scheduleReducer from './reducers/scheduleReducer';
 
 const rootReducer = combineReducers({
 	schedule: scheduleReducer,
 });
 
-const store = createStore(rootReducer, applyMiddleware(thunk as any));
+const store = createStore(rootReducer, applyMiddleware(thunk));
 
 export type RootState = ReturnType<typeof rootReducer>;
-export type AppDispatch = typeof store.dispatch;
-
+export type AppDispatch = ThunkDispatch<RootState, unknown, AnyAction>; //Thunk와 동기 액션 모두 처리 가능
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, AnyAction>;
 export default store;

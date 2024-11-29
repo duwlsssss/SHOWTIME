@@ -5,10 +5,9 @@ import { Toggle } from '../toggle/Toggle';
 //admin의 경우 회원가입 시 관리자인지 구분하여 저장하는 데이터베이스 데이터가 있기때문에 그걸 토대로
 //각 사용자에 맞는 UI를 보여주면 될것으로 보임.
 
-interface ScheduleModalProps {
-	state?: string;
-}
-const ScheduleModal = ({ state = 'admin' }: ScheduleModalProps) => {
+const ScheduleModal = () => {
+	const isAdmin = false; // firebase auth 연결 필요
+
 	const dateAt = formatToKoreanTime(new Date());
 	const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -21,7 +20,7 @@ const ScheduleModal = ({ state = 'admin' }: ScheduleModalProps) => {
 					<h1>일정 추가</h1>
 					<InputWrapper>
 						<Icon onClick={() => console.log('검색')}>🔍</Icon>
-						{state === 'admin' && (
+						{isAdmin && (
 							<ModalSearchInput
 								type="text"
 								placeholder="이름을 검색하여 주세요."
