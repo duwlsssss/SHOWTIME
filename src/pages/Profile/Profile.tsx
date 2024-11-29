@@ -1,14 +1,10 @@
-import styled from 'styled-components';
+import * as S from './Profile.styles';
 
-const ProfilePage = styled.div.attrs({ className: 'page-content' })``;
-
-function Profile() {
+export function Profile() {
 	return (
-		<ProfilePage>
+		<S.ProfileContainer>
 			<h2>Profile Page</h2>
 			{/* 프로필 페이지 내용 */}
-		</ProfilePage>
+		</S.ProfileContainer>
 	);
 }
-
-export default Profile;
