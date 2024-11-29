@@ -51,7 +51,7 @@ export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFo
 				</S.Logo>
 				<S.WelcomeText>
 					<h1>환영합니다!</h1>
-					<p>회원가입을 통해 다양한 서비스를 이용해보세요.</p>
+					<p>Showtime 급여 및 일정 관리 사이트입니다.</p>
 				</S.WelcomeText>
 			</S.LeftSection>
 			<S.RightSection>

@@ -3,13 +3,13 @@ import styled from 'styled-components';
 export const LoginContainer = styled.main`
 	min-height: 100vh;
 	display: flex;
-	background-color: #f3f4f6;
+	background-color: var(--color-pale-gray);
 `;
 
 export const LeftSection = styled.div`
 	display: none;
 	width: 50%;
-	background-color: #f3f4f6;
+	background-color: var(--color-pale-gray);
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
@@ -35,7 +35,7 @@ export const RightSection = styled.div`
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	padding: 0 2rem;
+	padding: 0 var(--space-large);
 	position: relative;
 
 	@media (min-width: 1024px) {
@@ -44,10 +44,10 @@ export const RightSection = styled.div`
 `;
 
 export const FormContainer = styled.div`
-	background-color: white;
-	padding: 2rem 1.5rem;
-	border-radius: 1rem;
-	box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+	background-color: var(--color-white);
+	padding: var(--space-large) var(--space-medium);
+	border-radius: var(--medium-border-radius);
+	box-shadow: var(--box-shadow-xlarge);
 	min-width: 320px;
 	max-width: 320px;
 	justify-content: center;
@@ -55,21 +55,21 @@ export const FormContainer = styled.div`
 
 export const FormTitle = styled.h1`
 	text-align: center;
-	font-size: 1.5rem;
+	font-size: var(--font-large);
 	font-weight: bold;
-	margin-bottom: 2.5rem;
+	margin-bottom: var(--space-xlarge);
 `;
 
 export const FormField = styled.div`
-	margin-bottom: 2rem;
+	margin-bottom: var(--space-large);
 `;
 
 export const Label = styled.label`
 	display: block;
-	font-size: 0.875rem;
+	font-size: var(--font-small);
 	font-weight: 500;
-	color: #374151;
-	margin-bottom: 0.25rem;
+	color: var(--color-dark-gray);
+	margin-bottom: var(--space-xsmall);
 `;
 
 interface InputProps {
@@ -78,37 +78,38 @@ interface InputProps {
 
 export const Input = styled.input<InputProps>`
 	width: 100%;
-	padding: 0.5rem 0.75rem;
-	border: 1px solid ${(props) => (props.hasError ? '#ef4444' : '#d1d5db')};
-	border-radius: 0.375rem;
+	padding: var(--space-small) var(--space-small);
+	border: 1px solid
+		${(props) => (props.hasError ? 'var(--color-coral-dark)' : 'var(--color-light-gray)')};
+	border-radius: var(--small-border-radius);
 	outline: none;
 	transition: all 0.3s;
 
 	&:focus {
-		border-color: #3b82f6;
-		box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+		border-color: var(--color-blue);
+		box-shadow: var(--box-shadow-small);
 	}
 `;
 
 export const ErrorMessage = styled.p`
-	color: #ef4444;
-	font-size: 0.875rem;
-	margin-top: 0.5rem;
+	color: var(--color-coral-dark);
+	font-size: var(--font-small);
+	margin-top: var(--space-small);
 `;
 
 export const SubmitButton = styled.button`
 	width: 100%;
-	padding: 0.5rem 1rem;
-	background-color: #93e9f9;
-	color: white;
+	padding: var(--space-small) var(--space-medium);
+	background-color: var(--color-skyblue-light-dark);
+	color: var(--color-white);
 	border: none;
-	border-radius: 0.375rem;
-	font-size: 0.875rem;
+	border-radius: var(--small-border-radius);
+	font-size: var(--font-small);
 	font-weight: 500;
 	transition: all 0.3s;
 
 	&:hover:not(:disabled) {
-		background-color: #1d4ed8;
+		background-color: var(--color-blue);
 	}
 
 	&:disabled {
@@ -118,7 +119,7 @@ export const SubmitButton = styled.button`
 `;
 
 export const Logo = styled.div`
-	margin-bottom: 2rem;
+	margin-bottom: var(--space-large);
 
 	img {
 		width: 150px;
@@ -128,16 +129,16 @@ export const Logo = styled.div`
 
 export const WelcomeText = styled.div`
 	text-align: center;
-	margin-bottom: 2rem;
+	margin-bottom: var(--space-large);
 
 	h1 {
-		font-size: 2rem;
+		font-size: var(--font-xlarge);
 		font-weight: bold;
-		margin-bottom: 1rem;
+		margin-bottom: var(--space-medium);
 	}
 
 	p {
-		font-size: 1.125rem;
+		font-size: var(--font-medium);
 		opacity: 0.9;
 	}
 `;

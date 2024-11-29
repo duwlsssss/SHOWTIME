@@ -21,12 +21,21 @@ export function LoginForm() {
 			...prev,
 			[name]: value,
 		}));
-		// 입력 시 해당 필드의 에러 초기화
 		if (errors[name as keyof LoginFormData]) {
 			setErrors((prev) => ({
 				...prev,
 				[name]: undefined,
 			}));
+		}
+	};
+
+	const handleLogout = async () => {
+		try {
+			await signOut(auth);
+			setUser(null);
+			setFormData({ email: '', password: '' });
+		} catch (error) {
+			console.error('로그아웃 에러:', error);
 		}
 	};
 
@@ -67,7 +76,7 @@ export function LoginForm() {
 						<>
 							<S.FormTitle>환영합니다</S.FormTitle>
 							<p>{user.email}</p>
-							<S.SubmitButton onClick={() => signOut(auth)}>로그아웃</S.SubmitButton>
+							<S.SubmitButton onClick={handleLogout}>로그아웃</S.SubmitButton>
 						</>
 					) : (
 						<>
