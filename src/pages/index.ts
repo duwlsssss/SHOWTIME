@@ -16,9 +16,4 @@ export { Navbar } from '@/components/nav/Navbar';
 export { Button } from '@/components/button/Button';
 export { Error } from '@/components/error/Error';
 export { Loading } from '@/components/loading/Loading';
-//export { PrivateRoute } from '@/components/PrivateRoute';
-export { useRegister } from '@/hooks/useRegister';
-
-export * from '@/types/register';
-
-export * from '@/types/main';
+export { MainLayout } from '@/components/home/MainLayout';

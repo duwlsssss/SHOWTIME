@@ -1,4 +1,4 @@
-import { MainLayout } from '@/components/home/MainLayout';
+import { MainLayout } from '@/pages';
 //import CheckboxGroup from '@/components/checkbox/CheckboxGroup';
 //import { Button, Error, Loading } from '@/components';
 //import ModalPortal from '@/components/modal/ModalPortal';

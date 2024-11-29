@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { ToggleButtonState, LeftSectionState, RightSectionState } from '@/pages';
+import type { ToggleButtonState, LeftSectionState, RightSectionState } from '@/types/main';
 
 export const MainContainer = styled.main`
 	min-height: 100vh;
