@@ -18,6 +18,7 @@ export const Lists = styled.li<{ cursor?: string; background?: string }>`
 
 export const InnerUnorderLists = styled.ul`
 	display: flex;
+	align-items: center;
 `;
 
 export const InnerLists = styled.li`
