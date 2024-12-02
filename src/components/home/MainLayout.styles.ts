@@ -1,16 +1,17 @@
 import styled from 'styled-components';
 import type { ToggleButtonState, LeftSectionState, RightSectionState } from '@/types/main';
 
-export const MainContainer = styled.main`
-	min-height: 100vh;
-	background-color: var(--color-pale-gray-light);
-	padding: var(--space-medium);
+export const MainContainer = styled.div`
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
 `;
 
 export const FlexContainer = styled.div`
 	display: flex;
+	height: 100%;
 	gap: var(--space-medium);
-	position: relative;
+	padding: var(--space-medium);
 `;
 
 export const ToggleButton = styled.button<ToggleButtonState>`
@@ -46,6 +47,9 @@ export const LeftSection = styled.div<LeftSectionState>`
 		transform: translateX(${(props) => (props.$isExpanded ? '0' : '-100%')});
 		display: ${(props) => (props.$isExpanded ? 'block' : 'none')};
 	}
+	@media (max-height: 1200px) {
+		height: 600px;
+	}
 `;
 
 export const CategoryTitle = styled.h2`
@@ -74,17 +78,25 @@ export const MiddleSection = styled.div`
 	border-radius: var(--small-border-radius);
 	box-shadow: var(--box-shadow-large);
 	padding: var(--space-medium);
+
+	@media (max-height: 1200px) {
+		height: 600px;
+	}
 `;
 
 export const RightSection = styled.div<RightSectionState>`
-	width: 320px;
-	height: 810px;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-medium);
+	width: ${({ $isCollapsed }) => ($isCollapsed ? '400px' : '300px')};
+	height: 100%;
 
 	@media (max-width: 1165px) {
 		display: ${(props) => (props.$isCollapsed ? 'none' : 'flex')};
+	}
+
+	@media (max-height: 1200px) {
+		height: 600px;
 	}
 `;
 
@@ -97,6 +109,9 @@ export const WorkingHoursContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
+	@media (max-height: 1200px) {
+		height: 120px;
+	}
 `;
 
 export const WorkingHoursWrapper = styled.div`

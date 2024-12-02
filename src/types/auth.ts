@@ -55,6 +55,7 @@ export const COMMON_ERROR_MESSAGES = {
 		gender: '성별을 선택해주세요',
 		age: '나이를 입력해주세요',
 		position: '직책을 선택해주세요',
+		shiftType: '시간 타입을 선택해주세요',
 	},
 	INVALID: {
 		email: '올바른 이메일 형식이 아닙니다',

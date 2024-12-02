@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import * as S from '@/pages/Login/Login.styles';
+import * as S from '@/components/Login/Login.styles';
 import { auth } from '@/firebaseConfig';
 import { LoginFormData, LoginFormErrors } from '@/types/login';
 import { User } from '@/types/auth';
