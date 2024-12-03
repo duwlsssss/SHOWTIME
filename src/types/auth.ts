@@ -1,5 +1,22 @@
 export type { User } from 'firebase/auth';
 
+// 전역 유저 정보
+export interface TUser {
+	id: string;
+	email: string | null;
+	userName: string;
+	userAlias: string;
+	age: number;
+	role: string;
+	gender: string;
+	position: string;
+	shiftType: string;
+}
+export interface AuthState {
+	user: TUser | null;
+	isAuthInitialized: boolean;
+}
+
 // 공통 필드 타입
 export interface AuthFormFields {
 	email: string;

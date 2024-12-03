@@ -9,6 +9,7 @@ import {
 	SELECT_DATE,
 	FILTERED_SCHEDULES,
 	SET_LOADING,
+	SET_SCHEDULE_MODAL_OPEN,
 } from '../actionTypes';
 
 const initialState: TScheduleState = {
@@ -16,12 +17,18 @@ const initialState: TScheduleState = {
 	selectedDate: new Date(),
 	filteredSchedules: [],
 	isLoading: false,
+	isScheduleModalOpen: false,
 };
 
-function scheduleReducer(state: TScheduleState = initialState, action: any): TScheduleState {
+export default function scheduleReducer(
+	state: TScheduleState = initialState,
+	action: any,
+): TScheduleState {
 	switch (action.type) {
 		case SET_LOADING:
 			return { ...state, isLoading: action.payload };
+		case SET_SCHEDULE_MODAL_OPEN:
+			return { ...state, isScheduleModalOpen: action.payload };
 		case GET_SCHEDULES:
 			return { ...state, schedules: action.payload, isLoading: false };
 		case ADD_SCHEDULES:
@@ -63,5 +70,3 @@ function scheduleReducer(state: TScheduleState = initialState, action: any): TSc
 			return state;
 	}
 }
-
-export default scheduleReducer;

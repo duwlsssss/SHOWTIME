@@ -2,16 +2,17 @@ import * as S from './UserScheduleCard.styles';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { toDate } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
-// import ModalPortal from '../../../modal/ModalPortal';
-// import ScheduleModal from '../../../modal/ScheduleModal';
+// import ScheduleModal from '../schedule-modal/ScheduleModal';
 import {
 	addScheduleToFirestore,
 	editScheduleToFirestore,
 	removeScheduleToFirestore,
+	// setIsScheduleModalOpen,
 } from '@/redux/actions/scheduleActions';
-import { TSchedule } from '@/types/schedule';
+import { SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
 import { Timestamp } from 'firebase/firestore';
+import { auth } from '@/firebaseConfig';
 
 interface UserScheduleCardProps {
 	schedule: TSchedule;
@@ -22,17 +23,28 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
+	// const isScheduleModalOpen = useAppSelector((state) => state.schedule.isScheduleModalOpen);
 
+	const userId = auth.currentUser?.uid;
 	// 임시 데이터
 	const updatedFields: Partial<TSchedule> = {
-		category: '플로어',
+		category: 'floor',
 		start_date_time: new Date('2024-11-27T22:00:00.000Z'),
 		time: '3',
-		repeat: '매일',
+		repeat: 'everyDay',
 		repeat_end_date: new Date('2024-11-29T00:00:00.000Z'),
 		description: '대청소ㅜㅠㅜㅠ',
 		created_at: new Date(),
 	};
+
+	// const handleSubmit = async (schedules: TSchedule[]) => {
+	//   const userId = auth.currentUser?.uid;
+	//   if (!userId) return;
+
+	//   } else {
+	//     console.error('firestore에 스케줄 수정 실패:', addResult.message);
+	//   }
+	// };
 
 	const handleEditScheduleClick = async (
 		schedule: TSchedule,
@@ -46,9 +58,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				const schedulesToDelete = filteredRepeatSchedules(schedule, schedules);
 				const scheduleIdsToDelete = schedulesToDelete.map((s) => s.schedule_id);
 
-				const deleteResult = await dispatch(
-					removeScheduleToFirestore('user1', scheduleIdsToDelete),
-				);
+				const deleteResult = await dispatch(removeScheduleToFirestore(userId, scheduleIdsToDelete));
 				if (!deleteResult.success) {
 					console.error('전체 수정 전 삭제 실패:', deleteResult.message);
 					return;
@@ -59,7 +69,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 					...updatedFields,
 				});
 				// 새 스케줄 배열 Firestore에 추가
-				const addResult = await dispatch(addScheduleToFirestore('user1', updatedSchedules));
+				const addResult = await dispatch(addScheduleToFirestore(userId, updatedSchedules));
 				if (addResult.success) {
 					console.log('전체 스케줄이 성공적으로 수정됨');
 				} else {
@@ -72,7 +82,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 			try {
 				// 기존 스케줄 삭제
 				const deleteResult = await dispatch(
-					removeScheduleToFirestore('user1', [schedule.schedule_id]),
+					removeScheduleToFirestore(userId, [schedule.schedule_id]),
 				);
 				if (!deleteResult.success) {
 					console.error('단일 수정 전 삭제 실패:', deleteResult.message);
@@ -86,7 +96,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 						...schedule,
 						...updatedFields,
 					});
-					const addResult = await dispatch(addScheduleToFirestore('user1', updatedSchedules));
+					const addResult = await dispatch(addScheduleToFirestore(userId, updatedSchedules));
 					if (addResult.success) {
 						console.log('단일 스케줄 수정이 반복 스케줄로 성공적으로 수정됨');
 					} else {
@@ -98,7 +108,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 						...schedule,
 						...updatedFields,
 					};
-					const editResult = await dispatch(editScheduleToFirestore('user1', [updatedSchedule]));
+					const editResult = await dispatch(editScheduleToFirestore(userId, [updatedSchedule]));
 					if (editResult.success) {
 						console.log('단일 스케줄이 단일 스케줄로 성공적으로 수정됨');
 					} else {
@@ -118,9 +128,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				const filteredS = filteredRepeatSchedules(schedule, schedules);
 				const scheduleIdsToDelete = filteredS.map((s) => s.schedule_id);
 				console.log('scheduleIdsToDelete:', scheduleIdsToDelete);
-				const deleteResult = await dispatch(
-					removeScheduleToFirestore('user1', scheduleIdsToDelete),
-				);
+				const deleteResult = await dispatch(removeScheduleToFirestore(userId, scheduleIdsToDelete));
 				if (!deleteResult.success) {
 					console.error('전체 삭제 실패:', deleteResult.message);
 					return;
@@ -130,7 +138,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				// 단일 스케줄 삭제
 				console.log('schedule.schedule_id:', [schedule.schedule_id]);
 				const deleteResult = await dispatch(
-					removeScheduleToFirestore('user1', [schedule.schedule_id]),
+					removeScheduleToFirestore(userId, [schedule.schedule_id]),
 				);
 				if (!deleteResult.success) {
 					console.error('단일 삭제 실패:', deleteResult.message);
@@ -160,42 +168,52 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 		: null;
 
 	return (
-		<S.ScheduleCardContainer>
-			<S.TimeContainerUp>
-				{showStartTime ? (
-					<S.TimeDot $category={schedule.category} />
-				) : (
-					<S.TimeDotEmpty $category={schedule.category} />
-				)}
-				<S.TimeText>
-					{startTime}
-					{shouldShowTime ? ` - ${endTime}` : ''}
-				</S.TimeText>
-				<S.ButtonContainer>
-					<S.EditIcon
-						onClick={() => {
-							handleEditScheduleClick(schedule, updatedFields, false);
-						}}
-					/>
-					<S.DeleteIcon
-						onClick={() => {
-							handleDeleteScheduleClick(schedule, true);
-						}}
-					/>
-				</S.ButtonContainer>
-			</S.TimeContainerUp>
-			<S.ContentContainer>
-				<S.CategoryText>{schedule.category}</S.CategoryText>
-				<S.DescriptionText>{schedule.description}</S.DescriptionText>
-			</S.ContentContainer>
-			<S.TimeContainerDown>
-				{showEndTime ? (
-					<S.TimeDotDown $category={schedule.category} />
-				) : (
-					<S.TimeDotEmptyDown $category={schedule.category} />
-				)}
-				<S.TimeTextDown>{endTime}</S.TimeTextDown>
-			</S.TimeContainerDown>
-		</S.ScheduleCardContainer>
+		<>
+			<S.ScheduleCardContainer>
+				<S.TimeContainerUp>
+					{showStartTime ? (
+						<S.TimeDot $category={schedule.category} />
+					) : (
+						<S.TimeDotEmpty $category={schedule.category} />
+					)}
+					<S.TimeText>
+						{startTime}
+						{shouldShowTime ? ` - ${endTime}` : ''}
+					</S.TimeText>
+					<S.ButtonContainer>
+						<S.EditIcon
+							onClick={() => {
+								handleEditScheduleClick(schedule, updatedFields, false);
+							}}
+						/>
+						<S.DeleteIcon
+							onClick={() => {
+								handleDeleteScheduleClick(schedule, true);
+							}}
+						/>
+					</S.ButtonContainer>
+				</S.TimeContainerUp>
+				<S.ContentContainer>
+					<S.CategoryText>{SCHEDULE_CATEGORY_LABELS[schedule.category]}</S.CategoryText>
+					<S.DescriptionText>{schedule.description}</S.DescriptionText>
+				</S.ContentContainer>
+				<S.TimeContainerDown>
+					{showEndTime ? (
+						<S.TimeDotDown $category={schedule.category} />
+					) : (
+						<S.TimeDotEmptyDown $category={schedule.category} />
+					)}
+					<S.TimeTextDown>{endTime}</S.TimeTextDown>
+				</S.TimeContainerDown>
+			</S.ScheduleCardContainer>
+			{/* {isScheduleModalOpen && (
+				<ScheduleModal
+					type="scheduleUser"
+					mode='edit'
+					onSubmit={handleSubmit}
+					onClose={() => dispatch(setIsScheduleModalOpen(false))}
+				/>
+			)} */}
+		</>
 	);
 };

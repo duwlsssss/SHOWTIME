@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import * as S from '@/components/Register/Register.styles';
+import * as S from './Register.styles';
 import {
 	FormData,
 	RegisterFormErrors,

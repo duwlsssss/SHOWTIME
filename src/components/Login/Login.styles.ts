@@ -72,14 +72,14 @@ export const Label = styled.label`
 `;
 
 interface InputProps {
-	hasError?: boolean;
+	$hasError?: boolean;
 }
 
 export const Input = styled.input<InputProps>`
 	width: 100%;
 	padding: var(--space-small) var(--space-small);
 	border: 1px solid
-		${(props) => (props.hasError ? 'var(--color-coral-dark)' : 'var(--color-light-gray)')};
+		${(props) => (props.$hasError ? 'var(--color-coral-dark)' : 'var(--color-light-gray)')};
 	border-radius: var(--small-border-radius);
 	outline: none;
 	transition: all 0.3s;

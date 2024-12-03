@@ -2,9 +2,11 @@ import { applyMiddleware, combineReducers, createStore } from 'redux';
 import { thunk, ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import scheduleReducer from './reducers/scheduleReducer';
+import userReducer from './reducers/userReducer';
 
 const rootReducer = combineReducers({
 	schedule: scheduleReducer,
+	user: userReducer,
 });
 
 const store = createStore(rootReducer, applyMiddleware(thunk));

@@ -4,11 +4,11 @@ import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
 import { getSchedules, selectDate, filteredSchedules } from '@/redux/actions/scheduleActions';
 import { filterSchedulesByDateAndSort } from '@/utils/filterSchedulesByDate';
 import { formatCalendarDay } from '@/utils/dateFormatter';
-import { TSchedule } from '@/types/schedule';
+import { TSchedule, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
 import { toDate } from '@/utils/dateFormatter';
 import { db } from '@/firebaseConfig';
-import { collection, onSnapshot } from 'firebase/firestore';
-
+import { onSnapshot, doc } from 'firebase/firestore';
+import { auth } from '@/firebaseConfig';
 interface CalendarComponentProps {
 	isManagementPage?: boolean;
 }
@@ -17,17 +17,28 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 
+	const userId = auth.currentUser?.uid;
+	// console.log('userId:', userId);
+
 	useEffect(() => {
 		console.log('isManagementPage:', isManagementPage);
 	}, [isManagementPage]);
 
 	// Firestore에서 스케줄 가져오기 - 무한 렌더링 막기 위해 Firestore의 실시간 리스너 사용
 	useEffect(() => {
-		const schedulesRef = collection(db, 'schedules', 'user1', 'userSchedules');
+		if (!userId) {
+			// userId가 없으면 빈 배열로 초기화
+			dispatch(getSchedules([]));
+			return;
+		}
 
-		const unsubscribe = onSnapshot(schedulesRef, (snapshot) => {
-			const schedules = snapshot.docs.map((doc) => doc.data() as TSchedule);
-			dispatch(getSchedules(schedules));
+		const userDocRef = doc(db, 'schedules', userId);
+
+		const unsubscribe = onSnapshot(userDocRef, (doc) => {
+			if (doc.exists()) {
+				const schedules = doc.data().schedules || [];
+				dispatch(getSchedules(schedules));
+			}
 		});
 
 		return () => unsubscribe();
@@ -47,7 +58,7 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 
 		const filteredS = filterSchedulesByDateAndSort(schedules, date);
 
-		console.log('filteredS:', filteredS); // 디버깅용
+		// console.log('filteredS:', filteredS); // 디버깅용
 
 		dispatch(filteredSchedules(filteredS));
 	};
@@ -66,7 +77,7 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 			<>
 				{daySchedules.map((s: TSchedule) => (
 					<S.ScheduleBar key={s.schedule_id} $category={s.category}>
-						{s.category}
+						{SCHEDULE_CATEGORY_LABELS[s.category]}
 					</S.ScheduleBar>
 				))}
 			</>

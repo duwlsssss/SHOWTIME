@@ -3,25 +3,54 @@ import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebas
 import * as S from '@/components/Login/Login.styles';
 import { auth } from '@/firebaseConfig';
 import { LoginFormData, LoginFormErrors } from '@/types/login';
-import { User } from '@/types/auth';
+// import { User } from '@/types/auth';
+import { getDoc, doc } from 'firebase/firestore';
+import { db } from '@/firebaseConfig';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { setUser, clearUser } from '@/redux/actions/userAction';
 import { validateLoginForm, getAuthErrorMessage } from '@/components/Login/LoginValidation';
 import { Loading } from '@/pages';
 
 export function LoginForm() {
-	const [user, setUser] = useState<User | null>(null);
+	// const [user, setUser] = useState<TUser | null>(null);
 	const [formData, setFormData] = useState<LoginFormData>({
 		email: '',
 		password: '',
 	});
 	const [errors, setErrors] = useState<LoginFormErrors>({});
 	const [isLoading, setIsLoading] = useState(false);
-	const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+	// const [isAuthInitialized, setIsAuthInitialized] = useState(false);
+
+	const dispatch = useAppDispatch();
+	const { user, isAuthInitialized } = useAppSelector((state) => state.user);
 
 	// 파이어베이스 auth 상태 변경 감지 -> 로그인 상태 확인
 	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-			setUser(currentUser);
-			setIsAuthInitialized(true);
+		const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+			// setUser(currentUser);
+			// setIsAuthInitialized(true);
+			if (currentUser) {
+				// Firestore에서 유저 정보 가져오기
+				const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
+				const additionalData = userDoc.data();
+
+				const userData = {
+					id: currentUser.uid,
+					email: currentUser.email,
+					userName: additionalData?.user_name ?? '',
+					userAlias: additionalData?.user_alias ?? '',
+					age: additionalData?.age ?? 0,
+					role: additionalData?.role ?? '',
+					gender: additionalData?.gender ?? '',
+					position: additionalData?.position ?? '',
+					shiftType: additionalData?.shift_type ?? '',
+				};
+
+				dispatch(setUser(userData));
+			} else {
+				dispatch(clearUser());
+			}
+			// setIsAuthInitialized(true);
 		});
 
 		return () => unsubscribe();
@@ -46,6 +75,8 @@ export function LoginForm() {
 			// 파이어베이스 auth 함수
 			await signOut(auth);
 			setFormData({ email: '', password: '' });
+
+			dispatch(clearUser());
 		} catch (error) {
 			console.error('로그아웃 에러:', error);
 		}
@@ -87,7 +118,7 @@ export function LoginForm() {
 						<>
 							<S.FormTitle>환영합니다</S.FormTitle>
 							<p>{user.email}</p>
-							<p>uid: {user.uid}</p>
+							<p>uid: {user.id}</p>
 							<S.SubmitButton onClick={handleLogout}>로그아웃</S.SubmitButton>
 						</>
 					) : (
@@ -102,7 +133,7 @@ export function LoginForm() {
 										type="email"
 										value={formData.email}
 										onChange={handleInputChange}
-										hasError={!!errors.email}
+										$hasError={!!errors.email}
 									/>
 									{errors.email && <S.ErrorMessage>{errors.email}</S.ErrorMessage>}
 								</S.FormField>
@@ -115,7 +146,7 @@ export function LoginForm() {
 										type="password"
 										value={formData.password}
 										onChange={handleInputChange}
-										hasError={!!errors.password}
+										$hasError={!!errors.password}
 									/>
 									{errors.password && <S.ErrorMessage>{errors.password}</S.ErrorMessage>}
 								</S.FormField>

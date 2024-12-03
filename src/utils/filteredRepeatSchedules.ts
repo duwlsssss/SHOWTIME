@@ -7,7 +7,7 @@ export default function filteredRepeatSchedules(schedule: TSchedule, schedules: 
 			s.category === schedule.category &&
 			s.time === schedule.time &&
 			s.repeat === schedule.repeat &&
-			s.scheduleTimeCategory === schedule.scheduleTimeCategory &&
+			s.schedule_shift_type === schedule.schedule_shift_type &&
 			s.description === schedule.description;
 
 		// console.log('비교 결과:', { schedule: s, match });

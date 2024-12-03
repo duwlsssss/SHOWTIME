@@ -1,43 +1,32 @@
-import { StyledInput, StyledHelperText } from './Input.style';
+import React, { forwardRef } from 'react';
+import { StyledInput } from './Input.style';
 
-type InputProps = {
-	type?: string;
-	placeholder?: string;
-	value?: string;
-	onChange?: () => void;
-	onClick?: () => void;
+// InputHTMLAttributes를 확장해 모든 HTML input 속성을 지원하도록 함
+type InputProps = React.InputHTMLAttributes<HTMLInputElement> & {
 	helperText?: string;
 	className?: string;
 	borderColor?: string;
 	focusColor?: string;
+	error?: boolean;
 };
 
-const Input = ({
-	type = 'text',
-	placeholder = '',
-	value = '',
-	onChange,
-	onClick,
-	helperText = '',
-	className = '',
-	borderColor,
-	focusColor,
-}: InputProps) => {
-	return (
-		<div className={className}>
-			<StyledInput
-				className={className}
-				type={type}
-				placeholder={placeholder}
-				value={value}
-				onChange={onChange}
-				onClick={onClick}
-				borderColor={borderColor}
-				focusColor={focusColor}
-			/>
-			{helperText && <StyledHelperText>{helperText}</StyledHelperText>}
-		</div>
-	);
-};
+const Input = forwardRef<HTMLInputElement, InputProps>(
+	({ helperText, className = '', borderColor, focusColor, error = false, ...props }, ref) => {
+		return (
+			<div className={className}>
+				<StyledInput
+					ref={ref}
+					{...props}
+					borderColor={borderColor}
+					focusColor={focusColor}
+					error={error}
+				/>
+				{helperText && <span>{helperText}</span>}
+			</div>
+		);
+	},
+);
+
+Input.displayName = 'Input'; // React DevTools에서 컴포넌트 이름 표시
 
 export default Input;
