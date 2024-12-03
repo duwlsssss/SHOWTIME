@@ -26,6 +26,8 @@ export const validateForm = (data: FormData): FormErrors<FormData> => {
 	if (!data.gender) errors.gender = COMMON_ERROR_MESSAGES.REQUIRED.gender;
 	if (!data.position) errors.position = COMMON_ERROR_MESSAGES.REQUIRED.position;
 	if (!data.shiftType) errors.shiftType = COMMON_ERROR_MESSAGES.REQUIRED.shiftType;
+	if (!data.userName) errors.userName = COMMON_ERROR_MESSAGES.REQUIRED.userName;
+	if (!data.userAlias) errors.userAlias = COMMON_ERROR_MESSAGES.REQUIRED.userAlias;
 
 	if (!data.age) {
 		errors.age = COMMON_ERROR_MESSAGES.REQUIRED.age;

@@ -177,6 +177,32 @@ export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFo
 						</S.FormField>
 
 						<S.FormField>
+							<S.Label htmlFor="userName">이름</S.Label>
+							<S.Input
+								id="userName"
+								name="userName"
+								type="string"
+								value={formData.userName}
+								onChange={handleInputChange}
+								$validation={errors.userName ? 'invalid' : 'default'}
+							/>
+							{errors.userName && <S.ErrorMessage>{errors.userName}</S.ErrorMessage>}
+						</S.FormField>
+
+						<S.FormField>
+							<S.Label htmlFor="userAlias">별명</S.Label>
+							<S.Input
+								id="userAlias"
+								name="userAlias"
+								type="string"
+								value={formData.userAlias}
+								onChange={handleInputChange}
+								$validation={errors.userAlias ? 'invalid' : 'default'}
+							/>
+							{errors.userAlias && <S.ErrorMessage>{errors.userAlias}</S.ErrorMessage>}
+						</S.FormField>
+
+						<S.FormField>
 							<S.Label htmlFor="age">나이</S.Label>
 							<S.Input
 								id="age"

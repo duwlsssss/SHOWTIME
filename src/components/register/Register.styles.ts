@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const RegisterContainer = styled.main`
-	max-height: 80vh;
-	min-height: 80vh;
+	max-height: 88vh;
+	min-height: 88vh;
 	display: flex;
 	background-color: var(--color-pale-gray);
 `;
@@ -59,8 +59,8 @@ export const FormContainer = styled.div`
 	width: 470px;
 	min-width: 470px;
 	max-width: 470px;
-	margin-top: 20px;
-	margin-bottom: 20px;
+	margin-top: 10px;
+	margin-bottom: 10px;
 
 	@media (max-width: 520px) {
 		width: 320px;
@@ -74,7 +74,7 @@ export const FormTitle = styled.h1`
 	text-align: center;
 	font-size: var(--font-large);
 	font-weight: bold;
-	margin-bottom: var(--space-large);
+	margin-bottom: 1px;
 `;
 
 export const FormField = styled.div`
