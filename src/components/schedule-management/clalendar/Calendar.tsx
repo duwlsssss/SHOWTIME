@@ -5,10 +5,13 @@ import { getSchedules, selectDate, filteredSchedules } from '@/redux/actions/sch
 import { filterSchedulesByDateAndSort } from '@/utils/filterSchedulesByDate';
 import { formatCalendarDay } from '@/utils/dateFormatter';
 import { TSchedule, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { toDate } from '@/utils/dateFormatter';
 import { db } from '@/firebaseConfig';
 import { onSnapshot, doc } from 'firebase/firestore';
 import { auth } from '@/firebaseConfig';
+import { Timestamp } from 'firebase/firestore';
+
 interface CalendarComponentProps {
 	isManagementPage?: boolean;
 }
@@ -66,13 +69,26 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 	// 일정 있는 날짜에 바 표시
 	const tileContent = ({ date }: { date: Date }) => {
 		const daySchedules = schedules
-			.filter((schedule) => toDate(schedule.start_date_time).toDateString() === date.toDateString())
-			.sort(
-				(a, b) =>
-					toDate(a.start_date_time).getTime() - toDate(b.start_date_time).getTime() ||
-					toDate(a.created_at).getTime() - toDate(b.created_at).getTime(),
-			)
+			.filter((schedule) => {
+				const scheduleDate =
+					schedule.start_date_time instanceof Timestamp
+						? schedule.start_date_time.toDate()
+						: new Date(schedule.start_date_time);
+				return scheduleDate.toDateString() === date.toDateString();
+			})
+			.sort((a, b) => {
+				const aDate =
+					a.start_date_time instanceof Timestamp
+						? a.start_date_time.toDate()
+						: new Date(a.start_date_time);
+				const bDate =
+					b.start_date_time instanceof Timestamp
+						? b.start_date_time.toDate()
+						: new Date(b.start_date_time);
+				return aDate.getTime() - bDate.getTime();
+			})
 			.slice(0, 2);
+
 		return daySchedules.length > 0 ? (
 			<>
 				{daySchedules.map((s: TSchedule) => (

@@ -1,18 +1,56 @@
 import * as S from './UserScheduleList.styles';
+import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { UserScheduleCard } from '../../schedule-card/UserScheduleCard';
 import { formatToKoreanDate, toDate } from '@/utils/dateFormatter';
 import ScheduleModal from '../../schedule-modal/ScheduleModal';
-import { addScheduleToFirestore, setIsScheduleModalOpen } from '@/redux/actions/scheduleActions';
+import {
+	addScheduleToFirestore,
+	setIsScheduleModalOpen,
+	getSchedulesFromSupabase,
+} from '@/redux/actions/scheduleActions';
 import { TSchedule } from '@/types/schedule';
 import { ScheduleAddButton } from '../../schedule-add-button/ScheduleAddButton';
 import { auth } from '@/firebaseConfig';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { db } from '@/firebaseConfig';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { onSnapshot, doc } from 'firebase/firestore';
 
 export const UserScheduleList = () => {
 	const dispatch = useAppDispatch();
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const filteredSchedules = useAppSelector((state) => state.schedule.filteredSchedules);
 	const isScheduleModalOpen = useAppSelector((state) => state.schedule.isScheduleModalOpen);
+
+	// Firebase 실시간 리스너로 데이터 가져오기
+	// useEffect(() => {
+	// 	const userId = auth.currentUser?.uid;
+	// 	if (!userId) return;
+
+	// 	console.log('Firebase 조회 시작');
+	// 	const userDocRef = doc(db, 'schedules', userId);
+	// 	const unsubscribe = onSnapshot(userDocRef, (doc) => {
+	// 		if (doc.exists()) {
+	// 			const schedules = doc.data().schedules || [];
+	// 			console.log('Firebase 스케줄 데이터:', schedules);
+	// 			// dispatch(getSchedules(schedules)); // Firebase 조회 테스트시 주석 해제
+	// 		}
+	// 	});
+
+	// 	return () => unsubscribe();
+	// }, [dispatch]);
+
+	// 테스트시 Firebase와 Supabase 둘 중 하나를 주석처리하고 테스트하면 됩니다.
+	// Supabase로 데이터 가져오기
+	useEffect(() => {
+		const userId = auth.currentUser?.uid;
+		if (!userId) return;
+
+		console.log('Supabase 조회 시작');
+		dispatch(getSchedulesFromSupabase(userId));
+		// Supabase 조회 테스트시 위 라인 주석 해제
+	}, [dispatch]);
 
 	const handleScheduleAddButtonClick = async () => {
 		dispatch(setIsScheduleModalOpen(true));
