@@ -8,11 +8,11 @@ type TableProps = {
 	children?: React.ReactNode;
 };
 
-interface RowItem {
-	급여월: string;
-	급여지급일: string;
-	지급총액: string;
-	실지급액: string;
+export interface RowItem {
+	급여월?: string;
+	급여지급일?: string;
+	지급총액?: string;
+	실지급액?: string;
 }
 
 type BtnContent = {

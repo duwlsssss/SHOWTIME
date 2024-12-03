@@ -1,15 +1,19 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Table from '../table/table';
 import Pagination from '../pagination/pagination';
 import { ConfirmModal, Modal } from '@/components/modal/Modal';
+import SalarySelect from '@/components/salaryselect/salarySelect';
 import ModalPortal from '@/components/modal/ModalPortal';
 import { Button } from '@/components';
+import { getDocs, collection } from 'firebase/firestore';
+import { db } from '@/firebaseConfig';
 
 interface RowItem {
 	급여월: string;
 	급여지급일: string;
 	지급총액: string;
 	실지급액: string;
+	id: string;
 }
 
 type Message = {
@@ -24,49 +28,12 @@ type Message = {
 // 	onClickBtn: () => void;
 // };
 
-const rowItems: RowItem[] = [
-	{
-		급여월: '2023-01-01',
-		급여지급일: '2023-01-20',
-		지급총액: '100만원',
-		실지급액: '100만원',
-	},
-	{
-		급여월: '2023-02-01',
-		급여지급일: '2023-02-20',
-		지급총액: '200만원',
-		실지급액: '200만원',
-	},
-	{
-		급여월: '2023-03-01',
-		급여지급일: '2023-03-20',
-		지급총액: '300만원',
-		실지급액: '300만원',
-	},
-	{
-		급여월: '2023-04-01',
-		급여지급일: '2023-04-20',
-		지급총액: '400만원',
-		실지급액: '400만원',
-	},
-	{
-		급여월: '2023-05-01',
-		급여지급일: '2023-05-20',
-		지급총액: '500만원',
-		실지급액: '500만원',
-	},
-	{
-		급여월: '2023-06-01',
-		급여지급일: '2023-06-20',
-		지급총액: '600만원',
-		실지급액: '600만원',
-	},
-];
 const headerItems: string[] = ['급여월', '급여지급일', '지급총액', '실지급액', '급여명세'];
 
 const itemsPerPage = 5;
 
 export default function PaginatedTable() {
+	//모달창 변수들
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const openModal = () => setIsModalOpen(true);
@@ -83,6 +50,12 @@ export default function PaginatedTable() {
 		rightBtn: '아니오',
 	};
 
+	//데이터 상태
+	const [rowItems, setRowItems] = useState<RowItem[]>([]);
+	const [selectedYear, setSelectedYear] = useState<string>('2024');
+	const [selectedMonth, setSelectedMonth] = useState<string>('01');
+	const [filteredItems, setFilteredItems] = useState<RowItem[]>([]);
+
 	//페이지네이션 변수들
 	const [currentPage, setCurrentPage] = useState(1);
 
@@ -92,12 +65,48 @@ export default function PaginatedTable() {
 
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
-	const paginatedData: RowItem[] = rowItems.slice(startIndex, endIndex);
+	const paginatedData: RowItem[] = filteredItems.slice(startIndex, endIndex);
 
 	const totalPages = Math.ceil(rowItems.length / itemsPerPage);
 
+	useEffect(() => {
+		const fetchData = async () => {
+			try {
+				const querySnapshot = await getDocs(collection(db, 'attendance')); // 'attendance' 컬렉션 가져오기
+				const fetchedData = querySnapshot.docs.map((doc) => ({
+					id: doc.id, // 문서 ID 추가
+					...doc.data(), // 문서 데이터 추가
+				}));
+				setRowItems(fetchedData as RowItem[]); // 상태에 데이터 설정
+			} catch (error) {
+				console.error('Firestore 데이터를 가져오는 중 오류 발생:', error);
+			}
+		};
+
+		fetchData();
+	}, []);
+
+	//select로 데이터 필터해서 테이블에 데이터 띄울 훅
+	useEffect(() => {
+		const filteredData = rowItems
+			.filter((cur) => cur.급여월.substring(0, 4) === selectedYear)
+			.filter((cur) => cur.급여월.substring(5, 7) === selectedMonth);
+		setFilteredItems(filteredData);
+	}, [selectedYear, selectedMonth, rowItems]);
+
 	return (
 		<>
+			<SalarySelect
+				value={selectedYear}
+				value1={selectedMonth}
+				onChange={(value) => {
+					setSelectedYear(value);
+					setSelectedMonth('');
+				}}
+				onChange1={(value1) => {
+					setSelectedMonth(value1);
+				}}
+			/>
 			<Table
 				data={paginatedData}
 				headerItems={headerItems}
