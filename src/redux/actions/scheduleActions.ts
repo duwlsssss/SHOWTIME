@@ -11,12 +11,18 @@ import {
 	FILTERED_SCHEDULES,
 	SET_LOADING,
 	SET_SCHEDULE_MODAL_OPEN,
+	ADMIN_GET_SCHEDULES,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
 export const setisLoading = (isLoading: boolean) => ({
 	type: SET_LOADING,
 	payload: isLoading,
+});
+
+export const getAdminSchedules = (schedules: TSchedule[]) => ({
+	type: ADMIN_GET_SCHEDULES,
+	payload: schedules,
 });
 
 //스케줄 추가, 수정 모달 상태

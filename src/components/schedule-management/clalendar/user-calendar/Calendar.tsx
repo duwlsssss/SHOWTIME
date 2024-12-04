@@ -1,4 +1,4 @@
-import * as S from './Calendar.styles';
+import * as S from '../Calendar.styles';
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
 import { getSchedules, selectDate, filteredSchedules } from '@/redux/actions/scheduleActions';

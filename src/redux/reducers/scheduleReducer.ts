@@ -10,6 +10,7 @@ import {
 	FILTERED_SCHEDULES,
 	SET_LOADING,
 	SET_SCHEDULE_MODAL_OPEN,
+	ADMIN_GET_SCHEDULES,
 } from '../actionTypes';
 
 const initialState: TScheduleState = {
@@ -33,6 +34,13 @@ export default function scheduleReducer(
 			return { ...state, schedules: action.payload, isLoading: false };
 		case ADD_SCHEDULES:
 			return { ...state, schedules: [...state.schedules, ...action.payload], isLoading: false };
+		case ADMIN_GET_SCHEDULES: {
+			const uniqueSchedules = [...state.schedules, ...action.payload].filter(
+				(schedule, index, self) =>
+					index === self.findIndex((s) => s.schedule_id === schedule.schedule_id),
+			);
+			return { ...state, schedules: uniqueSchedules, isLoading: false };
+		}
 		case EDIT_SCHEDULES: {
 			const updatedSchedules = state.schedules.map((s) => {
 				const updated = action.payload.find(
