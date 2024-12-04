@@ -1,37 +1,23 @@
 import { TSchedule } from '@/types/schedule';
-import { toDate } from './dateFormatter';
-import { Timestamp } from 'firebase/firestore';
+import { isSameDay } from './dateFormatter';
 
-export function filterSchedulesByDate(schedules: TSchedule[], selectedDate: Date): TSchedule[] {
-	return schedules.filter(
-		(schedule) =>
-			toDate(schedule.start_date_time).toDateString() === toDate(selectedDate).toDateString() ||
-			(schedule.end_date_time
-				? toDate(schedule.end_date_time).toDateString() === toDate(selectedDate).toDateString()
-				: true),
-	);
-}
-
-export const filterSchedulesByDateAndSort = (schedules: TSchedule[], selectedDate: Date) => {
+// 데이터 가져올때 - 시작, 끝나는 시간 체크, 시작시간으로 정렬
+export function filterSchedulesByDateAndSort(
+	schedules: TSchedule[],
+	selectedDate: Date,
+): TSchedule[] {
 	return schedules
 		.filter((schedule) => {
-			const scheduleDate =
-				schedule.start_date_time instanceof Timestamp
-					? schedule.start_date_time.toDate()
-					: new Date(schedule.start_date_time); // 문자열을 Date 객체로 변환
-
-			return scheduleDate.toDateString() === selectedDate.toDateString();
+			const scheduleDate = new Date(schedule.start_date_time);
+			const compareDate = new Date(selectedDate);
+			return (
+				isSameDay(scheduleDate, compareDate) ||
+				(schedule.end_date_time ? isSameDay(new Date(schedule.end_date_time), compareDate) : true)
+			);
 		})
 		.sort((a, b) => {
-			const aDate =
-				a.start_date_time instanceof Timestamp
-					? a.start_date_time.toDate()
-					: new Date(a.start_date_time);
-			const bDate =
-				b.start_date_time instanceof Timestamp
-					? b.start_date_time.toDate()
-					: new Date(b.start_date_time);
-
-			return aDate.getTime() - bDate.getTime();
+			const aDate = new Date(a.start_date_time);
+			const bDate = new Date(b.start_date_time);
+			return aDate.getUTCHours() - bDate.getUTCHours(); // 정렬은 UTC 기준_DB에 저장된 시간이 UTC
 		});
-};
+}

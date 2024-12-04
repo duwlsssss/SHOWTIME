@@ -1,7 +1,7 @@
 import * as S from './ScheduleModal.styles';
 import { useState } from 'react';
-import { useAppDispatch } from '@/hooks/useRedux';
-import { setIsScheduleModalOpen } from '@/redux/actions/scheduleActions';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { setIsModalOpen } from '@/redux/actions/scheduleActions';
 import {
 	TSchedule,
 	scheduleSchema,
@@ -16,7 +16,6 @@ import calculateEndDateTime from '@/utils/calculateEndDateTime';
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { v4 as uuidv4 } from 'uuid';
-import { auth } from '@/firebaseConfig';
 import { useForm } from 'react-hook-form';
 import { Toggle } from '../../toggle/Toggle';
 import { Button } from '../../button/Button';
@@ -34,6 +33,8 @@ const ScheduleModal = ({ type, mode, onSubmit, onClose }: TScheduleModalProps) =
 	const [isRepeatActive, setIsRepeatActive] = useState<boolean>(false); // 토글 상태
 
 	const dispatch = useAppDispatch();
+
+	const user = useAppSelector((state) => state.user.user);
 
 	const schema = type === 'scheduleAdmin' ? scheduleAdminSchema : scheduleSchema;
 
@@ -53,7 +54,7 @@ const ScheduleModal = ({ type, mode, onSubmit, onClose }: TScheduleModalProps) =
 		errors: errors,
 		isSubmitting: isSubmitting,
 		data: watch(),
-		currentUser: auth.currentUser,
+		currentUser: user,
 	});
 
 	const startDateTime = watch('start_date_time'); // 시작 일시 값 감시
@@ -61,9 +62,7 @@ const ScheduleModal = ({ type, mode, onSubmit, onClose }: TScheduleModalProps) =
 
 	// 실시간으로 에러 메시지 생성
 	const noneStartDateTimeError = !startDateTime ? '시작일시를 선택해주세요' : null;
-
 	const noneEndDateError = !repeatEndDate ? '종료일을 선택해주세요' : null;
-
 	const repeatEndDateError =
 		repeatEndDate && startDateTime && new Date(repeatEndDate) < new Date(startDateTime)
 			? '반복 종료일은 시작일 이후여야 합니다'
@@ -82,9 +81,9 @@ const ScheduleModal = ({ type, mode, onSubmit, onClose }: TScheduleModalProps) =
 
 	const onSubmitForm = handleSubmit(async (data) => {
 		console.log('폼 제출 시작', data);
-		const userId = auth.currentUser?.uid;
-		const userName = auth.currentUser;
-		console.log(userName);
+		const userId = user?.id;
+		const userName = user?.userName;
+		const userAlias = user?.userAlias;
 		try {
 			if (!userId) {
 				throw new Error('사용자 인증 필요');
@@ -93,25 +92,20 @@ const ScheduleModal = ({ type, mode, onSubmit, onClose }: TScheduleModalProps) =
 			const scheduleData: TSchedule = {
 				schedule_id: uuidv4(),
 				user_id: userId,
-				user_name: '',
-				user_alias: '',
+				user_name: userName as string,
+				user_alias: userAlias as string,
 				category: data.category,
-				start_date_time: data.start_date_time,
+				start_date_time: new Date(data.start_date_time),
 				time: data.time,
-				end_date_time: calculateEndDateTime(data.start_date_time, data.time),
+				end_date_time: new Date(calculateEndDateTime(data.start_date_time, data.time)),
 				schedule_shift_type: calculateScheduleShiftType(data.start_date_time),
-				repeat: data.repeat as TScheduleRepeatCycle,
-				repeat_end_date: data.repeat_end_date,
+				repeat: (data.repeat as TScheduleRepeatCycle) || null, // Supabase에 저장하기 전에 null로 변환
+				repeat_end_date: data.repeat_end_date ? new Date(data.repeat_end_date) : null,
 				created_at: new Date(),
-				description: data.description,
+				description: data.description as string | null,
 			};
 
-			// undefined 필드 제거
-			const cleanedScheduleData = Object.fromEntries(
-				Object.entries(scheduleData).filter(([, v]) => v !== undefined),
-			) as TSchedule;
-
-			const newSchedules = generateRepeatingSchedules(cleanedScheduleData);
+			const newSchedules = generateRepeatingSchedules(scheduleData);
 
 			await onSubmit(newSchedules);
 			onClose(); // 모달 닫기
@@ -126,7 +120,7 @@ const ScheduleModal = ({ type, mode, onSubmit, onClose }: TScheduleModalProps) =
 				<S.ModalContent onSubmit={onSubmitForm}>
 					<S.ModalContentTitle>
 						<h1>일정 {mode === 'add' ? '추가' : '수정'}</h1>
-						<S.CloseIcon onClick={() => dispatch(setIsScheduleModalOpen(false))} />
+						<S.CloseIcon onClick={() => dispatch(setIsModalOpen(false))} />
 					</S.ModalContentTitle>
 
 					{type === 'scheduleAdmin' && (

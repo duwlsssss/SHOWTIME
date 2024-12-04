@@ -21,7 +21,15 @@ export const AdminScheduleList = () => {
 			{filteredSchedules.length > 0 ? (
 				<ul>
 					{filteredSchedules.map((schedule) => (
-						<AdminScheduleCard schedulesItem={schedule} key={schedule.schedule_id} />
+						<AdminScheduleCard
+							schedulesItem={{
+								...schedule,
+								repeat: schedule.repeat || undefined,
+								repeat_end_date: schedule.repeat_end_date || undefined,
+								description: schedule.description || undefined,
+							}}
+							key={schedule.schedule_id}
+						/>
 					))}
 				</ul>
 			) : (

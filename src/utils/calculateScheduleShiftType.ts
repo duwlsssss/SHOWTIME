@@ -1,10 +1,10 @@
 import { TScheduleShiftType } from '@/types/schedule';
 
-const calculateScheduleShiftType = (start_date_time: Date): TScheduleShiftType => {
-	const hours = start_date_time.getHours();
-	if (hours >= 6 && hours < 12) return 'open';
-	if (hours < 18) return 'middle';
-	return 'close';
-};
+export default function calculateScheduleShiftType(start_date_time: Date): TScheduleShiftType {
+	const hours = start_date_time.getUTCHours();
 
-export default calculateScheduleShiftType;
+	// UTC 기준으로 교대 시간 계산
+	if (hours >= 21 || hours < 3) return 'open'; // UTC 21-03 = KST 06-12
+	if (hours < 9) return 'middle'; // UTC 03-09 = KST 12-18
+	return 'close'; // UTC 09-21 = KST 18-06
+}

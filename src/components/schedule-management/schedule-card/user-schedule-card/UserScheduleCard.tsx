@@ -1,46 +1,39 @@
 import * as S from './UserScheduleCard.styles';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { toDate } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
-// import ScheduleModal from '../schedule-modal/ScheduleModal';
-import {
-	addScheduleToFirestore,
-	editScheduleToFirestore,
-	removeScheduleToFirestore,
-	// setIsScheduleModalOpen,
-} from '@/redux/actions/scheduleActions';
-import { SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
+import { isSameDay, formatTime } from '@/utils/dateFormatter';
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
-import { Timestamp } from 'firebase/firestore';
-import { auth } from '@/firebaseConfig';
-import { removeScheduleFromSupabase } from '@/redux/actions/scheduleActions';
-import { addScheduleToSupabase, editScheduleToSupabase } from '@/redux/actions/scheduleActions';
-
-interface UserScheduleCardProps {
-	schedule: TSchedule;
-	shouldShowTime: boolean;
-}
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import {
+	addScheduleToSupabase,
+	editScheduleToSupabase,
+	removeScheduleFromSupabase,
+	// setIsModalOpen,
+} from '@/redux/actions/scheduleActions';
+import { UserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
+// import ScheduleModal from '../schedule-modal/ScheduleModal';
+// import ModalPortal from '../../modal/ModalPortal';
+// import { Modal } from '../../modal/Modal';
+import { v4 as uuidv4 } from 'uuid';
 
 export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardProps) => {
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
-	// const isScheduleModalOpen = useAppSelector((state) => state.schedule.isScheduleModalOpen);
+	const user = useAppSelector((state) => state.user.user);
+	// const isModalOpen = useAppSelector((state) => state.schedule.isModalOpen);
 
-	const userId = auth.currentUser?.uid;
+	const userId = user?.id;
+
 	// 임시 데이터
 	const updatedFields: Partial<TSchedule> = {
 		category: 'floor',
-		start_date_time: new Date('2024-11-27T22:00:00.000Z'),
+		start_date_time: new Date(),
 		time: '3',
-		repeat: 'everyDay',
-		repeat_end_date: new Date('2024-11-29T00:00:00.000Z'),
 		description: '대청소ㅜㅠㅜㅠ',
 		created_at: new Date(),
 	};
 
 	// const handleSubmit = async (schedules: TSchedule[]) => {
-	//   const userId = auth.currentUser?.uid;
 	//   if (!userId) return;
 
 	//   } else {
@@ -60,16 +53,12 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				const schedulesToDelete = filteredRepeatSchedules(schedule, schedules);
 				const scheduleIdsToDelete = schedulesToDelete.map((s) => s.schedule_id);
 
-				// Firebase 삭제
-				const firebaseDeleteResult = await dispatch(
-					removeScheduleToFirestore(userId, scheduleIdsToDelete),
-				);
 				// Supabase 삭제
 				const supabaseDeleteResult = await dispatch(
 					removeScheduleFromSupabase(userId!, scheduleIdsToDelete),
 				);
 
-				if (!firebaseDeleteResult.success || !supabaseDeleteResult.success) {
+				if (!supabaseDeleteResult.success) {
 					console.error('전체 수정 전 삭제 실패');
 					return;
 				}
@@ -77,13 +66,12 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				const updatedSchedules = generateRepeatingSchedules({
 					...schedule,
 					...updatedFields,
+					schedule_id: uuidv4(), // 첫번째 스케줄에 새로운 ID 생성해줌
 				});
 
-				// Firebase와 Supabase에 추가
-				const firebaseAddResult = await dispatch(addScheduleToFirestore(userId, updatedSchedules));
 				const supabaseAddResult = await dispatch(addScheduleToSupabase(userId!, updatedSchedules));
 
-				if (!firebaseAddResult.success || !supabaseAddResult.success) {
+				if (!supabaseAddResult.success) {
 					console.error('전체 수정 중 추가 실패');
 					return;
 				}
@@ -93,15 +81,11 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 			}
 		} else {
 			try {
-				// Firebase와 Supabase 삭제
-				const firebaseDeleteResult = await dispatch(
-					removeScheduleToFirestore(userId, [schedule.schedule_id]),
-				);
 				const supabaseDeleteResult = await dispatch(
 					removeScheduleFromSupabase(userId!, [schedule.schedule_id]),
 				);
 
-				if (!firebaseDeleteResult.success || !supabaseDeleteResult.success) {
+				if (!supabaseDeleteResult.success) {
 					console.error('단일 수정 전 삭제 실패');
 					return;
 				}
@@ -112,17 +96,14 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 					const updatedSchedules = generateRepeatingSchedules({
 						...schedule,
 						...updatedFields,
+						schedule_id: uuidv4(), // 첫번째 스케줄에 새로운 ID 생성
 					});
 
-					// Firebase와 Supabase에 추가
-					const firebaseAddResult = await dispatch(
-						addScheduleToFirestore(userId, updatedSchedules),
-					);
 					const supabaseAddResult = await dispatch(
 						addScheduleToSupabase(userId!, updatedSchedules),
 					);
 
-					if (!firebaseAddResult.success || !supabaseAddResult.success) {
+					if (!supabaseAddResult.success) {
 						console.error('단일 스케줄 수정이 반복 스케줄로 수정 실패');
 						return;
 					}
@@ -133,15 +114,11 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 						...updatedFields,
 					};
 
-					// Firebase와 Supabase 수정
-					const firebaseEditResult = await dispatch(
-						editScheduleToFirestore(userId, [updatedSchedule]),
-					);
 					const supabaseEditResult = await dispatch(
 						editScheduleToSupabase(userId!, [updatedSchedule]),
 					);
 
-					if (!firebaseEditResult.success || !supabaseEditResult.success) {
+					if (!supabaseEditResult.success) {
 						console.error('단일 스케줄 수정 실패');
 						return;
 					}
@@ -159,16 +136,11 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				const filteredS = filteredRepeatSchedules(schedule, schedules);
 				const scheduleIdsToDelete = filteredS.map((s) => s.schedule_id);
 
-				// Firebase 삭제
-				const firebaseResult = await dispatch(
-					removeScheduleToFirestore(userId, scheduleIdsToDelete),
-				);
-				// Supabase 삭제 추가
-				const supabaseResult = await dispatch(
+				const supabaseDeleteResult = await dispatch(
 					removeScheduleFromSupabase(userId!, scheduleIdsToDelete),
 				);
 
-				if (!firebaseResult.success || !supabaseResult.success) {
+				if (!supabaseDeleteResult.success) {
 					console.error('삭제 실패');
 					return;
 				}
@@ -177,7 +149,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 				// 단일 스케줄 삭제
 				console.log('schedule.schedule_id:', [schedule.schedule_id]);
 				const deleteResult = await dispatch(
-					removeScheduleToFirestore(userId, [schedule.schedule_id]),
+					removeScheduleFromSupabase(userId!, [schedule.schedule_id]),
 				);
 				if (!deleteResult.success) {
 					console.error('단일 삭제 실패:', deleteResult.message);
@@ -191,20 +163,15 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 	};
 
 	// 넘어가는 날짜 원 처리용
-	const isSameDate = (date1: Date | Timestamp, date2: Date | Timestamp) => {
-		if (!date1 || !date2) return false;
-		return toDate(date1).toLocaleDateString() === toDate(date2).toLocaleDateString();
-	};
-	const showStartTime = isSameDate(selectedDate, schedule.start_date_time);
-	let showEndTime = false;
-	if (schedule.end_date_time) {
-		showEndTime = isSameDate(selectedDate, schedule.end_date_time);
-	}
+	const compareDate = new Date(selectedDate);
+	const startDate = new Date(schedule.start_date_time);
+	const endDate = new Date(schedule.end_date_time);
 
-	const startTime = String(toDate(schedule.start_date_time)).slice(16, 21);
-	const endTime = schedule.end_date_time
-		? String(toDate(schedule.end_date_time)).slice(16, 21)
-		: null;
+	const showStartTime = isSameDay(compareDate, startDate);
+	const showEndTime = isSameDay(compareDate, endDate);
+
+	const startTime = formatTime(startDate);
+	const endTime = formatTime(endDate);
 
 	return (
 		<>
@@ -222,12 +189,12 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 					<S.ButtonContainer>
 						<S.EditIcon
 							onClick={() => {
-								handleEditScheduleClick(schedule, updatedFields, false);
+								handleEditScheduleClick(schedule, updatedFields, true);
 							}}
 						/>
 						<S.DeleteIcon
 							onClick={() => {
-								handleDeleteScheduleClick(schedule, true);
+								handleDeleteScheduleClick(schedule, false);
 							}}
 						/>
 					</S.ButtonContainer>
@@ -245,12 +212,12 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 					<S.TimeTextDown>{endTime}</S.TimeTextDown>
 				</S.TimeContainerDown>
 			</S.ScheduleCardContainer>
-			{/* {isScheduleModalOpen && (
+			{/* { isModalOpen && (
 				<ScheduleModal
 					type="scheduleUser"
 					mode='edit'
 					onSubmit={handleSubmit}
-					onClose={() => dispatch(setIsScheduleModalOpen(false))}
+					onClose={() => dispatch(setIsModalOpen(false))}
 				/>
 			)} */}
 		</>
