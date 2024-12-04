@@ -1,6 +1,7 @@
-import * as S from './adminScheduleList.styles';
+import * as S from './AdminScheduleList.styles';
 import { useAppSelector } from '@/hooks/useRedux';
-import { toDate, formatToKoreanDate } from '@/utils/dateFormatter';
+import { formatToKoreanDate } from '@/utils/dateFormatter';
+import AdminScheduleCard from '../../schedule-card/admin-schedule-card/AdminScheduleCard';
 
 export const AdminScheduleList = () => {
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
@@ -11,7 +12,7 @@ export const AdminScheduleList = () => {
 			<h3>
 				{selectedDate ? (
 					<>
-						<S.DateText>{formatToKoreanDate(selectedDate as Date)}</S.DateText> 의 업무
+						<S.DateText>{formatToKoreanDate(selectedDate as Date)}</S.DateText> 의 업무 현황
 					</>
 				) : (
 					'Loading...'
@@ -20,11 +21,7 @@ export const AdminScheduleList = () => {
 			{filteredSchedules.length > 0 ? (
 				<ul>
 					{filteredSchedules.map((schedule) => (
-						<li key={schedule.schedule_id}>
-							<strong>{schedule.category}</strong>: {schedule.description}
-							<strong className="time">{String(toDate(schedule.start_date_time))}</strong>:{' '}
-							{schedule.end_date_time ? String(toDate(schedule.end_date_time)) : ''}
-						</li>
+						<AdminScheduleCard schedulesItem={schedule} key={schedule.schedule_id} />
 					))}
 				</ul>
 			) : (

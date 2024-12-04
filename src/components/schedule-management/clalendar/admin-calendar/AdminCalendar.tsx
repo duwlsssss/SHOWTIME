@@ -55,10 +55,7 @@ export const AdminCalendarComponent = ({ isManagementPage }: CalendarComponentPr
 	// 날짜 선택시 그 날짜, 그 날짜의 스케줄 필터링해서 전역 상태에 저장
 	const handleDateClick = (date: Date) => {
 		dispatch(selectDate(date));
-
 		const filteredS = filterSchedulesByDateAndSort(schedules, date);
-
-		console.log('filteredS:', filteredS); // 디버깅용
 
 		dispatch(filteredSchedules(filteredS));
 	};
@@ -70,7 +67,8 @@ export const AdminCalendarComponent = ({ isManagementPage }: CalendarComponentPr
 				(a, b) =>
 					toDate(a.start_date_time).getTime() - toDate(b.start_date_time).getTime() ||
 					toDate(a.created_at).getTime() - toDate(b.created_at).getTime(),
-			);
+			)
+			.slice(0, 2);
 
 		return daySchedules.length > 0 ? (
 			<>

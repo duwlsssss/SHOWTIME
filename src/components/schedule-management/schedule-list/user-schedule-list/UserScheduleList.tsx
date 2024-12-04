@@ -1,7 +1,7 @@
 import * as S from './UserScheduleList.styles';
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { UserScheduleCard } from '../../schedule-card/UserScheduleCard';
+import { UserScheduleCard } from '../../schedule-card/user-schedule-card/UserScheduleCard';
 import { formatToKoreanDate, toDate } from '@/utils/dateFormatter';
 import ScheduleModal from '../../schedule-modal/ScheduleModal';
 import {
