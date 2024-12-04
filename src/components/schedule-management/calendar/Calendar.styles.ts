@@ -5,17 +5,16 @@ import { TScheduleCategory } from '@/types/schedule';
 
 export const CalenderContainer = styled.div`
 	padding: var(--space-medium);
-	height: 550px;
 	border-radius: var(--medium-border-radius);
 	box-shadow: var(--box-shadow-large);
 	display: flex;
 	justify-content: space-between;
+	max-height: 567.2px;
 `;
 
 export const StyledCalendar = styled(Calendar)`
 	font-family: 'Pretendard', sans-serif;
 	width: 600px;
-	height: 520px;
 	border-radius: var(--medium-border-radius);
 	border: 1px solid var(--color-pale-gray);
 	/* 네비게이션 */
@@ -78,6 +77,15 @@ export const StyledCalendar = styled(Calendar)`
 		justify-content: flex-start;
 		align-items: center;
 		overflow: hidden;
+
+		/* 주말 일자 색 변경 */
+		&.react-calendar__month-view__days__day {
+			&.react-calendar__month-view__days__day--weekend {
+				abbr {
+					color: var(--color-coral);
+				}
+			}
+		}
 	}
 	/* hover, focus, 선택됐을 시 */
 	.react-calendar__tile:enabled:hover,
@@ -101,9 +109,9 @@ export const ScheduleBar = styled.div<{ $category: TScheduleCategory }>`
 	margin: 2px 0 5px;
 	text-align: center;
 	background-color: ${({ $category }) =>
-		$category === '매표'
+		$category === 'ticket'
 			? 'var(--color-blue)'
-			: $category === '매점'
+			: $category === 'snack'
 				? 'var(--color-caramel)'
 				: 'var(--color-coral)'};
 	color: var(--color-dark-gray);

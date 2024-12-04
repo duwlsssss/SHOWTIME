@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import * as S from './MainLayout.styles';
-import { TOGGLE_BUTTON_TEXT } from '@/pages';
+import { TOGGLE_BUTTON_TEXT } from '@/types/main';
 import { useMainViewportWidth } from '@/hooks/useMainViewportWidth';
 
 export function MainLayout() {

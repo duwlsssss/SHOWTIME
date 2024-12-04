@@ -4,7 +4,7 @@ export const ScheduleListContainer = styled.div`
 	padding: var(--space-large);
 	padding-left: 45px;
 	width: 300px;
-	height: 550px;
+	max-height: 567.2px;
 	border-radius: var(--medium-border-radius);
 	box-shadow: var(--box-shadow-large);
 	overflow-y: auto;
@@ -15,7 +15,7 @@ export const ScheduleListContainer = styled.div`
 	}
 	/* 스크롤바 막대 */
 	&::-webkit-scrollbar-thumb {
-		background: var(--color-skyblue);
+		background: var(--color-light-gray);
 		border-radius: var(--small-border-radius);
 	}
 	/* 스크롤바 트랙 */
@@ -32,7 +32,7 @@ export const ScheduleListContainer = styled.div`
 
 	.schedule-add-button {
 		position: fixed;
-		bottom: 130px;
+		bottom: 75px;
 		right: 50px;
 		z-index: 3;
 	}

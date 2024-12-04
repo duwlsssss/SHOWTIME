@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const LoginContainer = styled.main`
-	min-height: 100vh;
+	min-height: 80vh;
 	display: flex;
 	background-color: var(--color-pale-gray);
 `;
@@ -20,7 +20,7 @@ export const LeftSection = styled.div`
 
 	img {
 		width: 600px;
-		height: 900px;
+		height: 600px;
 		object-fit: fill;
 		flex-shrink: 0;
 		flex-grow: 0;
@@ -31,7 +31,6 @@ export const LeftSection = styled.div`
 
 export const RightSection = styled.div`
 	width: 100%;
-	height: 100vh;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -73,14 +72,14 @@ export const Label = styled.label`
 `;
 
 interface InputProps {
-	hasError?: boolean;
+	$hasError?: boolean;
 }
 
 export const Input = styled.input<InputProps>`
 	width: 100%;
 	padding: var(--space-small) var(--space-small);
 	border: 1px solid
-		${(props) => (props.hasError ? 'var(--color-coral-dark)' : 'var(--color-light-gray)')};
+		${(props) => (props.$hasError ? 'var(--color-coral-dark)' : 'var(--color-light-gray)')};
 	border-radius: var(--small-border-radius);
 	outline: none;
 	transition: all 0.3s;

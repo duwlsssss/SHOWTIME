@@ -22,9 +22,9 @@ export const TimeDot = styled.div<{ $category: TScheduleCategory }>`
 	border-radius: 50%;
 	margin-left: -6.5px;
 	background-color: ${({ $category }) =>
-		$category === '매표'
+		$category === 'ticket'
 			? 'var(--color-blue)'
-			: $category === '매점'
+			: $category === 'snack'
 				? 'var(--color-caramel)'
 				: 'var(--color-coral)'};
 `;
@@ -32,9 +32,9 @@ export const TimeDotEmpty = styled(TimeDot)`
 	background-color: var(--color-white);
 	border: 2px solid
 		${({ $category }) =>
-			$category === '매표'
+			$category === 'ticket'
 				? 'var(--color-blue)'
-				: $category === '매점'
+				: $category === 'snack'
 					? 'var(--color-caramel)'
 					: 'var(--color-coral)'};
 `;

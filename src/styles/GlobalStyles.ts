@@ -14,6 +14,7 @@ const GlobalStyles = createGlobalStyle`
     font-weight: 500;
     color: var(--color-dark-gray);
     background-color: var(--color-white);
+    overflow: hidden;
   }
 
   * {

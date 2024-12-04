@@ -48,6 +48,7 @@
   --box-shadow-xlarge: 4px 8px 16px rgba(0, 0, 0, 0.5);
 
   /* border radius */
+  --xsmall-border-radius: 5px;
   --small-border-radius: 10px;
   --medium-border-radius: 15px;
   --large-border-radius: 20px;

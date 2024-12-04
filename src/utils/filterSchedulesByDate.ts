@@ -1,27 +1,23 @@
 import { TSchedule } from '@/types/schedule';
-import { toDate } from './dateFormatter';
+import { isSameDay } from './dateFormatter';
 
-export function filterSchedulesByDate(schedules: TSchedule[], selectedDate: Date): TSchedule[] {
-	return schedules.filter(
-		(schedule) =>
-			toDate(schedule.start_date_time).toDateString() === toDate(selectedDate).toDateString() ||
-			(schedule.end_date_time
-				? toDate(schedule.end_date_time).toDateString() === toDate(selectedDate).toDateString()
-				: true),
-	);
-}
-
+// 데이터 가져올때 - 시작, 끝나는 시간 체크, 시작시간으로 정렬
 export function filterSchedulesByDateAndSort(
 	schedules: TSchedule[],
 	selectedDate: Date,
 ): TSchedule[] {
 	return schedules
-		.filter(
-			(schedule) =>
-				toDate(schedule.start_date_time).toDateString() === selectedDate.toDateString() ||
-				(schedule.end_date_time
-					? toDate(schedule.end_date_time).toDateString() === selectedDate.toDateString()
-					: true),
-		)
-		.sort((a, b) => toDate(a.start_date_time).getTime() - toDate(b.start_date_time).getTime()); // 시작 날짜 오름차순
+		.filter((schedule) => {
+			const scheduleDate = new Date(schedule.start_date_time);
+			const compareDate = new Date(selectedDate);
+			return (
+				isSameDay(scheduleDate, compareDate) ||
+				(schedule.end_date_time ? isSameDay(new Date(schedule.end_date_time), compareDate) : true)
+			);
+		})
+		.sort((a, b) => {
+			const aDate = new Date(a.start_date_time);
+			const bDate = new Date(b.start_date_time);
+			return aDate.getUTCHours() - bDate.getUTCHours(); // 정렬은 UTC 기준_DB에 저장된 시간이 UTC
+		});
 }

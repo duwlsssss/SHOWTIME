@@ -1,35 +1,35 @@
 import * as S from './UserScheduleList.styles';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { UserScheduleCard } from '../../schedule-card/UserScheduleCard';
-import { formatToKoreanDate, toDate } from '@/utils/dateFormatter';
-// import ModalPortal from '../../../modal/ModalPortal';
-// import ScheduleModal from '../../../modal/ScheduleModal';
-import { addScheduleToFirestore } from '@/redux/actions/scheduleActions';
+import { UserScheduleCard } from '../../schedule-card/user-schedule-card/UserScheduleCard';
+import { formatToKoreanDate, formatTime } from '@/utils/dateFormatter';
+import ScheduleModal from '../../schedule-modal/ScheduleModal';
+import { setIsModalOpen, addScheduleToSupabase } from '@/redux/actions/scheduleActions';
 import { TSchedule } from '@/types/schedule';
 import { ScheduleAddButton } from '../../schedule-add-button/ScheduleAddButton';
-import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
-import { v4 as uuidv4 } from 'uuid';
 
 export const UserScheduleList = () => {
 	const dispatch = useAppDispatch();
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const filteredSchedules = useAppSelector((state) => state.schedule.filteredSchedules);
+	const isModalOpen = useAppSelector((state) => state.schedule.isModalOpen);
+	const user = useAppSelector((state) => state.user.user);
 
-	// 임시 데이터
-	const addScheduleFields: TSchedule = {
-		schedule_id: uuidv4(),
-		category: '플로어',
-		start_date_time: new Date('2024-11-20T15:00:00.000Z'),
-		time: '4',
-		repeat: '매주',
-		repeat_end_date: new Date('2024-11-31T00:00:00.000Z'),
-		description: '의자 밑 팝콘 잘 확인!!!',
-		created_at: new Date(),
-	};
+	// console.log('filteredSchedules in userList',filteredSchedules)
+
+	const userId = user?.id;
+
+	// 모달 띄우기
 	const handleScheduleAddButtonClick = async () => {
-		const newSchedules = generateRepeatingSchedules(addScheduleFields); // 받은 데이터로 반복 배열 계산하고(배열로 사용할 거라 반복 안되도 무조건 넣어야 함)
-		const addResult = await dispatch(addScheduleToFirestore('user1', newSchedules));
-		if (!addResult.success) {
+		dispatch(setIsModalOpen(true));
+	};
+
+	const handleSubmit = async (schedules: TSchedule[]) => {
+		if (!userId) return;
+
+		const addResult = await dispatch(addScheduleToSupabase(userId, schedules));
+		if (addResult.success) {
+			dispatch(setIsModalOpen(false));
+		} else {
 			console.error('firestore에 스케줄 추가 실패:', addResult.message);
 		}
 	};
@@ -42,45 +42,55 @@ export const UserScheduleList = () => {
 			return false;
 		}
 
-		const currentStartTime = String(toDate(filteredSchedules[index].start_date_time)).slice(16, 21);
+		const currentStartTime = formatTime(new Date(filteredSchedules[index].start_date_time));
+
 		const prevSchedule = index > 0 ? filteredSchedules[index - 1] : null;
 		const prevEndTime = prevSchedule?.end_date_time
-			? String(toDate(prevSchedule.end_date_time)).slice(16, 21)
+			? formatTime(new Date(prevSchedule.end_date_time))
 			: null;
 
 		const shouldShowTime = !prevEndTime || prevEndTime !== currentStartTime;
-
 		return shouldShowTime; // 시간 2개 표시(-) 여부
 	};
 
 	return (
-		<S.ScheduleListContainer>
-			<h3>
-				{selectedDate ? (
-					<>
-						<S.DateText>{formatToKoreanDate(selectedDate as Date)}</S.DateText> 의 업무
-					</>
+		<>
+			<S.ScheduleListContainer>
+				<h3>
+					{selectedDate ? (
+						<>
+							<S.DateText>{formatToKoreanDate(selectedDate)}</S.DateText> 의 업무
+						</>
+					) : (
+						'Loading...'
+					)}
+				</h3>
+				{filteredSchedules.length > 0 ? (
+					filteredSchedules.map((schedule, index) => (
+						<UserScheduleCard
+							key={schedule.schedule_id}
+							schedule={schedule}
+							shouldShowTime={getTimeDisplay(index)}
+						/>
+					))
 				) : (
-					'Loading...'
+					<S.EmptyScheduleText>오늘은 쉬는 날 😊</S.EmptyScheduleText>
 				)}
-			</h3>
-			{filteredSchedules.length > 0 ? (
-				filteredSchedules.map((schedule, index) => (
-					<UserScheduleCard
-						key={schedule.schedule_id}
-						schedule={schedule}
-						shouldShowTime={getTimeDisplay(index)}
-					/>
-				))
-			) : (
-				<S.EmptyScheduleText>오늘은 쉬는 날 😊</S.EmptyScheduleText>
+				<ScheduleAddButton
+					className="schedule-add-button"
+					onClick={() => {
+						handleScheduleAddButtonClick();
+					}}
+				/>
+			</S.ScheduleListContainer>
+			{isModalOpen && (
+				<ScheduleModal
+					type="scheduleUser"
+					mode="add"
+					onSubmit={handleSubmit}
+					onClose={() => dispatch(setIsModalOpen(false))}
+				/>
 			)}
-			<ScheduleAddButton
-				className="schedule-add-button"
-				onClick={() => {
-					handleScheduleAddButtonClick();
-				}}
-			/>
-		</S.ScheduleListContainer>
+		</>
 	);
 };

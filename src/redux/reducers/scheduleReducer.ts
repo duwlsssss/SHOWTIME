@@ -1,5 +1,5 @@
 import { TSchedule, TScheduleState } from '@/types/schedule';
-import { filterSchedulesByDate } from '@/utils/filterSchedulesByDate';
+import { filterSchedulesByDateAndSort } from '@/utils/filterSchedulesByDate';
 
 import {
 	GET_SCHEDULES,
@@ -9,6 +9,8 @@ import {
 	SELECT_DATE,
 	FILTERED_SCHEDULES,
 	SET_LOADING,
+	SET_MODAL_OPEN,
+	ADMIN_GET_SCHEDULES,
 } from '../actionTypes';
 
 const initialState: TScheduleState = {
@@ -16,16 +18,29 @@ const initialState: TScheduleState = {
 	selectedDate: new Date(),
 	filteredSchedules: [],
 	isLoading: false,
+	isModalOpen: false,
 };
 
-function scheduleReducer(state: TScheduleState = initialState, action: any): TScheduleState {
+export default function scheduleReducer(
+	state: TScheduleState = initialState,
+	action: any,
+): TScheduleState {
 	switch (action.type) {
 		case SET_LOADING:
 			return { ...state, isLoading: action.payload };
+		case SET_MODAL_OPEN:
+			return { ...state, isModalOpen: action.payload };
 		case GET_SCHEDULES:
 			return { ...state, schedules: action.payload, isLoading: false };
 		case ADD_SCHEDULES:
 			return { ...state, schedules: [...state.schedules, ...action.payload], isLoading: false };
+		case ADMIN_GET_SCHEDULES: {
+			const uniqueSchedules = [...state.schedules, ...action.payload].filter(
+				(schedule, index, self) =>
+					index === self.findIndex((s) => s.schedule_id === schedule.schedule_id),
+			);
+			return { ...state, schedules: uniqueSchedules, isLoading: false };
+		}
 		case EDIT_SCHEDULES: {
 			const updatedSchedules = state.schedules.map((s) => {
 				const updated = action.payload.find(
@@ -37,7 +52,7 @@ function scheduleReducer(state: TScheduleState = initialState, action: any): TSc
 				...state,
 				schedules: updatedSchedules,
 				filteredSchedules: state.selectedDate
-					? filterSchedulesByDate(updatedSchedules, state.selectedDate as Date)
+					? filterSchedulesByDateAndSort(updatedSchedules, state.selectedDate)
 					: updatedSchedules,
 				isLoading: false,
 			};
@@ -56,12 +71,10 @@ function scheduleReducer(state: TScheduleState = initialState, action: any): TSc
 			};
 		}
 		case SELECT_DATE:
-			return { ...state, selectedDate: action.payload, isLoading: false };
+			return { ...state, selectedDate: new Date(action.payload), isLoading: false };
 		case FILTERED_SCHEDULES:
 			return { ...state, filteredSchedules: action.payload, isLoading: false };
 		default:
 			return state;
 	}
 }
-
-export default scheduleReducer;

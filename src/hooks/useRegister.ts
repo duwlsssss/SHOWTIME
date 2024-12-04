@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
-import { RegisterData, AuthErrorCode, AUTH_ERROR_MESSAGES } from '@/pages';
+import { RegisterData } from '@/types/register';
+import { AuthErrorCode, AUTH_ERROR_MESSAGES } from '@/types/auth';
 
 export const useRegister = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -23,7 +24,10 @@ export const useRegister = () => {
 				gender: data.gender,
 				age: Number(data.age),
 				position: data.position,
-				createdAt: new Date().toISOString(),
+				created_at: new Date().toISOString(),
+				user_name: data.userName,
+				user_alias: data.userAlias,
+				shift_type: data.shiftType,
 			};
 
 			try {

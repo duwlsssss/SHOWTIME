@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 interface CheckboxItemProps {
-	item: '매표' | '매점' | '플로어';
+	item: 'ticket' | 'snack' | 'floor';
 }
 
 const CheckboxItem = ({ item }: CheckboxItemProps) => {
