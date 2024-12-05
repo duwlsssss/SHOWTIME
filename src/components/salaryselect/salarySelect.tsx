@@ -1,4 +1,4 @@
-import { SelectContainer, SelectBox } from './salarySelect.style';
+import { SelectContainer, SelectBox } from './SalarySelect.style';
 
 interface SelectBoxProps {
 	value: string;

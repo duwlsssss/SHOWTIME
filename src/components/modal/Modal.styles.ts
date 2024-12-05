@@ -16,13 +16,16 @@ export const Overlay = styled.div`
 
 export const ModalContent = styled.div`
 	background: var(--color-pale-gray);
-	width: 500px;
-	height: 300px;
+	height: 500px;
 	padding: var(--space-large);
 	border-radius: var(--small-border-radius);
 	width: 900px;
 	text-align: center;
 	z-index: 12;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
 `;
 
 export const ConfirmModalContent = styled.div`
