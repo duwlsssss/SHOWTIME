@@ -1,166 +1,32 @@
 import * as S from './UserScheduleCard.styles';
-import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 import { isSameDay, formatTime } from '@/utils/dateFormatter';
-import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
+import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
 import {
-	addScheduleToSupabase,
-	editScheduleToSupabase,
-	removeScheduleFromSupabase,
-	// setIsModalOpen,
-} from '@/redux/actions/scheduleActions';
+	setIsScheduleEditModalOpen,
+	setIsScheduleDeleteModalOpen,
+} from '@/redux/actions/ModalActions';
 import { UserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
-// import ScheduleModal from '../schedule-modal/ScheduleModal';
-// import ModalPortal from '../../modal/ModalPortal';
-// import { Modal } from '../../modal/Modal';
-import { v4 as uuidv4 } from 'uuid';
+import useScheduleManage from '@/hooks/useScheduleManage';
+import ScheduleModal from '../../schedule-modal/ScheduleModal';
+import ModalPortal from '../../../modal/ModalPortal';
+import { ConfirmModal } from '../../../modal/Modal';
 
 export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardProps) => {
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const user = useAppSelector((state) => state.user.user);
-	// const isModalOpen = useAppSelector((state) => state.schedule.isModalOpen);
+	const isScheduleEditModalOpen = useAppSelector((state) => state.modal.isScheduleEditModalOpen);
+	const isScheduleDeleteModalOpen = useAppSelector(
+		(state) => state.modal.isScheduleDeleteModalOpen,
+	);
+	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
 
 	const userId = user?.id;
 
-	// 임시 데이터
-	const updatedFields: Partial<TSchedule> = {
-		category: 'floor',
-		start_date_time: new Date(),
-		time: '3',
-		description: '대청소ㅜㅠㅜㅠ',
-		created_at: new Date(),
-	};
-
-	// const handleSubmit = async (schedules: TSchedule[]) => {
-	//   if (!userId) return;
-
-	//   } else {
-	//     console.error('firestore에 스케줄 수정 실패:', addResult.message);
-	//   }
-	// };
-
-	const handleEditScheduleClick = async (
-		schedule: TSchedule,
-		updatedFields: Partial<TSchedule>,
-		editAll: boolean,
-	) => {
-		if (editAll) {
-			try {
-				// 전체 삭제 선택시 반복 스케줄들 모두 삭제 후 수정
-				// 기존 스케줄 삭제부터 함
-				const schedulesToDelete = filteredRepeatSchedules(schedule, schedules);
-				const scheduleIdsToDelete = schedulesToDelete.map((s) => s.schedule_id);
-
-				// Supabase 삭제
-				const supabaseDeleteResult = await dispatch(
-					removeScheduleFromSupabase(userId!, scheduleIdsToDelete),
-				);
-
-				if (!supabaseDeleteResult.success) {
-					console.error('전체 수정 전 삭제 실패');
-					return;
-				}
-
-				const updatedSchedules = generateRepeatingSchedules({
-					...schedule,
-					...updatedFields,
-					schedule_id: uuidv4(), // 첫번째 스케줄에 새로운 ID 생성해줌
-				});
-
-				const supabaseAddResult = await dispatch(addScheduleToSupabase(userId!, updatedSchedules));
-
-				if (!supabaseAddResult.success) {
-					console.error('전체 수정 중 추가 실패');
-					return;
-				}
-				console.log('전체 스케줄이 성공적으로 수정됨');
-			} catch (error) {
-				console.error('스케줄 수정 실패', error);
-			}
-		} else {
-			try {
-				const supabaseDeleteResult = await dispatch(
-					removeScheduleFromSupabase(userId!, [schedule.schedule_id]),
-				);
-
-				if (!supabaseDeleteResult.success) {
-					console.error('단일 수정 전 삭제 실패');
-					return;
-				}
-				// 단일 스케줄 수정시에도 repeat, repeat_end_date (반복 설정) 있으면 반복 배열 추가
-				const hasRepeat = updatedFields.repeat && updatedFields.repeat_end_date;
-				if (hasRepeat) {
-					// 반복 배열 생성, 추가
-					const updatedSchedules = generateRepeatingSchedules({
-						...schedule,
-						...updatedFields,
-						schedule_id: uuidv4(), // 첫번째 스케줄에 새로운 ID 생성
-					});
-
-					const supabaseAddResult = await dispatch(
-						addScheduleToSupabase(userId!, updatedSchedules),
-					);
-
-					if (!supabaseAddResult.success) {
-						console.error('단일 스케줄 수정이 반복 스케줄로 수정 실패');
-						return;
-					}
-					console.log('단일 스케줄 수정이 반복 스케줄로 성공적으로 수정됨');
-				} else {
-					const updatedSchedule = {
-						...schedule,
-						...updatedFields,
-					};
-
-					const supabaseEditResult = await dispatch(
-						editScheduleToSupabase(userId!, [updatedSchedule]),
-					);
-
-					if (!supabaseEditResult.success) {
-						console.error('단일 스케줄 수정 실패');
-						return;
-					}
-					console.log('단일 스케줄이 성공적으로 수정됨');
-				}
-			} catch (error) {
-				console.error('스케줄 수정 실패', error);
-			}
-		}
-	};
-
-	const handleDeleteScheduleClick = async (schedule: TSchedule, deleteAll: boolean) => {
-		try {
-			if (deleteAll) {
-				const filteredS = filteredRepeatSchedules(schedule, schedules);
-				const scheduleIdsToDelete = filteredS.map((s) => s.schedule_id);
-
-				const supabaseDeleteResult = await dispatch(
-					removeScheduleFromSupabase(userId!, scheduleIdsToDelete),
-				);
-
-				if (!supabaseDeleteResult.success) {
-					console.error('삭제 실패');
-					return;
-				}
-				console.log('모든 반복 스케줄이 성공적으로 삭제됨');
-			} else {
-				// 단일 스케줄 삭제
-				console.log('schedule.schedule_id:', [schedule.schedule_id]);
-				const deleteResult = await dispatch(
-					removeScheduleFromSupabase(userId!, [schedule.schedule_id]),
-				);
-				if (!deleteResult.success) {
-					console.error('단일 삭제 실패:', deleteResult.message);
-					return;
-				}
-				console.log('단일 스케줄이 성공적으로 삭제됨');
-			}
-		} catch (error) {
-			console.error('스케줄 삭제 실패:', error);
-		}
-	};
+	const { handleDeleteSchedule } = useScheduleManage(userId ?? null, schedules);
 
 	// 넘어가는 날짜 원 처리용
 	const compareDate = new Date(selectedDate);
@@ -173,6 +39,35 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 	const startTime = formatTime(startDate);
 	const endTime = formatTime(endDate);
 
+	const handleEditIconClick = (schedule: TSchedule) => {
+		dispatch(setSelectedSchedule(schedule));
+		dispatch(setIsScheduleEditModalOpen(true));
+	};
+	const handleDeleteIconClick = async (schedule: TSchedule) => {
+		const repeatedSchedules = filteredRepeatSchedules(schedule, schedules);
+		const isRecurring = repeatedSchedules.length > 1;
+
+		if (isRecurring) {
+			// 반복되는 스케줄이 있으면
+			dispatch(setSelectedSchedule(schedule));
+			dispatch(setIsScheduleDeleteModalOpen(true));
+		} else {
+			await handleDeleteSchedule(schedule, false); // 하나면 그냥 삭제
+		}
+	};
+
+	const handleConfirmDelete = async (deleteAll: boolean) => {
+		try {
+			if (!selectedSchedule) return;
+
+			await handleDeleteSchedule(selectedSchedule, deleteAll);
+			dispatch(setIsScheduleDeleteModalOpen(false));
+			dispatch(setSelectedSchedule(null)); // 선택된 스케줄 초기화
+		} catch (error) {
+			console.error('스케줄 삭제 실패:', error);
+		}
+	};
+
 	return (
 		<>
 			<S.ScheduleCardContainer>
@@ -182,22 +77,16 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 					) : (
 						<S.TimeDotEmpty $category={schedule.category} />
 					)}
-					<S.TimeText>
-						{startTime}
-						{shouldShowTime ? ` - ${endTime}` : ''}
-					</S.TimeText>
-					<S.ButtonContainer>
-						<S.EditIcon
-							onClick={() => {
-								handleEditScheduleClick(schedule, updatedFields, true);
-							}}
-						/>
-						<S.DeleteIcon
-							onClick={() => {
-								handleDeleteScheduleClick(schedule, false);
-							}}
-						/>
-					</S.ButtonContainer>
+					<S.TimeButtonWrapper>
+						<S.TimeText>
+							{startTime}
+							{shouldShowTime ? ` - ${endTime}` : ''}
+						</S.TimeText>
+						<S.ButtonContainer>
+							<S.EditIcon onClick={() => handleEditIconClick(schedule)} />
+							<S.DeleteIcon onClick={() => handleDeleteIconClick(schedule)} />
+						</S.ButtonContainer>
+					</S.TimeButtonWrapper>
 				</S.TimeContainerUp>
 				<S.ContentContainer>
 					<S.CategoryText>{SCHEDULE_CATEGORY_LABELS[schedule.category]}</S.CategoryText>
@@ -212,14 +101,24 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 					<S.TimeTextDown>{endTime}</S.TimeTextDown>
 				</S.TimeContainerDown>
 			</S.ScheduleCardContainer>
-			{/* { isModalOpen && (
-				<ScheduleModal
-					type="scheduleUser"
-					mode='edit'
-					onSubmit={handleSubmit}
-					onClose={() => dispatch(setIsModalOpen(false))}
-				/>
-			)} */}
+			{isScheduleEditModalOpen && <ScheduleModal type="scheduleUser" mode="edit" />}
+			{isScheduleDeleteModalOpen && (
+				<ModalPortal>
+					<ConfirmModal
+						onClose={() => {
+							dispatch(setIsScheduleDeleteModalOpen(false));
+						}}
+						message={{
+							confirm: '반복되는 일정을 모두 삭제하시겠습니까?',
+							leftBtn: '모두 삭제',
+							rightBtn: '이 일정만 삭제',
+						}}
+						color={'red'}
+						onClickLeftBtn={() => handleConfirmDelete(true)}
+						onClickRightBtn={() => handleConfirmDelete(false)}
+					/>
+				</ModalPortal>
+			)}
 		</>
 	);
 };

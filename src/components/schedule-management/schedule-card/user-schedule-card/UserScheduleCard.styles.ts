@@ -39,6 +39,12 @@ export const TimeDotEmpty = styled(TimeDot)`
 					: 'var(--color-coral)'};
 `;
 
+export const TimeButtonWrapper = styled.div`
+	display: flex;
+	width: 200px;
+	justify-content: space-between;
+`;
+
 export const TimeText = styled.div`
 	font-size: var(--font-medium);
 	color: var(--color-dark-gray);
@@ -48,7 +54,6 @@ export const TimeText = styled.div`
 export const ButtonContainer = styled.div`
 	display: flex;
 	gap: var(--space-xsmall);
-	margin-left: 110px;
 	margin-top: -2px;
 	opacity: 0;
 	transition: opacity 0.2s;

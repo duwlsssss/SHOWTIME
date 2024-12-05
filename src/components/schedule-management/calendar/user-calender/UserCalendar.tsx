@@ -16,6 +16,11 @@ export const UserCalendarComponent = ({ isManagementPage }: CalendarComponentPro
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
+	const modalState = useAppSelector((state) => state.modal);
+
+	useEffect(() => {
+		console.log('전체 모달 상태:', modalState);
+	}, [modalState]);
 
 	useEffect(() => {
 		console.log('isManagementPage:', isManagementPage);

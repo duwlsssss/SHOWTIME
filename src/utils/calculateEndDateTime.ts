@@ -1,4 +1,4 @@
-export default function calculateEndDateTime(start_date_time: Date, time: string): Date {
+export default function calculateEndDateTime(start_date_time: Date | string, time: string): Date {
 	const hours = Number(time);
 	const endDateTime = new Date(start_date_time);
 

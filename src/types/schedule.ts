@@ -4,9 +4,11 @@ export type TScheduleShiftType = 'open' | 'middle' | 'close';
 export type TScheduleRepeatCycle = 'everyDay' | 'everyWeek' | 'everyMonth';
 
 // ❌ 일단 유지 - supabase로 마이그레이션 완료 후 삭제
-import { Timestamp } from 'firebase/firestore';
-export type TDate = Date | Timestamp;
+// import { Timestamp } from 'firebase/firestore';
+// export type TDate = Date | Timestamp;
 //
+
+export type TDate = Date | string; // supabase에 ISOstring으로 저장됨
 
 export interface TSchedule {
 	schedule_id: string;
@@ -14,13 +16,13 @@ export interface TSchedule {
 	user_name: string;
 	user_alias: string;
 	category: TScheduleCategory;
-	start_date_time: Date;
+	start_date_time: TDate;
 	time: string;
-	end_date_time: Date; // 계산된 종료 시간
+	end_date_time: TDate; // 계산된 종료 시간
 	schedule_shift_type: TScheduleShiftType; // 계산된 오픈, 미들, 마감
 	repeat?: TScheduleRepeatCycle | null;
-	repeat_end_date?: Date | null;
-	created_at: Date;
+	repeat_end_date?: TDate | null;
+	created_at: TDate;
 	description?: string | null;
 }
 
@@ -32,7 +34,7 @@ export interface TCalendarState {
 	selectedDate: Date;
 	filteredSchedules: TSchedule[];
 	isLoading: boolean;
-	isModalOpen: boolean;
+	selectedSchedule: TSchedule | null;
 }
 
 export type TScheduleState = TSchedules & TCalendarState;
@@ -46,6 +48,11 @@ export interface UserScheduleCardProps {
 	shouldShowTime: boolean;
 }
 
+export interface TScheduleModalProps {
+	type: 'scheduleUser' | 'scheduleAdmin';
+	mode: 'add' | 'edit';
+}
+
 // action types
 import {
 	GET_SCHEDULES,
@@ -54,8 +61,14 @@ import {
 	REMOVE_SCHEDULES,
 	SELECT_DATE,
 	FILTERED_SCHEDULES,
-	SET_LOADING,
-	SET_MODAL_OPEN,
+	// ADMIN_GET_SCHEDULES,
+	// SET_SELECTED_SCHEDULE,
+	SET_LOADING, // suspanse로 바꿔야함
+	// SET_MODAL_OPEN,
+	// SET_CONFIRM_MODAL_OPEN,
+	// SET_SCHEDULE_ADD_MODAL_OPEN,
+	// SET_SCHEDULE_EDIT_MODAL_OPEN,
+	// SET_SCHEDULE_DELETE_MODAL_OPEN
 } from '@/redux/actionTypes';
 
 export interface TGetSchedulesAction {
@@ -93,11 +106,6 @@ export interface TSetLoadingAction {
 	payload: boolean;
 }
 
-export interface TsetIsModalOpen {
-	type: typeof SET_MODAL_OPEN;
-	payload: boolean;
-}
-
 export type TScheduleActionTypes =
 	| TGetSchedulesAction
 	| TAddSchedulesAction
@@ -105,8 +113,7 @@ export type TScheduleActionTypes =
 	| TRemoveSchedulesAction
 	| TSelectDateAction
 	| TFilteredSchedulesAction
-	| TSetLoadingAction
-	| TsetIsModalOpen;
+	| TSetLoadingAction;
 
 export interface TScheduleApiResponse<T> {
 	success: boolean;
@@ -149,10 +156,10 @@ export const SCHEDULE_REPEAT_CYCLE_OPTIONS = {
 export interface TFormValues {
 	user_id?: string; // 관리자에서만
 	category: TScheduleCategory;
-	start_date_time: Date;
+	start_date_time: TDate;
 	time: string;
 	repeat?: string;
-	repeat_end_date?: Date;
+	repeat_end_date?: TDate;
 	description?: string;
 }
 

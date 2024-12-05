@@ -3,8 +3,9 @@ import { thunk, ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
 import { createTransform, persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
-import scheduleReducer from './reducers/scheduleReducer';
 import userReducer from './reducers/userReducer';
+import modalReducer from './reducers/modalReducer';
+import scheduleReducer from './reducers/scheduleReducer';
 import { TSchedule } from '@/types/schedule';
 
 const dateTransform = createTransform(
@@ -25,18 +26,21 @@ const dateTransform = createTransform(
 const persistConfig = {
 	key: 'root',
 	storage,
-	whitelist: ['user', 'schedule'],
+	whitelist: ['user', 'modal', 'schedule'],
 	transforms: [dateTransform],
 };
 
 const rootReducer = combineReducers({
-	schedule: scheduleReducer,
 	user: userReducer,
+	modal: modalReducer,
+	schedule: scheduleReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
 
 const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
+
+// storage.removeItem('persist:root'); // 가끔 상태 업데이트 안되면 이 부분으로 초기화하기
 
 export const store = createStore(persistedReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);

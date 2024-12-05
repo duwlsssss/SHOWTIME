@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { IoClose } from 'react-icons/io5';
 
 export const Overlay = styled.div`
 	position: fixed;
@@ -10,57 +11,49 @@ export const Overlay = styled.div`
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	z-index: 100;
+	z-index: 10;
 `;
 
 export const ModalContent = styled.div`
 	background: var(--color-pale-gray);
-	padding: 60px 20px 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	width: 500px;
+	height: 300px;
+	padding: var(--space-large);
+	border-radius: var(--small-border-radius);
 	width: 900px;
-	max-width: 90%;
 	text-align: center;
-	position: relative;
-
-	.closeBtn {
-		border: none;
-		cursor: pointer;
-		position: absolute;
-		padding: 0;
-		right: 20px;
-		top: 20px;
-		background-color: transparent;
-
-		& svg {
-			width: 25px;
-			height: 25px;
-			color: var(--color-dark-gray);
-		}
-	}
+	z-index: 12;
 `;
 
 export const ConfirmModalContent = styled.div`
 	background: var(--color-pale-gray);
-	padding: 40px 20px 20px;
-	border-radius: 10px;
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 	width: 500px;
-	max-width: 60%;
-	text-align: center;
-	z-index: 1000;
-	position: relative;
-
-	p {
-		margin: 20px 0;
-	}
-
-	.firstBtn {
-		margin-right: 20px;
-	}
+	height: 300px;
+	padding: var(--space-large);
+	border-radius: var(--small-border-radius);
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: space-between;
+	z-index: 11;
 
 	.queistionIcon {
-		width: 200px;
-		height: 200px;
+		width: 100px;
+		height: 100px;
 	}
+`;
+
+export const CloseIcon = styled(IoClose)`
+	align-self: flex-end;
+	cursor: pointer;
+	transition: color 0.2s;
+
+	&:hover {
+		color: var(--color-blue);
+	}
+`;
+
+export const BtnContainer = styled.div`
+	display: flex;
+	gap: var(--space-medium);
 `;
