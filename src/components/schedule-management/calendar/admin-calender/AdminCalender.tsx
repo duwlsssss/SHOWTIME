@@ -4,7 +4,7 @@ import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
 import {
 	selectDate,
 	filterSchedules,
-	getAdminSchedulesSuperbase,
+	getSchedulesFromSupabase,
 } from '@/redux/actions/scheduleActions';
 import { filterSchedulesByDateAndSort } from '@/utils/filterSchedulesByDate';
 import { formatCalendarDay } from '@/utils/dateFormatter';
@@ -24,7 +24,7 @@ export const AdminCalendarComponent = ({ isManagementPage }: CalendarComponentPr
 	}, [isManagementPage]);
 
 	const getSchedules = async () => {
-		await dispatch(getAdminSchedulesSuperbase());
+		await dispatch(getSchedulesFromSupabase());
 	};
 
 	useEffect(() => {

@@ -40,7 +40,7 @@ export type RootState = ReturnType<typeof rootReducer>;
 
 const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
 
-// storage.removeItem('persist:root'); // 가끔 상태 업데이트 안되면 이 부분으로 초기화하기
+// storage.removeItem('persist:root'); // 가끔 상태 업데이트 안되면 이 부분으로 초기화하기 -> 다시 로그인
 
 export const store = createStore(persistedReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);

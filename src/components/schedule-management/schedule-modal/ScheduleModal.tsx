@@ -5,7 +5,7 @@ import {
 	setIsConfirmModalOpen,
 	setIsScheduleAddModalOpen,
 	setIsScheduleEditModalOpen,
-} from '@/redux/actions/ModalActions';
+} from '@/redux/actions/modalActions';
 import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
 import {
 	TSchedule,
@@ -188,6 +188,15 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		}
 	};
 
+	// 버튼 disabled 상태
+	const isButtonDisabled = Boolean(
+		Object.keys(errors).length > 0 ||
+			isSubmitting ||
+			noneStartDateTimeError ||
+			noneEndDateError ||
+			repeatEndDateError,
+	);
+
 	return (
 		<ModalPortal>
 			{isConfirmModalOpen ? (
@@ -337,15 +346,9 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 						</S.InputWrapper>
 
 						<S.ButtonContainer>
-							{mode === 'add' ? (
-								<Button color="blue" disabled={Object.keys(errors).length > 0 || isSubmitting}>
-									추가하기
-								</Button>
-							) : (
-								<Button color="green" disabled={Object.keys(errors).length > 0 || isSubmitting}>
-									수정하기
-								</Button>
-							)}
+							<Button color={mode === 'add' ? 'blue' : 'green'} disabled={isButtonDisabled}>
+								{mode === 'add' ? '추가하기' : '수정하기'}
+							</Button>
 						</S.ButtonContainer>
 					</S.ModalContent>
 				</S.ModalOverlay>
