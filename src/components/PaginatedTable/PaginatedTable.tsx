@@ -18,6 +18,7 @@ interface RowItem {
 	급여지급일: string;
 	지급총액: string;
 	실지급액: string;
+	이름: string;
 	id: string;
 }
 
@@ -33,7 +34,6 @@ const headerItems: string[] = [
 const itemsPerPage = 5;
 
 export default function PaginatedTable() {
-	//모달창 변수들
 	//모달창 변수들
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [modalType, setModalType] = useState<'edit' | 'detail' | null>(null);
@@ -58,9 +58,7 @@ export default function PaginatedTable() {
 		const fetchAttendanceData = async () => {
 			const { data, error } = await supabase
 				.from('attendance')
-				.select(
-					'base_salary, total_salary, payment_day, payment_month,id,user_name,tax_deduction,insurance_deduction',
-				)
+				.select('*')
 				.order('total_work_hours', { ascending: false });
 
 			if (error) {
@@ -125,7 +123,7 @@ export default function PaginatedTable() {
 					btnColor: 'blue',
 					onClickBtn: () => openModal('detail'),
 				}}
-				btnContent1={{
+				btnEdit={{
 					btnText: '정정신청',
 					btnColor: 'blue',
 					onClickBtn: () => openModal('edit'),
