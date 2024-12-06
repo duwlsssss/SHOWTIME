@@ -113,7 +113,7 @@ export const ModalToggleContainer = styled.div`
 	align-items: center;
 	gap: var(--space-medium);
 	margin: var(--space-medium) 0;
-	height: 30px;
+	min-height: 30px;
 `;
 
 export const StyledSelect = styled.select<{ $error?: boolean }>`

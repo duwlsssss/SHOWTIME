@@ -1,10 +1,11 @@
-import { TableContainer, Lists, InnerUnorderLists, InnerLists } from './table.styled';
+import { TableContainer, Lists, InnerUnorderLists, InnerLists } from './Table.styled';
 import { Button } from '@/pages';
 
 type TableProps = {
 	data: RowItem[];
 	headerItems: string[];
 	btnContent?: BtnContent;
+	btnContent1?: BtnContent;
 	children?: React.ReactNode;
 };
 
@@ -25,6 +26,7 @@ export default function Table({
 	data,
 	headerItems,
 	btnContent = { btnText: '', btnColor: '', onClickBtn: () => {} },
+	btnContent1 = { btnText: '', btnColor: '', onClickBtn: () => {} },
 	children,
 }: TableProps) {
 	return (
@@ -50,6 +52,14 @@ export default function Table({
 								</Button>
 								{children}
 							</InnerLists>
+							{headerItems.length > 5 && (
+								<InnerLists>
+									<Button color={btnContent.btnColor} onClick={btnContent1.onClickBtn}>
+										{btnContent1.btnText}
+									</Button>
+									{children}
+								</InnerLists>
+							)}
 						</InnerUnorderLists>
 					</Lists>
 				))}

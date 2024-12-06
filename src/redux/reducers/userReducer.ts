@@ -1,5 +1,5 @@
 import { AuthState } from '@/types/auth';
-
+import { AnyAction } from 'redux';
 import { SET_USER, CLEAR_USER } from '../actionTypes';
 
 const initialState: AuthState = {
@@ -7,7 +7,7 @@ const initialState: AuthState = {
 	isAuthInitialized: false,
 };
 
-export default function userReducer(state: AuthState = initialState, action: any): AuthState {
+export default function userReducer(state: AuthState = initialState, action: AnyAction): AuthState {
 	switch (action.type) {
 		case SET_USER:
 			return { ...state, user: action.payload, isAuthInitialized: true };

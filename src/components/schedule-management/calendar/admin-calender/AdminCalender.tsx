@@ -1,13 +1,14 @@
 import * as S from '../Calendar.styles';
 import { useEffect } from 'react';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
-import { selectDate, filterSchedules } from '@/redux/actions/scheduleActions';
+import {
+	selectDate,
+	filterSchedules,
+	getAdminSchedulesSuperbase,
+} from '@/redux/actions/scheduleActions';
 import { filterSchedulesByDateAndSort } from '@/utils/filterSchedulesByDate';
 import { formatCalendarDay } from '@/utils/dateFormatter';
 import { TSchedule } from '@/types/schedule';
-import { toDate } from '@/utils/dateFormatter';
-import { db } from '@/firebaseConfig';
-import { collection, getDocs } from 'firebase/firestore';
 
 interface CalendarComponentProps {
 	isManagementPage?: boolean;
@@ -23,29 +24,12 @@ export const AdminCalendarComponent = ({ isManagementPage }: CalendarComponentPr
 	}, [isManagementPage]);
 
 	const getSchedules = async () => {
-		try {
-			const schedulesCollection = collection(db, 'schedules'); // "schedules" 컬렉션 참조
-			const querySnapshot = await getDocs(schedulesCollection); // 모든 문서 가져오기
-
-			const schedules = [];
-			querySnapshot.forEach((doc) => {
-				const data = doc.data();
-				dispatch({
-					type: 'ADMIN_GET_SCHEDULES',
-					payload: data.schedules.map((schedule) => schedule),
-				}); // 확인용 로그
-			});
-
-			return schedules;
-		} catch (error) {
-			console.error('Error fetching schedules: ', error);
-		}
+		await dispatch(getAdminSchedulesSuperbase());
 	};
 
 	useEffect(() => {
 		getSchedules();
-	}, [dispatch]);
-
+	}, []);
 	useEffect(() => {
 		if (schedules.length > 0 && selectedDate) {
 			const todaySchedules = filterSchedulesByDateAndSort(schedules, selectedDate as Date);
@@ -62,11 +46,13 @@ export const AdminCalendarComponent = ({ isManagementPage }: CalendarComponentPr
 
 	const tileContent = ({ date }: { date: Date }) => {
 		const daySchedules = schedules
-			.filter((schedule) => toDate(schedule.start_date_time).toDateString() === date.toDateString())
+			.filter(
+				(schedule) => new Date(schedule.start_date_time).toDateString() === date.toDateString(),
+			)
 			.sort(
 				(a, b) =>
-					toDate(a.start_date_time).getTime() - toDate(b.start_date_time).getTime() ||
-					toDate(a.created_at).getTime() - toDate(b.created_at).getTime(),
+					new Date(a.start_date_time).getTime() - new Date(b.start_date_time).getTime() ||
+					new Date(a.created_at).getTime() - new Date(b.created_at).getTime(),
 			)
 			.slice(0, 2);
 

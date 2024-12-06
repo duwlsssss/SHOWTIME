@@ -27,6 +27,7 @@
 	rules: {
 		'no-unused-vars': 'off',
 		'react/react-in-jsx-scope': 'off',
-		'@typescript-eslint/no-explicit-any': 'off',  // any 타입 허용
+		'@typescript-eslint/no-explicit-any': 'off', // any 타입 허용
+		'react/prop-types': 'off',
 	},
 };

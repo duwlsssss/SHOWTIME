@@ -7,26 +7,26 @@ import {
 	REMOVE_SCHEDULES,
 	SELECT_DATE,
 	FILTERED_SCHEDULES,
-	SET_LOADING,
-	SET_MODAL_OPEN,
+	SET_LOADING, // suspanse로 바꿔야함
+	SET_SELECTED_SCHEDULE,
 	ADMIN_GET_SCHEDULES,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
+// suspanse로 바꿔야함
 export const setisLoading = (isLoading: boolean) => ({
 	type: SET_LOADING,
 	payload: isLoading,
 });
 
+export const setSelectedSchedule = (schedule: TSchedule | null) => ({
+	type: SET_SELECTED_SCHEDULE,
+	payload: schedule,
+});
+
 export const getAdminSchedules = (schedules: TSchedule[]) => ({
 	type: ADMIN_GET_SCHEDULES,
 	payload: schedules,
-});
-
-//스케줄 추가, 수정 모달 상태
-export const setIsModalOpen = (isScheduleModalOpen: boolean) => ({
-	type: SET_MODAL_OPEN,
-	payload: isScheduleModalOpen,
 });
 
 export const getSchedules = (schedules: TSchedule[]) => ({
@@ -63,23 +63,23 @@ export const addScheduleToSupabase = (
 	userId: string,
 	schedules: TSchedule[],
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
-	return async (dispatch) => {
+	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
 			dispatch(setisLoading(true));
 
-			const { error: supabaseError } = await supabase.from('schedules').insert(
-				schedules.map((schedule) => ({
-					...schedule,
-					user_id: userId,
-					// UTC 타임스탬프로 저장
-					start_date_time: new Date(schedule.start_date_time).toISOString(),
-					end_date_time: new Date(schedule.end_date_time).toISOString(),
-					repeat_end_date: schedule.repeat_end_date
-						? new Date(schedule.repeat_end_date).toISOString()
-						: null,
-					created_at: new Date().toISOString(),
-				})),
-			);
+			const formattedSchedules = schedules.map((schedule) => ({
+				...schedule,
+				user_id: userId,
+				// UTC 타임스탬프로 저장
+				start_date_time: new Date(schedule.start_date_time).toISOString(),
+				end_date_time: new Date(schedule.end_date_time).toISOString(),
+				repeat_end_date: schedule.repeat_end_date
+					? new Date(schedule.repeat_end_date).toISOString()
+					: null,
+				created_at: new Date().toISOString(),
+			}));
+
+			const { error: supabaseError } = await supabase.from('schedules').insert(formattedSchedules);
 
 			if (supabaseError) throw supabaseError;
 
@@ -105,7 +105,7 @@ export const addScheduleToSupabase = (
 export const getSchedulesFromSupabase = (
 	userId: string,
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
-	return async (dispatch) => {
+	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
 			const { data, error } = await supabase.from('schedules').select('*').eq('user_id', userId);
 
@@ -120,7 +120,6 @@ export const getSchedulesFromSupabase = (
 				created_at: new Date(schedule.created_at),
 			}));
 
-			// console.log('Supabase 스케줄 조회 결과:', convertedData);
 			dispatch(getSchedules(convertedData));
 
 			return {
@@ -142,7 +141,7 @@ export const removeScheduleFromSupabase = (
 	userId: string,
 	scheduleIds: string[],
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
-	return async (dispatch) => {
+	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
 			dispatch(setisLoading(true));
 			// Supabase 삭제
@@ -154,7 +153,6 @@ export const removeScheduleFromSupabase = (
 
 			if (error) throw error;
 
-			console.log('Supabase 스케줄 삭제 성공:', scheduleIds); // 콘솔 확인용
 			dispatch(removeSchedules(scheduleIds));
 
 			return {
@@ -175,24 +173,24 @@ export const removeScheduleFromSupabase = (
 
 // Supabase 스케줄 수정
 export const editScheduleToSupabase = (
-	userId: string,
 	updatedSchedules: TSchedule[],
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
-	return async (dispatch) => {
+	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
 			dispatch(setisLoading(true));
 
-			const { error } = await supabase.from('schedules').upsert(
-				updatedSchedules.map((schedule) => ({
-					...schedule,
-					start_date_time: new Date(schedule.start_date_time).toISOString(),
-					end_date_time: new Date(schedule.end_date_time).toISOString(),
-					repeat_end_date: schedule.repeat_end_date
-						? new Date(schedule.repeat_end_date).toISOString()
-						: null,
-				})),
-				{ onConflict: 'schedule_id' },
-			);
+			const formattedSchedules = updatedSchedules.map((schedule) => ({
+				...schedule,
+				start_date_time: new Date(schedule.start_date_time).toISOString(),
+				end_date_time: new Date(schedule.end_date_time).toISOString(),
+				repeat_end_date: schedule.repeat_end_date
+					? new Date(schedule.repeat_end_date).toISOString()
+					: null,
+			}));
+
+			const { error } = await supabase.from('schedules').upsert(formattedSchedules, {
+				onConflict: 'schedule_id',
+			});
 
 			if (error) throw error;
 
@@ -210,6 +208,40 @@ export const editScheduleToSupabase = (
 			};
 		} finally {
 			dispatch(setisLoading(false));
+		}
+	};
+};
+
+// Supabase에서 스케줄 조회
+export const getAdminSchedulesSuperbase = (): AppThunk<Promise<TScheduleApiResponse<void>>> => {
+	return async (dispatch) => {
+		try {
+			const { data, error } = await supabase.from('schedules').select('*');
+
+			if (error) throw error;
+
+			// timestamp 문자열을 Date 객체로 변환
+			const convertedData = data.map((schedule) => ({
+				...schedule,
+				start_date_time: new Date(schedule.start_date_time),
+				end_date_time: new Date(schedule.end_date_time),
+				repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : null,
+				created_at: new Date(schedule.created_at),
+			}));
+
+			console.log('Supabase 스케줄 조회 결과:', convertedData);
+			dispatch(getSchedules(convertedData));
+
+			return {
+				success: true,
+				message: 'Supabase 스케줄을 성공적으로 조회했습니다.',
+			};
+		} catch (error) {
+			console.error('Supabase 스케줄 조회 실패:', error);
+			return {
+				success: false,
+				message: 'Supabase 스케줄 조회 중 오류가 발생했습니다.',
+			};
 		}
 	};
 };
