@@ -9,7 +9,6 @@ import {
 	FILTERED_SCHEDULES,
 	SET_LOADING, // suspanse로 바꿔야함
 	SET_SELECTED_SCHEDULE,
-	ADMIN_GET_SCHEDULES,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
@@ -22,11 +21,6 @@ export const setisLoading = (isLoading: boolean) => ({
 export const setSelectedSchedule = (schedule: TSchedule | null) => ({
 	type: SET_SELECTED_SCHEDULE,
 	payload: schedule,
-});
-
-export const getAdminSchedules = (schedules: TSchedule[]) => ({
-	type: ADMIN_GET_SCHEDULES,
-	payload: schedules,
 });
 
 export const getSchedules = (schedules: TSchedule[]) => ({
@@ -59,6 +53,7 @@ export const filterSchedules = (schedules: TSchedule[]) => ({
 	payload: schedules,
 });
 
+// Supabase에 스케줄 추가
 export const addScheduleToSupabase = (
 	userId: string,
 	schedules: TSchedule[],
@@ -103,16 +98,20 @@ export const addScheduleToSupabase = (
 
 // Supabase에서 스케줄 조회
 export const getSchedulesFromSupabase = (
-	userId: string,
+	userId?: string,
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
 	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
-			const { data, error } = await supabase.from('schedules').select('*').eq('user_id', userId);
+			let query = supabase.from('schedules').select('*');
+			if (userId) {
+				query = query.eq('user_id', userId);
+			}
+
+			const { data, error } = await query;
 
 			if (error) throw error;
 
-			// timestamp 문자열을 Date 객체로 변환
-			const convertedData = data.map((schedule) => ({
+			const convertedSchedules = data.map((schedule) => ({
 				...schedule,
 				start_date_time: new Date(schedule.start_date_time),
 				end_date_time: new Date(schedule.end_date_time),
@@ -120,7 +119,7 @@ export const getSchedulesFromSupabase = (
 				created_at: new Date(schedule.created_at),
 			}));
 
-			dispatch(getSchedules(convertedData));
+			dispatch(getSchedules(convertedSchedules));
 
 			return {
 				success: true,
@@ -208,40 +207,6 @@ export const editScheduleToSupabase = (
 			};
 		} finally {
 			dispatch(setisLoading(false));
-		}
-	};
-};
-
-// Supabase에서 스케줄 조회
-export const getAdminSchedulesSuperbase = (): AppThunk<Promise<TScheduleApiResponse<void>>> => {
-	return async (dispatch) => {
-		try {
-			const { data, error } = await supabase.from('schedules').select('*');
-
-			if (error) throw error;
-
-			// timestamp 문자열을 Date 객체로 변환
-			const convertedData = data.map((schedule) => ({
-				...schedule,
-				start_date_time: new Date(schedule.start_date_time),
-				end_date_time: new Date(schedule.end_date_time),
-				repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : null,
-				created_at: new Date(schedule.created_at),
-			}));
-
-			console.log('Supabase 스케줄 조회 결과:', convertedData);
-			dispatch(getSchedules(convertedData));
-
-			return {
-				success: true,
-				message: 'Supabase 스케줄을 성공적으로 조회했습니다.',
-			};
-		} catch (error) {
-			console.error('Supabase 스케줄 조회 실패:', error);
-			return {
-				success: false,
-				message: 'Supabase 스케줄 조회 중 오류가 발생했습니다.',
-			};
 		}
 	};
 };

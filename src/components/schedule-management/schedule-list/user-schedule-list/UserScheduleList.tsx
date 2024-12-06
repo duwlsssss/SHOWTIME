@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { UserScheduleCard } from '../../schedule-card/user-schedule-card/UserScheduleCard';
 import { formatToKoreanDate, formatTime } from '@/utils/dateFormatter';
 import ScheduleModal from '../../schedule-modal/ScheduleModal';
-import { setIsScheduleAddModalOpen } from '@/redux/actions/ModalActions';
+import { setIsScheduleAddModalOpen } from '@/redux/actions/modalActions';
 import { ScheduleAddButton } from '../../schedule-add-button/ScheduleAddButton';
 
 export const UserScheduleList = () => {

@@ -6,7 +6,7 @@ import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
 import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
-} from '@/redux/actions/ModalActions';
+} from '@/redux/actions/modalActions';
 import { UserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
 import useScheduleManage from '@/hooks/useScheduleManage';
 import ScheduleModal from '../../schedule-modal/ScheduleModal';
