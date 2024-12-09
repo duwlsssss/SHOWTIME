@@ -5,7 +5,7 @@ import {
 	TScheduleShiftType,
 } from '@/types/schedule';
 import * as S from './AdminScheduleCard.styles';
-import { formatToKoreanTime, toDate } from '@/utils/dateFormatter';
+import { formatTime } from '@/utils/dateFormatter';
 
 interface AdminScheduleCardProps {
 	schedulesItem: {
@@ -53,7 +53,7 @@ const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
 				<span>{categoryConvert(schedulesItem.category)}</span>
 			</div>
 			<S.ScheduleCardTime>
-				<span>{formatToKoreanTime(toDate(schedulesItem.end_date_time))}</span>
+				<span>{formatTime(new Date(schedulesItem.end_date_time))}</span>
 			</S.ScheduleCardTime>
 			<div>
 				<span>{schedulesItem.description}</span>

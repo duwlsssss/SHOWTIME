@@ -5,7 +5,7 @@ type TableProps = {
 	data: RowItem[];
 	headerItems: string[];
 	btnContent?: BtnContent;
-	btnContent1?: BtnContent;
+	btnEdit?: BtnContent;
 	children?: React.ReactNode;
 };
 
@@ -26,7 +26,7 @@ export default function Table({
 	data,
 	headerItems,
 	btnContent = { btnText: '', btnColor: '', onClickBtn: () => {} },
-	btnContent1 = { btnText: '', btnColor: '', onClickBtn: () => {} },
+	btnEdit = { btnText: '', btnColor: '', onClickBtn: () => {} },
 	children,
 }: TableProps) {
 	return (
@@ -54,8 +54,8 @@ export default function Table({
 							</InnerLists>
 							{headerItems.length > 5 && (
 								<InnerLists>
-									<Button color={btnContent.btnColor} onClick={btnContent1.onClickBtn}>
-										{btnContent1.btnText}
+									<Button color={btnContent.btnColor} onClick={btnEdit.onClickBtn}>
+										{btnEdit.btnText}
 									</Button>
 									{children}
 								</InnerLists>

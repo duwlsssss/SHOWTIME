@@ -1,47 +1,85 @@
 import { ModalBox, Info, TextArea, Label } from './editModal.style';
-import { createClient } from '@supabase/supabase-js';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Button } from '@/pages';
-
+import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-export default function EditModal({ data }) {
+export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+interface EditModalProps {
+	data: {
+		id: string;
+		이름: string;
+		급여월: string;
+		급여지급일: string;
+		실지급액: string;
+	};
+}
+export default function EditModal({ data }: EditModalProps) {
 	const [updatedAmount, setUpdatedAmount] = useState('');
 	const [reason, setReason] = useState('');
+	const [file, setFile] = useState<File | null>(null);
+	const [isUploading, setIsUploading] = useState(false);
+	const fileInputRef = useRef<HTMLInputElement>(null);
+	// 파일 선택 버튼 클릭 핸들러
+	const handleFileButtonClick = () => {
+		fileInputRef.current?.click();
+	};
+	// 파일 선택만 처리
+	const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const selectedFile = e.target.files?.[0];
+		if (!selectedFile) return;
 
-	//insert 함수
+		setFile(selectedFile);
+		console.log('파일 선택됨:', selectedFile.name);
+	};
+	// 파일 업로드 함수
+	const uploadFile = async (fileToUpload: File): Promise<string> => {
+		const fileExt = fileToUpload.name.split('.').pop();
+		const fileName = `corrections/${Date.now()}.${fileExt}`;
+		const { error: uploadError } = await supabase.storage
+			.from('SalaryFile')
+			.upload(fileName, fileToUpload);
+		if (uploadError) throw uploadError;
+		return `SalaryFile/${fileName}`;
+	};
+	// 제출 핸들러
 	const handleSubmit = async () => {
-		if (!updatedAmount || !reason) {
-			alert('정정신청급액과 신청사유를 모두 입력해주세요.');
+		if (!file) {
+			alert('파일을 선택해주세요');
 			return;
 		}
-
+		if (!updatedAmount) {
+			alert('정정신청급액을 입력해주세요');
+			return;
+		}
+		if (!reason) {
+			alert('신청사유를 입력해주세요');
+			return;
+		}
+		setIsUploading(true);
 		try {
-			const { error } = await supabase.from('attendance_request').insert([
+			const filePath = await uploadFile(file);
+			console.log('파일 업로드 완료:', filePath);
+
+			const { error: dbError } = await supabase.from('attendance_request').insert([
 				{
-					attendance: data['id'],
+					attendance: data.id,
 					requested_amount: updatedAmount,
 					reason: reason,
+					file_path: filePath,
+					created_at: new Date().toISOString(),
 				},
 			]);
-
-			if (error) {
-				console.error('Error inserting data:', error);
-				alert('전송 실패했습니다..');
-			} else {
-				alert('전송 하였습니다!');
-				setUpdatedAmount('');
-				setReason('');
-			}
-		} catch (err) {
-			console.error('Unexpected error:', err);
-			alert('오류 났어요.');
+			if (dbError) throw dbError;
+			alert('전송이 완료되었습니다!');
+			return;
+		} catch (error) {
+			console.error('제출 실패:', error);
+			alert('제출에 실패했습니다. 다시 시도해주세요.');
+		} finally {
+			setIsUploading(false);
 		}
 	};
-
 	return (
 		<ModalBox>
 			<div style={{ margin: '20px' }}>
@@ -68,12 +106,21 @@ export default function EditModal({ data }) {
 					onChange={(e) => setReason(e.target.value)}
 				/>
 				<div>
-					<Label htmlFor="file-upload">증거자료 첨부</Label>
-					<input id="file-upload" type="file" style={{ display: 'none' }} />
+					<Label onClick={handleFileButtonClick} style={{ cursor: 'pointer' }}>
+						증거자료 첨부
+					</Label>
+					<input
+						ref={fileInputRef}
+						type="file"
+						onChange={handleFileChange}
+						style={{ display: 'none' }}
+					/>
+					{file && <span style={{ marginLeft: '10px' }}>선택된 파일: {file.name}</span>}
+					{!file && <span style={{ marginLeft: '10px', color: '#666' }}>파일을 선택해주세요</span>}
 				</div>
 			</div>
-			<Button color="blue" shape="line" onClick={handleSubmit}>
-				제출하기
+			<Button color="blue" shape="line" onClick={handleSubmit} disabled={isUploading}>
+				{isUploading ? '업로드 중...' : '제출하기'}
 			</Button>
 		</ModalBox>
 	);

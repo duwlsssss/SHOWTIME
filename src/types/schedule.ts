@@ -3,11 +3,6 @@ export type TScheduleCategory = 'ticket' | 'snack' | 'floor';
 export type TScheduleShiftType = 'open' | 'middle' | 'close';
 export type TScheduleRepeatCycle = 'everyDay' | 'everyWeek' | 'everyMonth';
 
-// ❌ 일단 유지 - supabase로 마이그레이션 완료 후 삭제
-// import { Timestamp } from 'firebase/firestore';
-// export type TDate = Date | Timestamp;
-//
-
 export type TDate = Date | string; // supabase에 ISOstring으로 저장됨
 
 export interface TSchedule {
