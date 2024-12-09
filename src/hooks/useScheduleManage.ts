@@ -9,14 +9,20 @@ import {
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
-export default function useScheduleManage(userId: string | null, schedules: TSchedule[]) {
+export default function useScheduleManage(
+	userId: string | null,
+	schedules: TSchedule[],
+	searchUserId?: string,
+) {
 	const dispatch = useAppDispatch();
 
 	const handleAddSchedule = async (schedules: TSchedule[]) => {
 		if (!userId) throw new Error('userId가 없음');
-
+		const isAdmin = true;
 		try {
-			const addResult = await dispatch(addScheduleToSupabase(userId, schedules));
+			const addResult = await dispatch(
+				addScheduleToSupabase(isAdmin ? searchUserId! : userId!, schedules),
+			);
 			if (!addResult.success) throw new Error('스케줄 추가 실패');
 		} catch (error) {
 			console.error('스케줄 추가 실패:', error);

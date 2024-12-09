@@ -1,5 +1,5 @@
 import { z } from 'zod';
-export type TScheduleCategory = 'ticket' | 'snack' | 'floor';
+export type TScheduleCategory = 'ticket' | 'snack' | 'floor' | '';
 export type TScheduleShiftType = 'open' | 'middle' | 'close';
 export type TScheduleRepeatCycle = 'everyDay' | 'everyWeek' | 'everyMonth';
 
@@ -7,7 +7,7 @@ export type TDate = Date | string; // supabase에 ISOstring으로 저장됨
 
 export interface TSchedule {
 	schedule_id: string;
-	user_id: string;
+	user_id?: string;
 	user_name: string;
 	user_alias: string;
 	category: TScheduleCategory;
@@ -15,10 +15,10 @@ export interface TSchedule {
 	time: string;
 	end_date_time: TDate; // 계산된 종료 시간
 	schedule_shift_type: TScheduleShiftType; // 계산된 오픈, 미들, 마감
-	repeat?: TScheduleRepeatCycle | null;
-	repeat_end_date?: TDate | null;
+	repeat?: TScheduleRepeatCycle;
+	repeat_end_date?: TDate;
 	created_at: TDate;
-	description?: string | null;
+	description?: string;
 }
 
 export interface TSchedules {
@@ -46,6 +46,8 @@ export interface UserScheduleCardProps {
 export interface TScheduleModalProps {
 	type: 'scheduleUser' | 'scheduleAdmin';
 	mode: 'add' | 'edit';
+	adminUserId?: string;
+	searchUserId?: string;
 }
 
 // action types
@@ -165,12 +167,11 @@ const TIME_MIN_NUMBER = 1;
 const TIME_MAX_NUMBER = 10;
 
 export const scheduleSchema = z.object({
-	category: z.enum(['ticket', 'snack', 'floor'], {
-		errorMap: () => ({ message: '유효한 카테고리를 선택해주세요' }),
-	}),
+	category: z.string().min(1, { message: '카테고리를 선택해주세요' }),
 	start_date_time: z.coerce.date(),
 	time: z
 		.string()
+		.min(1, { message: '근무 시간을 입력해주세요' })
 		.max(TIME_MAX_LENGTH, '시간은 최대 2자리로 입력해주세요')
 		.refine((val) => Number(val) >= TIME_MIN_NUMBER, {
 			message: `근무 시간은 최소 ${TIME_MIN_NUMBER}시간입니다`,
@@ -181,18 +182,6 @@ export const scheduleSchema = z.object({
 	description: z
 		.string()
 		.max(DESCRIPTION_MAX_LENGTH, `업무 설명은 ${DESCRIPTION_MAX_LENGTH}자 이하로 입력해주세요`),
-	repeat: z
-		.enum(['everyDay', 'everyWeek', 'everyMonth'], {
-			errorMap: () => ({ message: '유효한 반복주기를 선택해주세요' }),
-		})
-		.optional(),
+	repeat: z.string().optional(),
 	repeat_end_date: z.coerce.date().optional(),
 });
-
-export const scheduleAdminSchema = scheduleSchema.pipe(
-	z.object({
-		user_id: z.string({
-			required_error: '유효한 직원 이름이나 닉네임을 입력해주세요',
-		}),
-	}),
-);

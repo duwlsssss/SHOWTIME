@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import * as S from '@/components/Login/Login.styles';
+import * as S from '@/components/login/Login.styles';
 import { auth } from '@/firebaseConfig';
 import { LoginFormData, LoginFormErrors } from '@/types/login';
 // import { User } from '@/types/auth';
@@ -8,7 +8,7 @@ import { getDoc, doc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { setUser, clearUser } from '@/redux/actions/userAction';
-import { validateLoginForm, getAuthErrorMessage } from '@/components/Login/LoginValidation';
+import { validateLoginForm, getAuthErrorMessage } from '@/components/login/LoginValidation';
 import { Loading } from '@/pages';
 
 export function LoginForm() {
