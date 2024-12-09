@@ -1,33 +1,19 @@
-// ❌ 일단 유지 - supabase로 마이그레이션 완료 후 삭제
-import { Timestamp } from 'firebase/firestore';
-export function toDate(input: Timestamp | Date): Date {
-	return input instanceof Timestamp ? input.toDate() : input;
-}
-// KST 기준으로 포맷된 문자열로 변환
-export const formatToKoreanTime = (date: Date) => {
-	const koreaTime = new Date(date.toLocaleString('en-US', { timeZone: 'Asia/Seoul' }));
-	const year = koreaTime.getFullYear();
-	const month = String(koreaTime.getMonth() + 1).padStart(2, '0');
-	const day = String(koreaTime.getDate()).padStart(2, '0');
-	const hour = String(koreaTime.getHours()).padStart(2, '0');
-	const minute = String(koreaTime.getMinutes()).padStart(2, '0');
-	return `${year}-${month}-${day} ${hour}:${minute}`;
-};
-//
-
 /**
  *  DB에는 UTC로 저장
  * 화면에는 KST로 표시
  * 날짜 비교도 KST 기준으로 수행
  */
-// UTC -> KST 변환 (날짜)
+
+// UTC -> KST 변환 (yyyy-MM-ddTHH:mm 형식)
+export const formatDateTime = (utcDate: Date) => {
+	const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+	return kstDate.toISOString().slice(0, 16);
+};
+
+// UTC -> KST 변환 (yyyy-MM-dd 형식)
 export const formatDate = (utcDate: Date) => {
-	return new Intl.DateTimeFormat('ko-KR', {
-		timeZone: 'Asia/Seoul',
-		year: 'numeric',
-		month: 'numeric',
-		day: 'numeric',
-	}).format(utcDate);
+	const kstDate = new Date(utcDate.getTime() + 9 * 60 * 60 * 1000);
+	return kstDate.toISOString().slice(0, 10);
 };
 
 // UTC -> KST 변환 (시간)
