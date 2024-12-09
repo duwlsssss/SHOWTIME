@@ -55,7 +55,9 @@ export const SearchInputContainer = styled.div`
 	gap: var(--space-medium);
 `;
 
-export const InputWrapper = styled.div``;
+export const InputWrapper = styled.div`
+	position: relative; /* 부모 요소가 새로운 스택 컨텍스트를 형성 */
+`;
 
 export const SearchIcon = styled.div`
 	font-size: var(--font-large);
@@ -178,4 +180,19 @@ export const DescriptionInput = styled(Input)`
 
 export const ButtonContainer = styled.div`
 	align-self: flex-end;
+`;
+
+export const SearchList = styled.div<{ $searchListOpen: boolean }>`
+	display: ${({ $searchListOpen }) => (!$searchListOpen ? 'flex' : 'none')};
+	flex-direction: column;
+	border-radius: 10px;
+	background-color: white;
+	z-index: 10;
+	position: absolute;
+	top: 100%;
+	left: 0;
+	width: 100%;
+	gap: 0.4rem;
+	height: 100px;
+	overflow-y: scroll;
 `;

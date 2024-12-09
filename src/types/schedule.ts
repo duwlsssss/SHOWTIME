@@ -7,7 +7,7 @@ export type TDate = Date | string; // supabase에 ISOstring으로 저장됨
 
 export interface TSchedule {
 	schedule_id: string;
-	user_id: string;
+	user_id?: string;
 	user_name: string;
 	user_alias: string;
 	category: TScheduleCategory;
@@ -15,10 +15,10 @@ export interface TSchedule {
 	time: string;
 	end_date_time: TDate; // 계산된 종료 시간
 	schedule_shift_type: TScheduleShiftType; // 계산된 오픈, 미들, 마감
-	repeat?: TScheduleRepeatCycle | null;
-	repeat_end_date?: TDate | null;
+	repeat?: TScheduleRepeatCycle;
+	repeat_end_date?: TDate;
 	created_at: TDate;
-	description?: string | null;
+	description?: string;
 }
 
 export interface TSchedules {
@@ -46,6 +46,8 @@ export interface UserScheduleCardProps {
 export interface TScheduleModalProps {
 	type: 'scheduleUser' | 'scheduleAdmin';
 	mode: 'add' | 'edit';
+	adminUserId?: string;
+	searchUserId?: string;
 }
 
 // action types

@@ -7,6 +7,8 @@ import userReducer from './reducers/userReducer';
 import modalReducer from './reducers/modalReducer';
 import scheduleReducer from './reducers/scheduleReducer';
 import { TSchedule } from '@/types/schedule';
+import adminUserIdReducer from './reducers/adminUserIdReducer';
+import emplyeeReducer from './reducers/emplyeeReducer';
 
 const dateTransform = createTransform(
 	null, // 저장 시 자동으로 문자열로 변환됨
@@ -26,7 +28,7 @@ const dateTransform = createTransform(
 const persistConfig = {
 	key: 'root',
 	storage,
-	whitelist: ['user', 'modal', 'schedule'],
+	whitelist: ['user', 'modal', 'schedule', 'emplyee', 'adminSearchUserId'],
 	transforms: [dateTransform],
 };
 
@@ -34,6 +36,8 @@ const rootReducer = combineReducers({
 	user: userReducer,
 	modal: modalReducer,
 	schedule: scheduleReducer,
+	emplyee: emplyeeReducer,
+	adminSearchUserId: adminUserIdReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

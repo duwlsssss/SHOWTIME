@@ -1,5 +1,5 @@
 import * as S from './ScheduleModal.styles';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import {
 	setIsConfirmModalOpen,
@@ -20,7 +20,6 @@ import calculateScheduleShiftType from '@/utils/calculateScheduleShiftType';
 import calculateEndDateTime from '@/utils/calculateEndDateTime';
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
-import { formatDateTime, formatDate } from '@/utils/dateFormatter';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { v4 as uuidv4 } from 'uuid';
 import { useForm } from 'react-hook-form';
@@ -29,24 +28,45 @@ import { Button } from '../../button/Button';
 import ModalPortal from '../../modal/ModalPortal';
 import { ConfirmModal } from '../../modal/Modal';
 import useScheduleManage from '@/hooks/useScheduleManage';
-// import useDebounce from '@/hooks/useDebounce';
+import { getAdminEmplyeeSchedules } from '@/redux/actions/emplyeeActions';
+import SearchEmplyeeList from '@/components/search/SearchEmplyeeList';
+import useDebounce from '@/hooks/useDebounce';
+import { formatDate, formatDateTime } from '@/utils/dateFormatter';
+//import useIsAdmin from '@/hooks/useIsAdmin';
 
-const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
+const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 	const [isRepeatActive, setIsRepeatActive] = useState<boolean>(false); // 토글 상태
+	const isAdmin = true;
 	const [pendingScheduleData, setPendingScheduleData] = useState<TSchedule | null>(null); // 수정할 데이터
-
+	const [searchListOpen, setSearchListOpen] = useState<boolean>(true);
+	const [searchTerm, setSearchTerm] = useState<string>('');
 	const dispatch = useAppDispatch();
-
+	const searchRef = useRef<HTMLDivElement | null>(null);
 	const user = useAppSelector((state) => state.user.user);
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
 	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
-
+	const debounce = useDebounce(searchTerm, 800);
+	const emplyeeSchedules = useAppSelector((state) => state.emplyee.schedules);
+	const searchUserId = useAppSelector((state) => state.adminSearchUserId);
 	const userId = user?.id;
 	const userName = user?.userName;
 	const userAlias = user?.userAlias;
 
-	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(userId ?? null, schedules);
+	const getUserIdToSend = () => {
+		if (mode === 'add' && isAdmin) {
+			return searchUserId;
+		}
+		if (isAdmin && mode === 'edit') {
+			return adminUserId;
+		}
+		return userId;
+	};
+	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(
+		getUserIdToSend(),
+		schedules,
+		searchUserId,
+	);
 
 	const {
 		register,
@@ -76,6 +96,8 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const startDateTime = watch('start_date_time'); // 시작 일시 값 감시
 	const repeatCycle = watch('repeat'); // 반복 주기 감시
 	const repeatEndDate = watch('repeat_end_date'); // 종료일 값 감시
+	const userIdValue = watch('user_id'); // 종료일 값 감시
+	const userIdError = type === 'scheduleAdmin' && !userIdValue ? 'user_id가 없습니다.' : null;
 
 	// 실시간으로 에러 메시지 생성
 	const noneStartDateTimeError = !startDateTime ? '시작일시를 선택해주세요' : null;
@@ -90,16 +112,16 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 			: null;
 
 	// 디버깅용
-	console.log({
-		errors: errors,
-		noneStartDateTimeError: noneStartDateTimeError,
-		noneRepeatCycleError: noneRepeatCycleError,
-		noneEndDateError: noneEndDateError,
-		repeatEndDateError: repeatEndDateError,
-		isSubmitting: isSubmitting,
-		data: watch(),
-		currentUser: user,
-	});
+	// console.log({
+	// 	errors: errors,
+	// 	noneStartDateTimeError: noneStartDateTimeError,
+	// 	noneRepeatCycleError: noneRepeatCycleError,
+	// 	noneEndDateError: noneEndDateError,
+	// 	repeatEndDateError: repeatEndDateError,
+	// 	isSubmitting: isSubmitting,
+	// 	data: watch(),
+	// 	currentUser: user,
+	// });
 
 	// 날짜 선택시 분을 00으로 초기화
 	const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -141,11 +163,15 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 
 	const onSubmitForm = handleSubmit(async (data) => {
 		try {
-			if (!userId) throw new Error('userId가 없음');
+			if (isAdmin && mode == 'add') {
+				if (!searchUserId) throw new Error('searchUserId 없음');
+			} else {
+				if (!userId) throw new Error('userId 없음');
+			}
 
 			const scheduleData: TSchedule = {
 				schedule_id: mode === 'edit' ? (selectedSchedule?.schedule_id ?? uuidv4()) : uuidv4(), // 한 개 수정시 이전 schedule_id 필요
-				user_id: userId,
+				user_id: isAdmin ? searchUserId : userId,
 				user_name: userName as string,
 				user_alias: userAlias as string,
 				category: data.category,
@@ -154,9 +180,9 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 				end_date_time: new Date(calculateEndDateTime(data.start_date_time, data.time)),
 				schedule_shift_type: calculateScheduleShiftType(data.start_date_time),
 				repeat: (data.repeat as TScheduleRepeatCycle) || null, // Supabase에 저장하기 전에 null로 변환
-				repeat_end_date: data.repeat_end_date ? new Date(data.repeat_end_date) : null,
+				repeat_end_date: data.repeat_end_date ? new Date(data.repeat_end_date) : undefined,
 				created_at: new Date(),
-				description: data.description as string | null,
+				description: data.description as string | undefined,
 			};
 
 			if (mode === 'add') {
@@ -213,9 +239,41 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 			isSubmitting ||
 			noneStartDateTimeError ||
 			noneEndDateError ||
-			repeatEndDateError,
+			repeatEndDateError ||
+			userIdError,
 	);
+	const handleEmployeeSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+		setSearchTerm(e.target.value);
+	};
 
+	const handleEmplyoeeSearhClick = () => {
+		dispatch(getAdminEmplyeeSchedules(searchTerm));
+	};
+
+	const handleClickOutside = (event: MouseEvent) => {
+		if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+			setSearchListOpen(true);
+		}
+	};
+
+	useEffect(() => {
+		document.addEventListener('click', handleClickOutside);
+		return () => {
+			document.removeEventListener('click', handleClickOutside); // 컴포넌트 언마운트 시 이벤트 리스너 제거
+		};
+	}, []);
+
+	useEffect(() => {
+		if (debounce) {
+			if (debounce.length > 0) {
+				setSearchListOpen(false);
+				dispatch(getAdminEmplyeeSchedules(debounce));
+			} else {
+				dispatch(getAdminEmplyeeSchedules(''));
+			}
+		}
+	}, [debounce]);
+	console.log(searchListOpen);
 	return (
 		<ModalPortal>
 			{isConfirmModalOpen ? (
@@ -244,15 +302,27 @@ const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 							<>
 								<S.ModalWrapperSubTitle>직원</S.ModalWrapperSubTitle>
 								<S.SearchInputContainer>
-									<S.InputWrapper>
+									<S.InputWrapper ref={searchRef}>
 										<S.ModalSearchInput
 											{...register('user_id')}
-											error={errors.user_id ? true : undefined}
 											placeholder="이름이나 닉네임을 입력해주세요."
+											onChange={(e) => handleEmployeeSearchChange(e)}
 										/>
+										<S.SearchList $searchListOpen={searchListOpen}>
+											{!searchListOpen &&
+												emplyeeSchedules.map((value) => (
+													<SearchEmplyeeList
+														schedulesItem={value}
+														key={value.schedule_id}
+														onSetSearchListOpen={setSearchListOpen}
+														onSetSearchTerm={setSearchTerm}
+													/>
+												))}
+										</S.SearchList>
+
 										{errors.user_id && <S.ErrorMessage>{errors.user_id.message}</S.ErrorMessage>}
 									</S.InputWrapper>
-									<S.SearchIcon onClick={() => console.log('검색')}>🔍</S.SearchIcon>
+									<S.SearchIcon onClick={() => handleEmplyoeeSearhClick}>🔍</S.SearchIcon>
 								</S.SearchInputContainer>
 							</>
 						)}
