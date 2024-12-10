@@ -1,6 +1,6 @@
 import { ManageRowItem } from '@/pages/salary-management/SalaryManagement';
 import { TableContainer, Lists, InnerUnorderLists, InnerLists } from './Table.styled';
-import { Button } from '@/pages';
+import { Button } from '@/components';
 
 type TableProps = {
 	data: RowItem[] | ManageRowItem[];

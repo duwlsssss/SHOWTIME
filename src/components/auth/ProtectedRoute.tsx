@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useAppSelector } from '@/hooks/useRedux';
-import { Loading } from '@/pages';
+import { Loading } from '@/components';
 
 interface ProtectedRouteProps {
 	children: React.ReactNode;

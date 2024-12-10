@@ -1,4 +1,4 @@
-import { MainLayout } from '@/pages';
+import { MainLayout } from '@/components';
 
 export function Home() {
 	return <MainLayout />;

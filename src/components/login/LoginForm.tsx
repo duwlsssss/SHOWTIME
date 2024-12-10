@@ -9,7 +9,7 @@ import { db } from '@/firebaseConfig';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { setUser, clearUser } from '@/redux/actions/userAction';
 import { validateLoginForm, getAuthErrorMessage } from '@/components/login/LoginValidation';
-import { Loading } from '@/pages';
+import { Loading } from '@/components';
 
 export function LoginForm() {
 	// const [user, setUser] = useState<TUser | null>(null);

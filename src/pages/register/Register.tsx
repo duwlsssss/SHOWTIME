@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { RegisterForm } from '@/pages';
+import { RegisterForm } from '@/components';
 import { useRegister } from '@/hooks/useRegister';
 import { FormData } from '@/types/register';
 

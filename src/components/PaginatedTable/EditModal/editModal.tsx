@@ -1,6 +1,6 @@
 import { ModalBox, Info, TextArea, Label } from './editModal.style';
 import { useState, useRef } from 'react';
-import { Button } from '@/pages';
+import { Button } from '@/components';
 import { createClient } from '@supabase/supabase-js';
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
