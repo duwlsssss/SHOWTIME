@@ -1,3 +1,5 @@
+import { LoginForm } from '@/pages';
+
 export function Login() {
-	return <></>;
+	return <LoginForm />;
 }
