@@ -6,6 +6,7 @@ import {
 	Login,
 	Register,
 	Profile,
+	SalaryManagement,
 	SalaryDetails,
 	CorrectionRequest,
 	ScheduleManagement,
@@ -50,6 +51,14 @@ export const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<ScheduleManagement />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: '/salary-management',
+				element: (
+					<ProtectedRoute>
+						<SalaryManagement />
 					</ProtectedRoute>
 				),
 			},

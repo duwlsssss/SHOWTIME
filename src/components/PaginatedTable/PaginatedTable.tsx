@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import Table from '../table/Table';
+import Table, { RowItem } from '../table/Table';
 import Pagination from '../pagination/pagination';
 import { Modal } from '@/components/modal/Modal';
 import SalarySelect from '@/components/salaryselect/SalarySelect';
@@ -12,15 +12,6 @@ const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-interface RowItem {
-	급여월: string;
-	급여지급일: string;
-	지급총액: string;
-	실지급액: string;
-	이름: string;
-	id: string;
-}
 
 const headerItems: string[] = [
 	'급여월',
@@ -102,6 +93,14 @@ export default function PaginatedTable() {
 		setFilteredItems(filteredData);
 	}, [selectedYear, selectedMonth, rowItems]);
 
+	const getBtnContent = () => {
+		return {
+			btnText: '확인하기',
+			btnColor: 'blue',
+			onClickBtn: () => openModal('detail'),
+		};
+	};
+
 	return (
 		<>
 			<SalarySelect
@@ -118,11 +117,7 @@ export default function PaginatedTable() {
 			<Table
 				data={paginatedData}
 				headerItems={headerItems}
-				btnContent={{
-					btnText: '확인하기',
-					btnColor: 'blue',
-					onClickBtn: () => openModal('detail'),
-				}}
+				btnContent={getBtnContent}
 				btnEdit={{
 					btnText: '정정신청',
 					btnColor: 'blue',

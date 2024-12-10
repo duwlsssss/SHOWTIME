@@ -6,6 +6,7 @@ export { SalaryDetails } from './salary-user/SalaryDetails';
 export { CorrectionRequest } from './correction-request/CorrectionRequest';
 export { ScheduleManagement } from './schedule-management/ScheduleManagement';
 export { NotFound } from './not-found/NotFound';
+export { SalaryManagement } from './salary-management/SalaryManagement';
 
 // 컴포넌트 익스포트
 export { LoginForm } from '@/components/login/LoginForm';
