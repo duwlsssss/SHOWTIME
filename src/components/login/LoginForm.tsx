@@ -11,14 +11,12 @@ import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
 import { Loading } from '@/components';
 
 export function LoginForm() {
-	// const [user, setUser] = useState<TUser | null>(null);
 	const [formData, setFormData] = useState<LoginFormData>({
 		email: '',
 		password: '',
 	});
 	const [errors, setErrors] = useState<LoginFormErrors>({});
 	const [isLoading, setIsLoading] = useState(false);
-	// const [isAuthInitialized, setIsAuthInitialized] = useState(false);
 
 	const dispatch = useAppDispatch();
 	const { user, isAuthInitialized } = useAppSelector((state) => state.user);

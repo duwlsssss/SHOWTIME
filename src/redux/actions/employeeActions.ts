@@ -2,7 +2,7 @@ import { TSchedule } from '@/types/schedule';
 import { ADMIN_GET_EMPLOYEE } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
-export const getAdminEmplyee = (schedules: TSchedule[]) => ({
+export const getAdminEmployee = (schedules: TSchedule[]) => ({
 	type: ADMIN_GET_EMPLOYEE,
 	payload: schedules,
 });
@@ -15,10 +15,11 @@ export const getAdminEmployeeSchedules = (value: string) => {
 				.from('schedules')
 				.select('*')
 				.or(`user_name.ilike.${value}%, user_alias.ilike.${value}%`);
+			console.log(data);
 
 			if (error) throw error;
 
-			dispatch(getAdminEmplyee(data));
+			dispatch(getAdminEmployee(data));
 
 			return {
 				success: true,

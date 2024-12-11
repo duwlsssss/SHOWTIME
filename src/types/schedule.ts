@@ -49,68 +49,6 @@ export interface TScheduleModalProps {
 	adminUserId?: string;
 }
 
-// action types
-import {
-	GET_SCHEDULES,
-	ADD_SCHEDULES,
-	EDIT_SCHEDULES,
-	REMOVE_SCHEDULES,
-	SELECT_DATE,
-	FILTERED_SCHEDULES,
-	// ADMIN_GET_SCHEDULES,
-	// SET_SELECTED_SCHEDULE,
-	SET_LOADING, // suspanse로 바꿔야함
-	// SET_MODAL_OPEN,
-	// SET_CONFIRM_MODAL_OPEN,
-	// SET_SCHEDULE_ADD_MODAL_OPEN,
-	// SET_SCHEDULE_EDIT_MODAL_OPEN,
-	// SET_SCHEDULE_DELETE_MODAL_OPEN
-} from '@/redux/actionTypes';
-
-export interface TGetSchedulesAction {
-	type: typeof GET_SCHEDULES;
-	payload: TSchedule[];
-}
-
-export interface TAddSchedulesAction {
-	type: typeof ADD_SCHEDULES;
-	payload: TSchedule[];
-}
-
-export interface TEditSchedulesAction {
-	type: typeof EDIT_SCHEDULES;
-	payload: TSchedule[];
-}
-
-export interface TRemoveSchedulesAction {
-	type: typeof REMOVE_SCHEDULES;
-	payload: string[];
-}
-
-export interface TSelectDateAction {
-	type: typeof SELECT_DATE;
-	payload: Date;
-}
-
-export interface TFilteredSchedulesAction {
-	type: typeof FILTERED_SCHEDULES;
-	payload: TSchedule[];
-}
-
-export interface TSetLoadingAction {
-	type: typeof SET_LOADING;
-	payload: boolean;
-}
-
-export type TScheduleActionTypes =
-	| TGetSchedulesAction
-	| TAddSchedulesAction
-	| TEditSchedulesAction
-	| TRemoveSchedulesAction
-	| TSelectDateAction
-	| TFilteredSchedulesAction
-	| TSetLoadingAction;
-
 export interface TScheduleApiResponse<T> {
 	success: boolean;
 	message: string;

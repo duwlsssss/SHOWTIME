@@ -12,16 +12,26 @@ import employeeReducer from './reducers/employeeReducer';
 
 const dateTransform = createTransform(
 	null, // 저장 시 자동으로 문자열로 변환됨
-	(state) => ({
-		...(state ?? {}),
-		selectedDate: new Date((state as { selectedDate: string }).selectedDate),
-		schedules: (state as { schedules?: TSchedule[] })?.schedules?.map((schedule) => ({
-			...schedule,
-			start_date_time: new Date(schedule.start_date_time),
-			created_at: new Date(schedule.created_at),
-			repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : undefined,
-		})),
-	}),
+	(state) => {
+		if (!state) return {};
+		try {
+			return {
+				...(state ?? {}),
+				selectedDate: new Date((state as { selectedDate: string }).selectedDate),
+				schedules: (state as { schedules?: TSchedule[] })?.schedules?.map((schedule) => ({
+					...schedule,
+					start_date_time: new Date(schedule.start_date_time),
+					created_at: new Date(schedule.created_at),
+					repeat_end_date: schedule.repeat_end_date
+						? new Date(schedule.repeat_end_date)
+						: undefined,
+				})),
+			};
+		} catch (error) {
+			console.error('Error transforming state:', error);
+			return {};
+		}
+	},
 	{ whitelist: ['schedule'] },
 );
 
@@ -43,8 +53,6 @@ const rootReducer = combineReducers({
 export type RootState = ReturnType<typeof rootReducer>;
 
 const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
-
-// storage.removeItem('persist:root'); // 가끔 상태 업데이트 안되면 이 부분으로 초기화하기 -> 다시 로그인
 
 export const store = createStore(persistedReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);

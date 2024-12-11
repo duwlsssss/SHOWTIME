@@ -1,11 +1,10 @@
+import * as S from './SearchEmplyeeList.style';
 import {
 	TDate,
 	TScheduleCategory,
 	TScheduleRepeatCycle,
 	TScheduleShiftType,
 } from '@/types/schedule';
-
-import * as S from './SearchEmplyeeList.style';
 
 interface AdminScheduleCardProps {
 	schedulesItem: {

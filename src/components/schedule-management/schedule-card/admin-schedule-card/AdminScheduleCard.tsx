@@ -1,45 +1,22 @@
-import {
-	TDate,
-	TSchedule,
-	TScheduleCategory,
-	TScheduleRepeatCycle,
-	TScheduleShiftType,
-} from '@/types/schedule';
 import * as S from './AdminScheduleCard.styles';
-import { formatTime } from '@/utils/dateFormatter';
+import { TSchedule, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
+import { ScheduleModal, ModalPortal, ConfirmModal } from '@/components';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import useScheduleManage from '@/hooks/useScheduleManage';
 import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
-import { useDispatch } from 'react-redux';
-import { useAppSelector } from '@/hooks/useRedux';
-import ScheduleModal from '../../schedule-modal/ScheduleModal';
-import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
 } from '@/redux/actions/modalActions';
-import useScheduleManage from '@/hooks/useScheduleManage';
-import ModalPortal from '@/components/modal/ModalPortal';
-import { ConfirmModal } from '@/components/modal/Modal';
+import { formatTime } from '@/utils/dateFormatter';
+import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
 interface AdminScheduleCardProps {
-	schedulesItem: {
-		schedule_id: string;
-		user_id?: string;
-		user_name: string;
-		user_alias: string;
-		category: TScheduleCategory;
-		start_date_time: TDate;
-		time: string;
-		end_date_time: TDate; // 계산된 종료 시간
-		schedule_shift_type: TScheduleShiftType; // 계산된 오픈, 미들, 마감
-		repeat?: TScheduleRepeatCycle;
-		repeat_end_date?: TDate;
-		created_at: TDate;
-		description?: string;
-	};
+	schedulesItem: TSchedule;
 }
 
 const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	const isScheduleEditModalOpen = useAppSelector((state) => state.modal.isScheduleEditModalOpen);
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const isScheduleDeleteModalOpen = useAppSelector(
@@ -48,20 +25,6 @@ const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
 	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
 
 	const { handleDeleteSchedule } = useScheduleManage(schedulesItem.user_id ?? '', schedules);
-
-	const categoryConvert = (schedulesCategory) => {
-		switch (schedulesCategory) {
-			case 'floor':
-				return '플로어';
-				break;
-			case 'snack':
-				return '매점';
-				break;
-			case 'ticket':
-				return '매표';
-				break;
-		}
-	};
 
 	const handleEditSchulde = (schedule: TSchedule) => {
 		dispatch(setSelectedSchedule(schedule));
@@ -105,7 +68,7 @@ const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
 					</S.ScheduleCardHeaderIcon>
 				</S.ScheduleCardHeader>
 				<div>
-					<span>{categoryConvert(schedulesItem.category)}</span>
+					<span>{SCHEDULE_CATEGORY_LABELS[schedulesItem.category]}</span>
 				</div>
 				<S.ScheduleCardTime>
 					<span>{formatTime(new Date(schedulesItem.end_date_time))}</span>
@@ -139,3 +102,4 @@ const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
 };
 
 export default AdminScheduleCard;
+

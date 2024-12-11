@@ -1,12 +1,5 @@
-import * as S from './ScheduleModal.styles';
 import { useState, useEffect, useRef } from 'react';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import {
-	setIsConfirmModalOpen,
-	setIsScheduleAddModalOpen,
-	setIsScheduleEditModalOpen,
-} from '@/redux/actions/modalActions';
-import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
+import * as S from './ScheduleModal.styles';
 import {
 	TSchedule,
 	scheduleSchema,
@@ -16,24 +9,30 @@ import {
 	SCHEDULE_REPEAT_CYCLE_OPTIONS,
 	TScheduleModalProps,
 } from '@/types/schedule';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { v4 as uuidv4 } from 'uuid';
+import { useForm } from 'react-hook-form';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import {
+	setIsConfirmModalOpen,
+	setIsScheduleAddModalOpen,
+	setIsScheduleEditModalOpen,
+} from '@/redux/actions/modalActions';
+import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
+import { getAdminEmployeeSchedules } from '@/redux/actions/employeeActions';
+import { Toggle } from '../../toggle/Toggle';
+import { Button } from '../../button/Button';
+import { ModalPortal, ConfirmModal } from '@/components';
+import SearchEmplyeeList from '@/components/search/SearchEmplyeeList';
+import useScheduleManage from '@/hooks/useScheduleManage';
+import useDebounce from '@/hooks/useDebounce';
+import { formatDate, formatDateTime } from '@/utils/dateFormatter';
 import calculateScheduleShiftType from '@/utils/calculateScheduleShiftType';
 import calculateEndDateTime from '@/utils/calculateEndDateTime';
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { v4 as uuidv4 } from 'uuid';
-import { useForm } from 'react-hook-form';
-import { Toggle } from '../../toggle/Toggle';
-import { Button } from '../../button/Button';
-import ModalPortal from '../../modal/ModalPortal';
-import { ConfirmModal } from '../../modal/Modal';
-import useScheduleManage from '@/hooks/useScheduleManage';
-import { getAdminEmployeeSchedules } from '@/redux/actions/employeeActions';
-import SearchEmplyeeList from '@/components/search/SearchEmplyeeList';
-import useDebounce from '@/hooks/useDebounce';
-import { formatDate, formatDateTime } from '@/utils/dateFormatter';
 
-const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
+export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const [isRepeatActive, setIsRepeatActive] = useState<boolean>(false); // 토글 상태
 	const [pendingScheduleData, setPendingScheduleData] = useState<TSchedule | null>(null); // 수정할 데이터
 	const [searchListOpen, setSearchListOpen] = useState<boolean>(true);
@@ -45,19 +44,14 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
 	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
 	const debounce = useDebounce(searchTerm, 800);
-	const emplyeeSchedules = useAppSelector((state) => state.employee.schedules);
+	const emplyeeSchedules = useAppSelector((state) => state.emplyee.schedules);
 	const searchUserId = useAppSelector((state) => state.adminSearchUserId);
 	const userId = user?.id;
 	const userName = user?.userName;
 	const userAlias = user?.userAlias;
+
 	const getUserIdToSend = () => {
-		if (mode === 'add' && type == 'scheduleAdmin') {
-			return searchUserId;
-		}
-		if (type == 'scheduleAdmin' && mode === 'edit') {
-			return adminUserId;
-		}
-		return userId;
+		return type === 'scheduleAdmin' && mode === 'add' ? searchUserId : userId;
 	};
 
 	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(getUserIdToSend(), schedules);
@@ -104,18 +98,18 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 		new Date(repeatEndDate) < new Date(startDateTime)
 			? '반복 종료일은 시작일 이후여야 합니다'
 			: null;
-	console.log(mode);
+
 	// 디버깅용
-	// console.log({
-	// 	errors: errors,
-	// 	noneStartDateTimeError: noneStartDateTimeError,
-	// 	noneRepeatCycleError: noneRepeatCycleError,
-	// 	noneEndDateError: noneEndDateError,
-	// 	repeatEndDateError: repeatEndDateError,
-	// 	isSubmitting: isSubmitting,
-	// 	data: watch(),
-	// 	currentUser: user,
-	// });
+	console.log({
+		errors: errors,
+		noneStartDateTimeError: noneStartDateTimeError,
+		noneRepeatCycleError: noneRepeatCycleError,
+		noneEndDateError: noneEndDateError,
+		repeatEndDateError: repeatEndDateError,
+		isSubmitting: isSubmitting,
+		data: watch(),
+		currentUser: user,
+	});
 
 	// 날짜 선택시 분을 00으로 초기화
 	const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -157,10 +151,8 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 
 	const onSubmitForm = handleSubmit(async (data) => {
 		try {
-			if (type == 'scheduleAdmin' && mode == 'add') {
+			if (type === 'scheduleAdmin' && mode === 'add') {
 				if (!searchUserId) throw new Error('searchUserId 없음');
-			} else if (type == 'scheduleAdmin' && mode == 'edit') {
-				if (!adminUserId) throw new Error('adminUserId 없음');
 			} else {
 				if (!userId) throw new Error('userId 없음');
 			}
@@ -175,7 +167,7 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 				time: data.time,
 				end_date_time: new Date(calculateEndDateTime(data.start_date_time, data.time)),
 				schedule_shift_type: calculateScheduleShiftType(data.start_date_time),
-				repeat: (data.repeat as TScheduleRepeatCycle) || undefined, // Supabase에 저장하기 전에 null로 변환
+				repeat: (data.repeat as TScheduleRepeatCycle) || undefined,
 				repeat_end_date: data.repeat_end_date ? new Date(data.repeat_end_date) : undefined,
 				created_at: new Date(),
 				description: data.description as string | undefined,
@@ -269,7 +261,7 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 			}
 		}
 	}, [debounce]);
-	console.log(searchListOpen);
+	// console.log(searchListOpen);
 	return (
 		<ModalPortal>
 			{isConfirmModalOpen ? (
@@ -452,4 +444,3 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 	);
 };
 
-export default ScheduleModal;

@@ -1,4 +1,3 @@
-// reducer.js
 import { ADMIN_USER_SEARCH_ID } from '../actionTypes';
 import { AnyAction } from 'redux';
 

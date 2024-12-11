@@ -1,18 +1,17 @@
 import * as S from './AdminScheduleList.styles';
-import { useAppSelector } from '@/hooks/useRedux';
-import { formatToKoreanDate } from '@/utils/dateFormatter';
 import AdminScheduleCard from '../../schedule-card/admin-schedule-card/AdminScheduleCard';
 import { ScheduleAddButton } from '../../schedule-add-button/ScheduleAddButton';
-import { useDispatch } from 'react-redux';
+import { ScheduleModal } from '@/components';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { setIsScheduleAddModalOpen } from '@/redux/actions/modalActions';
-import ScheduleModal from '../../schedule-modal/ScheduleModal';
+import { formatToKoreanDate } from '@/utils/dateFormatter';
 
 export const AdminScheduleList = () => {
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const filteredSchedules = useAppSelector((state) => state.schedule.filteredSchedules);
 	const isScheduleAddModalOpen = useAppSelector((state) => state.modal.isScheduleAddModalOpen);
 
-	const dispatch = useDispatch();
+	const dispatch = useAppDispatch();
 	return (
 		<>
 			<S.ScheduleListContainer>

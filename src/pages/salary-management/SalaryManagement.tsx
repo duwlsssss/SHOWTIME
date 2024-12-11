@@ -1,8 +1,7 @@
 import { Button } from '@/components';
 import * as S from './SalaryManagement.styles';
 import { useEffect, useState } from 'react';
-import { ConfirmModal, Modal } from '@/components/modal/Modal';
-import ModalPortal from '@/components/modal/ModalPortal';
+import { ConfirmModal, Modal, ModalPortal } from '@/components';
 import Table, { RowItem } from '@/components/table/Table';
 import Pagination from '@/components/pagination/pagination';
 import SalarySelect from '@/components/salaryselect/SalarySelect';

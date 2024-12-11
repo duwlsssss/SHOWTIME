@@ -8,14 +8,15 @@ import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
 
 export function Navbar() {
 	const dispatch = useAppDispatch();
-	const { user } = useAppSelector((state) => state.user);
+	const user = useAppSelector((state) => state.user.user);
 
 	useLoginAuthObserver();
 
 	const handleLogout = async () => {
 		try {
+			await persistor.purge(); // Redux Persist 저장소 초기화
+			dispatch(clearSchedules()); // Redux 상태 초기화
 			await signOut(auth);
-			dispatch(clearUser());
 		} catch (error) {
 			console.error('로그아웃 에러:', error);
 		}

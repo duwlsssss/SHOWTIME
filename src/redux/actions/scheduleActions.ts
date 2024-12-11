@@ -9,6 +9,7 @@ import {
 	FILTERED_SCHEDULES,
 	SET_LOADING, // suspanse로 바꿔야함
 	SET_SELECTED_SCHEDULE,
+	CLEAR_SCHEDULES,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
@@ -26,6 +27,10 @@ export const setSelectedSchedule = (schedule: TSchedule | null) => ({
 export const getSchedules = (schedules: TSchedule[]) => ({
 	type: GET_SCHEDULES,
 	payload: schedules,
+});
+
+export const clearSchedules = () => ({
+	type: CLEAR_SCHEDULES,
 });
 
 const addSchedules = (schedules: TSchedule[]) => ({
@@ -70,7 +75,7 @@ export const addScheduleToSupabase = (
 				end_date_time: new Date(schedule.end_date_time).toISOString(),
 				repeat_end_date: schedule.repeat_end_date
 					? new Date(schedule.repeat_end_date).toISOString()
-					: null,
+					: undefined,
 				created_at: new Date().toISOString(),
 			}));
 
@@ -115,7 +120,7 @@ export const getSchedulesFromSupabase = (
 				...schedule,
 				start_date_time: new Date(schedule.start_date_time),
 				end_date_time: new Date(schedule.end_date_time),
-				repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : null,
+				repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : undefined,
 				created_at: new Date(schedule.created_at),
 			}));
 
@@ -184,7 +189,7 @@ export const editScheduleToSupabase = (
 				end_date_time: new Date(schedule.end_date_time).toISOString(),
 				repeat_end_date: schedule.repeat_end_date
 					? new Date(schedule.repeat_end_date).toISOString()
-					: null,
+					: undefined,
 			}));
 
 			const { error } = await supabase.from('schedules').upsert(formattedSchedules, {
