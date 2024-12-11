@@ -1,17 +1,14 @@
 import { useState, useEffect } from 'react';
+
+import dayjs from 'dayjs';
+import useSupabaseData from './EditModal/hook/useSupabaseData';
 import Table, { RowItem } from '../table/Table';
 import Pagination from '../pagination/pagination';
 import { Modal } from '@/components/modal/Modal';
 import SalarySelect from '@/components/salaryselect/SalarySelect';
 import ModalPortal from '@/components/modal/ModalPortal';
-import { createClient } from '@supabase/supabase-js';
 import EditModal from './EditModal/editModal';
 import DetailModal from './DetailModal/detailModal';
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const headerItems: string[] = [
 	'급여월',
@@ -30,7 +27,6 @@ export default function PaginatedTable() {
 	const [modalType, setModalType] = useState<'edit' | 'detail' | null>(null);
 
 	const openModal = (type: 'edit' | 'detail') => {
-		console.log('Opening modal:', type); // 디버깅용
 		setIsModalOpen(true);
 		setModalType(type);
 	};
@@ -40,37 +36,33 @@ export default function PaginatedTable() {
 	};
 
 	//데이터 상태
-	const [rowItems, setRowItems] = useState<RowItem[]>([]);
 	const [selectedYear, setSelectedYear] = useState<string>('2024');
 	const [selectedMonth, setSelectedMonth] = useState<string>('01');
 	const [filteredItems, setFilteredItems] = useState<RowItem[]>([]);
+	const [diffInDays, setDiffInDays] = useState<number | null>(null);
 
+	//supabase 조회 커스텀훅
+	const { rowItems: rowItems } = useSupabaseData();
+
+	//정정신청가능/불가능 판별
 	useEffect(() => {
-		const fetchAttendanceData = async () => {
-			const { data, error } = await supabase
-				.from('attendance')
-				.select('*')
-				.order('total_work_hours', { ascending: false });
+		if (rowItems.length > 0) {
+			const salaryDate = rowItems[Number(selectedMonth) - 1].급여지급일;
+			console.log('급여지급일:', salaryDate);
 
-			if (error) {
-				console.error('Error fetching data:', error);
+			const supabaseDate = dayjs(salaryDate, 'YYYY-MM-DD');
+			if (supabaseDate.isValid()) {
+				const today = dayjs();
+				const difference = supabaseDate.diff(today, 'day');
+				setDiffInDays(difference);
 			} else {
-				const reorderedData: RowItem[] = data.map((item) => ({
-					급여월: item.payment_month,
-					급여지급일: item.payment_day,
-					지급총액: item.base_salary,
-					실지급액: item.total_salary,
-					이름: item.user_name,
-					보험공제: item.tax_deduction,
-					세금공제: item.insurance_deduction,
-					id: item.id,
-				}));
-				setRowItems(reorderedData);
+				console.error('유효하지 않은 날짜 형식:', salaryDate);
 			}
-		};
+		}
+	}, [rowItems, filteredItems]);
 
-		fetchAttendanceData();
-	}, []);
+	const btnText =
+		diffInDays !== null ? (diffInDays >= -14 ? '정정신청' : '정정신청불가') : '정정신청불가';
 
 	//페이지네이션 변수들
 	const [currentPage, setCurrentPage] = useState(1);
@@ -83,7 +75,7 @@ export default function PaginatedTable() {
 	const endIndex = startIndex + itemsPerPage;
 	const paginatedData: RowItem[] = filteredItems.slice(startIndex, endIndex);
 
-	const totalPages = Math.ceil(rowItems.length / itemsPerPage);
+	const totalPages = Math.ceil(paginatedData.length / itemsPerPage);
 
 	//select로 데이터 필터해서 테이블에 데이터 띄울 훅
 	useEffect(() => {
@@ -119,16 +111,17 @@ export default function PaginatedTable() {
 				headerItems={headerItems}
 				btnContent={getBtnContent}
 				btnEdit={{
-					btnText: '정정신청',
+					btnText: btnText,
 					btnColor: 'blue',
 					onClickBtn: () => openModal('edit'),
 				}}
+				condition={diffInDays}
 			>
 				{isModalOpen && (
 					<ModalPortal>
 						<Modal onClose={closeModal}>
 							{modalType === 'detail' && <DetailModal data={paginatedData[0]} />}
-							{modalType === 'edit' && <EditModal data={paginatedData[0]} />}
+							{modalType === 'edit' && <EditModal data={paginatedData[0] as RowItem} />}
 						</Modal>
 					</ModalPortal>
 				)}

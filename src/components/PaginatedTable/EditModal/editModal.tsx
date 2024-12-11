@@ -2,24 +2,35 @@ import { ModalBox, Info, TextArea, Label } from './editModal.style';
 import { useState, useRef } from 'react';
 import { Button } from '@/components';
 import { createClient } from '@supabase/supabase-js';
+import { ConfirmModal } from '@/components/modal/Modal';
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-interface EditModalProps {
-	data: {
-		id: string;
-		이름: string;
-		급여월: string;
-		급여지급일: string;
-		실지급액: string;
-	};
-}
-export default function EditModal({ data }: EditModalProps) {
+
+type Message = {
+	confirm: string;
+	leftBtn: string;
+	rightBtn: string;
+};
+
+export default function EditModal({ data }) {
 	const [updatedAmount, setUpdatedAmount] = useState('');
 	const [reason, setReason] = useState('');
 	const [file, setFile] = useState<File | null>(null);
 	const [isUploading, setIsUploading] = useState(false);
 	const fileInputRef = useRef<HTMLInputElement>(null);
+
+	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+
+	const openConfirmModal = () => setIsConfirmModalOpen(true);
+	const closeConfirmModal = () => setIsConfirmModalOpen(false);
+
+	const message: Message = {
+		confirm: '정정신청을 하시겠습니까?',
+		leftBtn: '네',
+		rightBtn: '아니오',
+	};
 	// 파일 선택 버튼 클릭 핸들러
 	const handleFileButtonClick = () => {
 		fileInputRef.current?.click();
@@ -78,6 +89,7 @@ export default function EditModal({ data }: EditModalProps) {
 			alert('제출에 실패했습니다. 다시 시도해주세요.');
 		} finally {
 			setIsUploading(false);
+			location.reload(); //화면새로고침으로 모달 초기화
 		}
 	};
 	return (
@@ -119,9 +131,19 @@ export default function EditModal({ data }: EditModalProps) {
 					{!file && <span style={{ marginLeft: '10px', color: '#666' }}>파일을 선택해주세요</span>}
 				</div>
 			</div>
-			<Button color="blue" shape="line" onClick={handleSubmit} disabled={isUploading}>
+			<Button color="blue" shape="line" onClick={openConfirmModal} disabled={isUploading}>
 				{isUploading ? '업로드 중...' : '제출하기'}
 			</Button>
+
+			{isConfirmModalOpen && (
+				<ConfirmModal
+					onClose={closeConfirmModal}
+					message={message}
+					color={'green'}
+					onClickLeftBtn={handleSubmit}
+					onClickRightBtn={closeConfirmModal}
+				/>
+			)}
 		</ModalBox>
 	);
 }

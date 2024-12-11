@@ -8,6 +8,7 @@ type TableProps = {
 	btnContent: (row: RowItem | ManageRowItem) => BtnContent;
 	children?: React.ReactNode;
 	btnEdit?: BtnContent;
+	condition?: React.ReactNode;
 };
 
 export interface RowItem {
@@ -28,7 +29,7 @@ export default function Table({
 	headerItems,
 	btnContent,
 	btnEdit = { btnText: '', btnColor: '', onClickBtn: () => {} },
-
+	condition,
 	children,
 }: TableProps) {
 	return (
@@ -59,7 +60,11 @@ export default function Table({
 							</InnerLists>
 							{headerItems.length > 5 && (
 								<InnerLists>
-									<Button color={btnContent(row).btnColor} onClick={btnEdit.onClickBtn}>
+									<Button
+										color={btnContent(row).btnColor}
+										onClick={btnEdit.onClickBtn}
+										disabled={Number(condition) <= -14}
+									>
 										{btnEdit.btnText}
 									</Button>
 									{children}
