@@ -9,8 +9,8 @@ export interface TUser {
 	age: number;
 	role: string;
 	gender: string;
-	position: string;
-	shiftType: string;
+	created_at: string;
+	phoneNumber?: string;
 }
 export interface AuthState {
 	user: TUser | null;
@@ -75,11 +75,42 @@ export const COMMON_ERROR_MESSAGES = {
 		shiftType: '시간 타입을 선택해주세요',
 		userName: '이름을 입력해주세요',
 		userAlias: '별명을 입력해주세요',
+		phoneNumber: '전화번호를 입력해주세요',
 	},
 	INVALID: {
 		email: '올바른 이메일 형식이 아닙니다',
 		password: `비밀번호는 ${AUTH_VALIDATION.PASSWORD.MIN_LENGTH}자 이상이어야 합니다`,
 		confirmPassword: '비밀번호가 일치하지 않습니다',
 		age: '올바른 나이를 입력해주세요',
+		phoneNumber: '올바른 전화번호 형식이 아닙니다 (01012345678)',
 	},
 } as const;
+
+interface FirebaseUser {
+	uid: string;
+	email: string | null;
+}
+
+interface UserData {
+	user_name?: string;
+	user_alias?: string;
+	age?: number;
+	role?: string;
+	gender?: string;
+	created_at?: string;
+	phone_number?: string;
+}
+
+export const formatUserData = (currentUser: FirebaseUser, additionalData?: UserData): TUser => {
+	return {
+		id: currentUser.uid,
+		email: currentUser.email,
+		userName: additionalData?.user_name ?? '',
+		userAlias: additionalData?.user_alias ?? '',
+		age: additionalData?.age ?? 0,
+		role: additionalData?.role ?? '',
+		gender: additionalData?.gender ?? '',
+		created_at: additionalData?.created_at ?? '',
+		phoneNumber: additionalData?.phone_number,
+	};
+};

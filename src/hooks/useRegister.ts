@@ -20,14 +20,14 @@ export const useRegister = () => {
 			// Firestore에 추가 사용자 정보 저장
 			const userData = {
 				email: data.email,
+				password: data.password,
 				role: data.role,
 				gender: data.gender,
 				age: Number(data.age),
-				position: data.position,
 				created_at: new Date().toISOString(),
 				user_name: data.userName,
 				user_alias: data.userAlias,
-				shift_type: data.shiftType,
+				phone_number: data.phoneNumber,
 			};
 
 			try {

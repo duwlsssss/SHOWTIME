@@ -6,14 +6,14 @@ export const TableContainer = styled.div`
 	margin: 0 auto;
 	border-radius: var(--small-border-radius) var(--small-border-radius) 0 0;
 	overflow: hidden;
-	box-shadow: 1px 1px 5px 1px #eee;
+	box-shadow: var(--box-shadow-small);
 `;
 
 export const Lists = styled.li<{ cursor?: string; background?: string }>`
 	cursor: ${(p) => p.cursor || 'auto'};
 	background: ${(p) => p.background || 'transparent'};
 	padding: 17px 45px;
-	border-bottom: 1px solid #eee;
+	border-bottom: 1px solid var(--color-light-gray);
 `;
 
 export const InnerUnorderLists = styled.ul`

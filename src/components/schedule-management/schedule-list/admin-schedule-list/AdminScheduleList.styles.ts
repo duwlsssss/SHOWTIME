@@ -3,7 +3,7 @@ import styled from 'styled-components';
 export const ScheduleListContainer = styled.div`
 	padding: var(--space-medium);
 	width: 300px;
-	height: 550px;
+	height: 100%;
 	border-radius: var(--medium-border-radius);
 	box-shadow: var(--box-shadow-large);
 	overflow-y: auto;

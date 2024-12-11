@@ -1,10 +1,10 @@
 import * as S from './UserScheduleList.styles';
-import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { UserScheduleCard } from '../../schedule-card/user-schedule-card/UserScheduleCard';
-import { formatToKoreanDate, formatTime } from '@/utils/dateFormatter';
-import ScheduleModal from '../../schedule-modal/ScheduleModal';
-import { setIsScheduleAddModalOpen } from '@/redux/actions/modalActions';
 import { ScheduleAddButton } from '../../schedule-add-button/ScheduleAddButton';
+import { ScheduleModal } from '@/components';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { setIsScheduleAddModalOpen } from '@/redux/actions/modalActions';
+import { formatToKoreanDate, formatTime } from '@/utils/dateFormatter';
 
 export const UserScheduleList = () => {
 	const dispatch = useAppDispatch();

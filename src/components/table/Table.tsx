@@ -1,12 +1,14 @@
+import { ManageRowItem } from '@/pages/salary-management/SalaryManagement';
 import { TableContainer, Lists, InnerUnorderLists, InnerLists } from './Table.styled';
-import { Button } from '@/pages';
+import { Button } from '@/components';
 
 type TableProps = {
-	data: RowItem[];
+	data: RowItem[] | ManageRowItem[];
 	headerItems: string[];
-	btnContent?: BtnContent;
-	btnEdit?: BtnContent;
+	btnContent: (row: RowItem | ManageRowItem) => BtnContent;
 	children?: React.ReactNode;
+	btnEdit?: BtnContent;
+	condition?: React.ReactNode;
 };
 
 export interface RowItem {
@@ -16,17 +18,18 @@ export interface RowItem {
 	실지급액?: string;
 }
 
-type BtnContent = {
+export type BtnContent = {
 	btnText: string;
 	btnColor: string;
-	onClickBtn: () => void;
+	onClickBtn: (row?: RowItem) => void;
 };
 
 export default function Table({
 	data,
 	headerItems,
-	btnContent = { btnText: '', btnColor: '', onClickBtn: () => {} },
+	btnContent,
 	btnEdit = { btnText: '', btnColor: '', onClickBtn: () => {} },
+	condition,
 	children,
 }: TableProps) {
 	return (
@@ -47,14 +50,21 @@ export default function Table({
 								<InnerLists key={idx1}>{row[header as keyof RowItem] ?? ''}</InnerLists>
 							))}
 							<InnerLists>
-								<Button color={btnContent.btnColor} onClick={btnContent.onClickBtn}>
-									{btnContent.btnText}
+								<Button
+									color={btnContent(row).btnColor}
+									onClick={() => btnContent(row).onClickBtn(row)}
+								>
+									{btnContent(row).btnText}
 								</Button>
 								{children}
 							</InnerLists>
 							{headerItems.length > 5 && (
 								<InnerLists>
-									<Button color={btnContent.btnColor} onClick={btnEdit.onClickBtn}>
+									<Button
+										color={btnContent(row).btnColor}
+										onClick={btnEdit.onClickBtn}
+										disabled={Number(condition) <= -14}
+									>
 										{btnEdit.btnText}
 									</Button>
 									{children}

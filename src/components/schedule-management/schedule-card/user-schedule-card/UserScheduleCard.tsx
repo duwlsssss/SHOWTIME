@@ -1,17 +1,15 @@
 import * as S from './UserScheduleCard.styles';
-import { isSameDay, formatTime } from '@/utils/dateFormatter';
-import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
+import { UserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
+import { ConfirmModal, ModalPortal, ScheduleModal } from '@/components';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import useScheduleManage from '@/hooks/useScheduleManage';
 import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
 import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
 } from '@/redux/actions/modalActions';
-import { UserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
-import useScheduleManage from '@/hooks/useScheduleManage';
-import ScheduleModal from '../../schedule-modal/ScheduleModal';
-import ModalPortal from '../../../modal/ModalPortal';
-import { ConfirmModal } from '../../../modal/Modal';
+import { isSameDay, formatTime } from '@/utils/dateFormatter';
+import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
 export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardProps) => {
 	const dispatch = useAppDispatch();
@@ -43,6 +41,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 		dispatch(setSelectedSchedule(schedule));
 		dispatch(setIsScheduleEditModalOpen(true));
 	};
+
 	const handleDeleteIconClick = async (schedule: TSchedule) => {
 		const repeatedSchedules = filteredRepeatSchedules(schedule, schedules);
 		const isRecurring = repeatedSchedules.length > 1;

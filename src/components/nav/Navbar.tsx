@@ -1,48 +1,22 @@
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { signOut } from 'firebase/auth';
 import { auth } from '@/firebaseConfig';
 import * as S from './Navbar.styles';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { setUser, clearUser } from '@/redux/actions/userAction';
-import { getDoc, doc } from 'firebase/firestore';
-import { db } from '@/firebaseConfig';
+import { clearUser } from '@/redux/actions/userAction';
+import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
 
 export function Navbar() {
 	const dispatch = useAppDispatch();
-	const { user } = useAppSelector((state) => state.user);
+	const user = useAppSelector((state) => state.user.user);
 
-	useEffect(() => {
-		const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-			if (currentUser) {
-				const userDoc = await getDoc(doc(db, 'users', currentUser.uid));
-				const additionalData = userDoc.data();
-
-				const userData = {
-					id: currentUser.uid,
-					email: currentUser.email,
-					userName: additionalData?.user_name ?? '',
-					userAlias: additionalData?.user_alias ?? '',
-					age: additionalData?.age ?? 0,
-					role: additionalData?.role ?? '',
-					gender: additionalData?.gender ?? '',
-					position: additionalData?.position ?? '',
-					shiftType: additionalData?.shift_type ?? '',
-				};
-
-				dispatch(setUser(userData));
-			} else {
-				dispatch(clearUser());
-			}
-		});
-
-		return () => unsubscribe();
-	}, [dispatch]);
+	useLoginAuthObserver();
 
 	const handleLogout = async () => {
 		try {
+			await persistor.purge(); // Redux Persist 저장소 초기화
+			dispatch(clearSchedules()); // Redux 상태 초기화
 			await signOut(auth);
-			dispatch(clearUser());
 		} catch (error) {
 			console.error('로그아웃 에러:', error);
 		}

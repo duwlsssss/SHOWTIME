@@ -1,5 +1,5 @@
 import * as S from './Header.styles';
-import { Navbar } from '../nav/Navbar';
+import { Navbar } from '@/components';
 
 export function Header() {
 	return (
