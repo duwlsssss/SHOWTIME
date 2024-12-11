@@ -19,7 +19,14 @@ export const router = createBrowserRouter([
 		element: <Layout />,
 		errorElement: <NotFound />,
 		children: [
-			{ path: '/', element: <Home /> },
+			{
+				path: '/',
+				element: (
+					<ProtectedRoute>
+						<Home />
+					</ProtectedRoute>
+				),
+			},
 			{ path: '/login', element: <Login /> },
 			{ path: '/register', element: <Register /> },
 			{

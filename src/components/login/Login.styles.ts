@@ -91,9 +91,10 @@ export const Input = styled.input<InputProps>`
 `;
 
 export const ErrorMessage = styled.p`
-	color: var(--color-coral-dark);
+	position: absolute;
+	margin-top: var(--space-xsmall);
 	font-size: var(--font-small);
-	margin-top: var(--space-small);
+	color: var(--color-coral-dark);
 `;
 
 export const SubmitButton = styled.button`

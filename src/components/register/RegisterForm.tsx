@@ -5,9 +5,7 @@ import {
 	RegisterFormErrors,
 	RegisterFormProps,
 	ROLE_OPTIONS,
-	POSITION_OPTIONS,
 	GENDER_OPTIONS,
-	SHIFT_TYPE_OPTIONS,
 } from '@/types/register';
 import { validateForm } from './FormValidation';
 
@@ -19,10 +17,9 @@ export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFo
 		role: '',
 		gender: '',
 		age: '',
-		position: '',
 		userName: '',
 		userAlias: '',
-		shiftType: '',
+		phoneNumber: '',
 	});
 	const [errors, setErrors] = useState<RegisterFormErrors>({});
 
@@ -101,82 +98,6 @@ export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFo
 						</S.FormField>
 
 						<S.FormField>
-							<S.Label htmlFor="role">역할</S.Label>
-							<S.Select
-								id="position"
-								name="position"
-								value={formData.position}
-								onChange={handleInputChange}
-								$validation={errors.position ? 'invalid' : 'default'}
-							>
-								<option value="">선택하세요</option>
-								{Object.values(POSITION_OPTIONS).map((position) => (
-									<option key={position.value} value={position.value}>
-										{position.label}
-									</option>
-								))}
-							</S.Select>
-							{errors.position && <S.ErrorMessage>{errors.position}</S.ErrorMessage>}
-						</S.FormField>
-
-						<S.FormField>
-							<S.Label htmlFor="shiftType">시간 타입</S.Label>
-							<S.Select
-								id="shiftType"
-								name="shiftType"
-								value={formData.shiftType}
-								onChange={handleInputChange}
-								$validation={errors.gender ? 'invalid' : 'default'}
-							>
-								<option value="">선택하세요</option>
-								{Object.values(SHIFT_TYPE_OPTIONS).map((shiftType) => (
-									<option key={shiftType.label} value={shiftType.value}>
-										{shiftType.label}
-									</option>
-								))}
-							</S.Select>
-							{errors.gender && <S.ErrorMessage>{errors.gender}</S.ErrorMessage>}
-						</S.FormField>
-
-						<S.FormField>
-							<S.Label htmlFor="role">직책</S.Label>
-							<S.Select
-								id="role"
-								name="role"
-								value={formData.role}
-								onChange={handleInputChange}
-								$validation={errors.role ? 'invalid' : 'default'}
-							>
-								<option value="">선택하세요</option>
-								{Object.values(ROLE_OPTIONS).map((role) => (
-									<option key={role.label} value={role.value}>
-										{role.label}
-									</option>
-								))}
-							</S.Select>
-							{errors.position && <S.ErrorMessage>{errors.position}</S.ErrorMessage>}
-						</S.FormField>
-
-						<S.FormField>
-							<S.Label htmlFor="gender">성별</S.Label>
-							<S.Select
-								id="gender"
-								name="gender"
-								value={formData.gender}
-								onChange={handleInputChange}
-								$validation={errors.gender ? 'invalid' : 'default'}
-							>
-								<option value="">선택하세요</option>
-								{Object.values(GENDER_OPTIONS).map((gender) => (
-									<option key={gender.label} value={gender.value}>
-										{gender.label}
-									</option>
-								))}
-							</S.Select>
-							{errors.gender && <S.ErrorMessage>{errors.gender}</S.ErrorMessage>}
-						</S.FormField>
-
-						<S.FormField>
 							<S.Label htmlFor="userName">이름</S.Label>
 							<S.Input
 								id="userName"
@@ -200,6 +121,58 @@ export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFo
 								$validation={errors.userAlias ? 'invalid' : 'default'}
 							/>
 							{errors.userAlias && <S.ErrorMessage>{errors.userAlias}</S.ErrorMessage>}
+						</S.FormField>
+
+						<S.FormField>
+							<S.Label htmlFor="phoneNumber">전화번호</S.Label>
+							<S.Input
+								id="phoneNumber"
+								name="phoneNumber"
+								type="tel"
+								placeholder="- 없이 입력해주세요"
+								value={formData.phoneNumber}
+								onChange={handleInputChange}
+								$validation={errors.phoneNumber ? 'invalid' : 'default'}
+							/>
+							{errors.phoneNumber && <S.ErrorMessage>{errors.phoneNumber}</S.ErrorMessage>}
+						</S.FormField>
+
+						<S.FormField>
+							<S.Label htmlFor="role">직책</S.Label>
+							<S.Select
+								id="role"
+								name="role"
+								value={formData.role}
+								onChange={handleInputChange}
+								$validation={errors.role ? 'invalid' : 'default'}
+							>
+								<option value="">선택하세요</option>
+								{Object.values(ROLE_OPTIONS).map((role) => (
+									<option key={role.label} value={role.value}>
+										{role.label}
+									</option>
+								))}
+							</S.Select>
+							{errors.role && <S.ErrorMessage>{errors.role}</S.ErrorMessage>}
+						</S.FormField>
+
+						<S.FormField>
+							<S.Label htmlFor="gender">성별</S.Label>
+							<S.Select
+								id="gender"
+								name="gender"
+								value={formData.gender}
+								onChange={handleInputChange}
+								$validation={errors.gender ? 'invalid' : 'default'}
+							>
+								<option value="">선택하세요</option>
+								{Object.values(GENDER_OPTIONS).map((gender) => (
+									<option key={gender.label} value={gender.value}>
+										{gender.label}
+									</option>
+								))}
+							</S.Select>
+							{errors.gender && <S.ErrorMessage>{errors.gender}</S.ErrorMessage>}
 						</S.FormField>
 
 						<S.FormField>

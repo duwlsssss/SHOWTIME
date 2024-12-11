@@ -1,6 +1,13 @@
 import { FormData } from '@/types/register';
 import { FormErrors, COMMON_ERROR_MESSAGES, AUTH_VALIDATION } from '@/types/auth';
 
+const VALIDATION_RULES = {
+	phoneNumber: {
+		required: (value: string) => !!value,
+		format: (value: string) => /^010\d{8}$/.test(value),
+	},
+};
+
 export const validateForm = (data: FormData): FormErrors<FormData> => {
 	const errors: FormErrors<FormData> = {};
 
@@ -24,8 +31,6 @@ export const validateForm = (data: FormData): FormErrors<FormData> => {
 
 	if (!data.role) errors.role = COMMON_ERROR_MESSAGES.REQUIRED.role;
 	if (!data.gender) errors.gender = COMMON_ERROR_MESSAGES.REQUIRED.gender;
-	if (!data.position) errors.position = COMMON_ERROR_MESSAGES.REQUIRED.position;
-	if (!data.shiftType) errors.shiftType = COMMON_ERROR_MESSAGES.REQUIRED.shiftType;
 	if (!data.userName) errors.userName = COMMON_ERROR_MESSAGES.REQUIRED.userName;
 	if (!data.userAlias) errors.userAlias = COMMON_ERROR_MESSAGES.REQUIRED.userAlias;
 
@@ -33,6 +38,12 @@ export const validateForm = (data: FormData): FormErrors<FormData> => {
 		errors.age = COMMON_ERROR_MESSAGES.REQUIRED.age;
 	} else if (isNaN(Number(data.age)) || Number(data.age) <= 0) {
 		errors.age = COMMON_ERROR_MESSAGES.INVALID.age;
+	}
+
+	if (!VALIDATION_RULES.phoneNumber.required(data.phoneNumber)) {
+		errors.phoneNumber = COMMON_ERROR_MESSAGES.REQUIRED.phoneNumber;
+	} else if (!VALIDATION_RULES.phoneNumber.format(data.phoneNumber)) {
+		errors.phoneNumber = COMMON_ERROR_MESSAGES.INVALID.phoneNumber;
 	}
 
 	return errors;
