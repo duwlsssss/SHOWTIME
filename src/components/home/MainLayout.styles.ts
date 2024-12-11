@@ -32,12 +32,13 @@ export const ToggleButton = styled.button<ToggleButtonState>`
 `;
 
 export const LeftSection = styled.div<LeftSectionState>`
-	width: 256px;
-	height: 810px;
-	background-color: var(--color-white);
-	border-radius: var(--small-border-radius);
-	box-shadow: var(--box-shadow-large);
-	padding: var(--space-medium);
+	/* width: 256px; */
+	/* height: 810px; */
+	/* background-color: var(--color-white); */
+	/* border-radius: var(--small-border-radius); */
+	/* box-shadow: var(--box-shadow-large); */
+	/* flex-grow: 1; */
+	/* padding: var(--space-medium); */
 	transition: transform 0.3s ease;
 
 	@media (max-width: 1165px) {
@@ -72,12 +73,15 @@ export const CategoryItem = styled.li`
 
 export const MiddleSection = styled.div`
 	flex: 1;
+	flex-grow: 2;
 	min-width: 500px;
 	height: 810px;
 	background-color: var(--color-white);
 	border-radius: var(--small-border-radius);
 	box-shadow: var(--box-shadow-large);
 	padding: var(--space-medium);
+	justify-content: center;
+	display: flex;
 
 	@media (max-height: 1200px) {
 		height: 600px;
@@ -90,7 +94,7 @@ export const RightSection = styled.div<RightSectionState>`
 	gap: var(--space-medium);
 	width: ${({ $isCollapsed }) => ($isCollapsed ? '400px' : '300px')};
 	height: 100%;
-
+	flex-grow: 0;
 	@media (max-width: 1165px) {
 		display: ${(props) => (props.$isCollapsed ? 'none' : 'flex')};
 	}

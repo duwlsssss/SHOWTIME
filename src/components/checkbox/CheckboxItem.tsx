@@ -1,16 +1,54 @@
+import useIsAdmin from '@/hooks/useIsAdmin';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { getSchedulesFromSupabase } from '@/redux/actions/scheduleActions';
+
 import styled from 'styled-components';
 
 interface CheckboxItemProps {
-	item: 'ticket' | 'snack' | 'floor';
+	categoryKey: string;
+	item: '매표' | '매점' | '플로어' | '전체'; // categoryMap의 value
 }
 
-const CheckboxItem = ({ item }: CheckboxItemProps) => {
+const CheckboxItem = ({ item, categoryKey }: CheckboxItemProps) => {
+	const dispatch = useAppDispatch();
+	const user = useAppSelector((state) => state.user.user);
+	const isAdmin = useIsAdmin();
+	const userId = user?.id;
+
+	const handleFilteredClick = (e) => {
+		const id = e.target.id as string;
+		positionFilteredSchedules({ isAdmin, userId, id });
+	};
+
+	const positionFilteredSchedules = ({ isAdmin, userId, id }) => {
+		if (isAdmin) {
+			if (categoryKey === 'all') {
+				dispatch(getSchedulesFromSupabase());
+			} else {
+				dispatch(getSchedulesFromSupabase(undefined, id));
+			}
+		} else {
+			if (categoryKey === 'all') {
+				dispatch(getSchedulesFromSupabase(userId));
+			}
+			dispatch(getSchedulesFromSupabase(userId, id));
+		}
+	};
+
+	// 각 항목에 대한 색상 설정
+
 	return (
-		<ListItem>
+		<ListItem key={categoryKey}>
 			<Label htmlFor={item}>
-				<HiddenCheckbox id={item} type="checkbox" />
-				<CustomCheckbox />
-				<CheckboxText>{item}</CheckboxText>
+				<RadioInput
+					type="radio"
+					name="option"
+					id={categoryKey}
+					onChange={(e) => handleFilteredClick(e)}
+					defaultChecked={categoryKey === 'all'}
+					color={categoryKey}
+				/>
+				<RadioText>{item}</RadioText>
 			</Label>
 		</ListItem>
 	);
@@ -21,56 +59,49 @@ export default CheckboxItem;
 const ListItem = styled.li`
 	list-style: none;
 	margin-bottom: 8px;
-
 	display: flex;
-	&:nth-child(3) {
-		display: block;
-		border-bottom: 1px solid black;
-		padding-bottom: 10px;
-		width: 100px;
-	}
-	&:nth-child(4) {
-		margin-top: 10px;
-	}
+	align-items: center;
 `;
 
 const Label = styled.label`
 	display: flex;
 	align-items: center;
-	cursor: pointer;
+	gap: 10px;
 `;
 
-const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
-	display: none;
-`;
-
-const CustomCheckbox = styled.div`
-	width: 20px;
-	height: 20px;
+const RadioInput = styled.input.attrs({ type: 'radio' })`
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 18px;
+	height: 18px;
 	border: 2px solid #ccc;
-	border-radius: 4px;
-	margin-right: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: transparent;
-	transition: all 0.2s ease;
+	border-radius: 50%;
+	outline: none;
+	cursor: pointer;
+	margin-bottom: 3px;
+	&:checked {
+		background-color: ${(props) =>
+			props.color !== 'all'
+				? props.color === 'ticket'
+					? 'var(--color-blue)'
+					: props.color === 'floor'
+						? 'var(--color-coral)'
+						: 'var(--color-caramel)'
+				: '#0d6efd'};
 
-	${HiddenCheckbox}:checked + & {
-		border-color: var(--color-green);
-		background-color: var(--color-green);
-		&::after {
-			content: '';
-			display: block;
-			width: 5px;
-			height: 10px;
-			border: solid white;
-			border-width: 0 2px 2px 0;
-			transform: rotate(45deg);
-		}
+		box-shadow: 0 0 0 1.6px
+			${(props) =>
+				props.color !== 'all'
+					? props.color === 'ticket'
+						? 'var(--color-blue)'
+						: props.color === 'floor'
+							? 'var(--color-coral)'
+							: 'var(--color-caramel)'
+					: '#0d6efd'};
 	}
 `;
 
-const CheckboxText = styled.span`
-	font-size: 16px;
+const RadioText = styled.span`
+	font-size: 20px;
 `;

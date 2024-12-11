@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import * as S from './MainLayout.styles';
 import { TOGGLE_BUTTON_TEXT } from '@/types/main';
 import { useMainViewportWidth } from '@/hooks/useMainViewportWidth';
+import CheckboxGroup from '../checkbox/CheckboxGroup';
+import { CalendarComponent } from '..';
 
 export function MainLayout() {
 	const [isLeftSectionExpanded, setIsLeftSectionExpanded] = useState(true);
@@ -27,31 +29,13 @@ export function MainLayout() {
 				</S.ToggleButton>
 
 				<S.LeftSection $isExpanded={isLeftSectionExpanded}>
-					<S.CategoryTitle>카테고리</S.CategoryTitle>
 					<S.CategoryList>
-						<S.CategoryItem>
-							<span>오픈</span>
-						</S.CategoryItem>
-						<S.CategoryItem>
-							<span>미들</span>
-						</S.CategoryItem>
-						<S.CategoryItem>
-							<span>마감</span>
-						</S.CategoryItem>
-						<S.CategoryItem>
-							<span>예약</span>
-						</S.CategoryItem>
-						<S.CategoryItem>
-							<span>예정</span>
-						</S.CategoryItem>
-						<S.CategoryItem>
-							<span>품평회</span>
-						</S.CategoryItem>
+						<CheckboxGroup />
 					</S.CategoryList>
 				</S.LeftSection>
 
 				<S.MiddleSection>
-					<div>Calendar Placeholder</div>
+					<CalendarComponent />
 				</S.MiddleSection>
 
 				<S.RightSection $isCollapsed={isLeftSectionExpanded}>

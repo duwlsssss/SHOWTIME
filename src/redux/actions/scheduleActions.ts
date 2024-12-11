@@ -104,16 +104,20 @@ export const addScheduleToSupabase = (
 // Supabase에서 스케줄 조회
 export const getSchedulesFromSupabase = (
 	userId?: string,
+	value?: string,
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
 	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
 			let query = supabase.from('schedules').select('*');
+
+			if (value) {
+				query = query.or(`category.like.${value}%`);
+			}
+
 			if (userId) {
 				query = query.eq('user_id', userId);
 			}
-
 			const { data, error } = await query;
-
 			if (error) throw error;
 
 			const convertedSchedules = data.map((schedule) => ({

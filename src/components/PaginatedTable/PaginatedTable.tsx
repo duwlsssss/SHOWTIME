@@ -1,12 +1,10 @@
 import { useState, useEffect } from 'react';
-
 import dayjs from 'dayjs';
 import useSupabaseData from './EditModal/hook/useSupabaseData';
 import Table, { RowItem } from '../table/Table';
 import Pagination from '../pagination/pagination';
 import { Modal, ModalPortal } from '@/components';
 import SalarySelect from '@/components/salaryselect/SalarySelect';
-import ModalPortal from '@/components/modal/ModalPortal';
 import EditModal from './EditModal/editModal';
 import DetailModal from './DetailModal/detailModal';
 

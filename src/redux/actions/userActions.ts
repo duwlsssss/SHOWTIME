@@ -1,4 +1,4 @@
-import { TUser } from '@/types/auth';
+import { TUser } from '../../types/auth';
 
 import { SET_USER, CLEAR_USER } from '../actionTypes';
 

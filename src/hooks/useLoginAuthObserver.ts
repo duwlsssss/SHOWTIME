@@ -3,7 +3,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { getDoc, doc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
 import { useAppDispatch } from './useRedux';
-import { setUser, clearUser } from '@/redux/actions/userAction';
+import { setUser, clearUser } from '@/redux/actions/userActions';
 import { formatUserData } from '@/types/auth';
 
 export const useLoginAuthObserver = () => {

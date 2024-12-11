@@ -1,9 +1,10 @@
+import * as S from './Navbar.styles';
 import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/firebaseConfig';
-import * as S from './Navbar.styles';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { clearUser } from '@/redux/actions/userAction';
+import { persistor } from '@/redux/store';
+import { clearSchedules } from '@/redux//actions/scheduleActions';
 import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
 
 export function Navbar() {
