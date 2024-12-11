@@ -1,21 +1,20 @@
 import { TSchedule } from '@/types/schedule';
-import { ADMIN_GET_EMPLYEE } from '../actionTypes';
+import { ADMIN_GET_EMPLOYEE } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
 export const getAdminEmplyee = (schedules: TSchedule[]) => ({
-	type: ADMIN_GET_EMPLYEE,
+	type: ADMIN_GET_EMPLOYEE,
 	payload: schedules,
 });
 
 // Supabase에서 검색을 통한 직원 조회
-export const getAdminEmplyeeSchedules = (value: string) => {
+export const getAdminEmployeeSchedules = (value: string) => {
 	return async (dispatch) => {
 		try {
 			const { data, error } = await supabase
 				.from('schedules')
 				.select('*')
 				.or(`user_name.ilike.${value}%, user_alias.ilike.${value}%`);
-			console.log(data);
 
 			if (error) throw error;
 

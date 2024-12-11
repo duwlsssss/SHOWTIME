@@ -1,5 +1,5 @@
 // reducer.js
-import { ADMIN_GET_EMPLYEE } from '../actionTypes';
+import { ADMIN_GET_EMPLOYEE } from '../actionTypes';
 import { TScheduleState } from '@/types/schedule';
 import { AnyAction } from 'redux';
 
@@ -11,12 +11,12 @@ const initialState: TScheduleState = {
 	selectedSchedule: null,
 };
 
-export default function emplyeeReducer(
+export default function employeeReducer(
 	state: TScheduleState = initialState,
 	action: AnyAction,
 ): TScheduleState {
 	switch (action.type) {
-		case ADMIN_GET_EMPLYEE: {
+		case ADMIN_GET_EMPLOYEE: {
 			return { ...state, schedules: [...action.payload], isLoading: false };
 		}
 

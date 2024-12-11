@@ -28,15 +28,13 @@ import { Button } from '../../button/Button';
 import ModalPortal from '../../modal/ModalPortal';
 import { ConfirmModal } from '../../modal/Modal';
 import useScheduleManage from '@/hooks/useScheduleManage';
-import { getAdminEmplyeeSchedules } from '@/redux/actions/emplyeeActions';
+import { getAdminEmployeeSchedules } from '@/redux/actions/employeeActions';
 import SearchEmplyeeList from '@/components/search/SearchEmplyeeList';
 import useDebounce from '@/hooks/useDebounce';
 import { formatDate, formatDateTime } from '@/utils/dateFormatter';
-//import useIsAdmin from '@/hooks/useIsAdmin';
 
 const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 	const [isRepeatActive, setIsRepeatActive] = useState<boolean>(false); // 토글 상태
-	const isAdmin = true;
 	const [pendingScheduleData, setPendingScheduleData] = useState<TSchedule | null>(null); // 수정할 데이터
 	const [searchListOpen, setSearchListOpen] = useState<boolean>(true);
 	const [searchTerm, setSearchTerm] = useState<string>('');
@@ -47,26 +45,22 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
 	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
 	const debounce = useDebounce(searchTerm, 800);
-	const emplyeeSchedules = useAppSelector((state) => state.emplyee.schedules);
+	const emplyeeSchedules = useAppSelector((state) => state.employee.schedules);
 	const searchUserId = useAppSelector((state) => state.adminSearchUserId);
 	const userId = user?.id;
 	const userName = user?.userName;
 	const userAlias = user?.userAlias;
-
 	const getUserIdToSend = () => {
-		if (mode === 'add' && isAdmin) {
+		if (mode === 'add' && type == 'scheduleAdmin') {
 			return searchUserId;
 		}
-		if (isAdmin && mode === 'edit') {
+		if (type == 'scheduleAdmin' && mode === 'edit') {
 			return adminUserId;
 		}
 		return userId;
 	};
-	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(
-		getUserIdToSend(),
-		schedules,
-		searchUserId,
-	);
+
+	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(getUserIdToSend(), schedules);
 
 	const {
 		register,
@@ -110,7 +104,7 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 		new Date(repeatEndDate) < new Date(startDateTime)
 			? '반복 종료일은 시작일 이후여야 합니다'
 			: null;
-
+	console.log(mode);
 	// 디버깅용
 	// console.log({
 	// 	errors: errors,
@@ -163,15 +157,17 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 
 	const onSubmitForm = handleSubmit(async (data) => {
 		try {
-			if (isAdmin && mode == 'add') {
+			if (type == 'scheduleAdmin' && mode == 'add') {
 				if (!searchUserId) throw new Error('searchUserId 없음');
+			} else if (type == 'scheduleAdmin' && mode == 'edit') {
+				if (!adminUserId) throw new Error('adminUserId 없음');
 			} else {
 				if (!userId) throw new Error('userId 없음');
 			}
 
 			const scheduleData: TSchedule = {
 				schedule_id: mode === 'edit' ? (selectedSchedule?.schedule_id ?? uuidv4()) : uuidv4(), // 한 개 수정시 이전 schedule_id 필요
-				user_id: isAdmin ? searchUserId : userId,
+				user_id: getUserIdToSend(),
 				user_name: userName as string,
 				user_alias: userAlias as string,
 				category: data.category,
@@ -179,7 +175,7 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 				time: data.time,
 				end_date_time: new Date(calculateEndDateTime(data.start_date_time, data.time)),
 				schedule_shift_type: calculateScheduleShiftType(data.start_date_time),
-				repeat: (data.repeat as TScheduleRepeatCycle) || null, // Supabase에 저장하기 전에 null로 변환
+				repeat: (data.repeat as TScheduleRepeatCycle) || undefined, // Supabase에 저장하기 전에 null로 변환
 				repeat_end_date: data.repeat_end_date ? new Date(data.repeat_end_date) : undefined,
 				created_at: new Date(),
 				description: data.description as string | undefined,
@@ -247,7 +243,7 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 	};
 
 	const handleEmplyoeeSearhClick = () => {
-		dispatch(getAdminEmplyeeSchedules(searchTerm));
+		dispatch(getAdminEmployeeSchedules(searchTerm));
 	};
 
 	const handleClickOutside = (event: MouseEvent) => {
@@ -267,9 +263,9 @@ const ScheduleModal = ({ type, mode, adminUserId }: TScheduleModalProps) => {
 		if (debounce) {
 			if (debounce.length > 0) {
 				setSearchListOpen(false);
-				dispatch(getAdminEmplyeeSchedules(debounce));
+				dispatch(getAdminEmployeeSchedules(debounce));
 			} else {
-				dispatch(getAdminEmplyeeSchedules(''));
+				dispatch(getAdminEmployeeSchedules(''));
 			}
 		}
 	}, [debounce]);

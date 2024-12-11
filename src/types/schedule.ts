@@ -47,7 +47,6 @@ export interface TScheduleModalProps {
 	type: 'scheduleUser' | 'scheduleAdmin';
 	mode: 'add' | 'edit';
 	adminUserId?: string;
-	searchUserId?: string;
 }
 
 // action types
