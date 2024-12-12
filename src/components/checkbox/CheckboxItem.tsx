@@ -1,41 +1,38 @@
+import styled from 'styled-components';
+import { TScheduleCategory, categoryColors } from '@/types/schedule';
 import useIsAdmin from '@/hooks/useIsAdmin';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { getSchedulesFromSupabase } from '@/redux/actions/scheduleActions';
+import { getSchedulesFromSupabase, setfilterCategory } from '@/redux/actions/scheduleActions';
 
-import styled from 'styled-components';
-
-interface CheckboxItemProps {
-	categoryKey: string;
-	item: '매표' | '매점' | '플로어' | '전체'; // categoryMap의 value
+interface TCheckboxItemProps {
+	categoryKey: TScheduleCategory;
+	item: string;
 }
 
-const CheckboxItem = ({ item, categoryKey }: CheckboxItemProps) => {
+const CheckboxItem = ({ categoryKey, item }: TCheckboxItemProps) => {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector((state) => state.user.user);
+	const filterCategoryKey = useAppSelector((state) => state.schedule.filterCategoryKey);
 	const isAdmin = useIsAdmin();
 	const userId = user?.id;
 
-	const handleFilteredClick = (e) => {
-		const id = e.target.id as string;
+	const handleFilteredClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const id = e.target.id as TScheduleCategory;
+		dispatch(setfilterCategory(id));
 		positionFilteredSchedules({ isAdmin, userId, id });
 	};
 
-	const positionFilteredSchedules = ({ isAdmin, userId, id }) => {
-		if (isAdmin) {
-			if (categoryKey === 'all') {
-				dispatch(getSchedulesFromSupabase());
-			} else {
-				dispatch(getSchedulesFromSupabase(undefined, id));
-			}
-		} else {
-			if (categoryKey === 'all') {
-				dispatch(getSchedulesFromSupabase(userId));
-			}
-			dispatch(getSchedulesFromSupabase(userId, id));
-		}
+	const positionFilteredSchedules = ({
+		isAdmin,
+		userId,
+		id,
+	}: {
+		isAdmin: boolean;
+		userId?: string;
+		id: TScheduleCategory;
+	}) => {
+		dispatch(getSchedulesFromSupabase(isAdmin ? undefined : userId, id === '' ? undefined : id));
 	};
-
-	// 각 항목에 대한 색상 설정
 
 	return (
 		<ListItem key={categoryKey}>
@@ -45,8 +42,7 @@ const CheckboxItem = ({ item, categoryKey }: CheckboxItemProps) => {
 					name="option"
 					id={categoryKey}
 					onChange={(e) => handleFilteredClick(e)}
-					defaultChecked={categoryKey === 'all'}
-					color={categoryKey}
+					checked={filterCategoryKey === categoryKey}
 				/>
 				<RadioText>{item}</RadioText>
 			</Label>
@@ -81,27 +77,10 @@ const RadioInput = styled.input.attrs({ type: 'radio' })`
 	cursor: pointer;
 	margin-bottom: 3px;
 	&:checked {
-		background-color: ${(props) =>
-			props.color !== 'all'
-				? props.color === 'ticket'
-					? 'var(--color-blue)'
-					: props.color === 'floor'
-						? 'var(--color-coral)'
-						: 'var(--color-caramel)'
-				: '#0d6efd'};
-
-		box-shadow: 0 0 0 1.6px
-			${(props) =>
-				props.color !== 'all'
-					? props.color === 'ticket'
-						? 'var(--color-blue)'
-						: props.color === 'floor'
-							? 'var(--color-coral)'
-							: 'var(--color-caramel)'
-					: '#0d6efd'};
+		background-color: ${(props) => categoryColors[props.id as TScheduleCategory]};
 	}
 `;
 
 const RadioText = styled.span`
-	font-size: 20px;
+	font-size: var(--font-medium);
 `;

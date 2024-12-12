@@ -1,5 +1,5 @@
 import { AppThunk } from '@/redux/store';
-import { TScheduleApiResponse, TSchedule } from '@/types/schedule';
+import { TScheduleApiResponse, TSchedule, TScheduleCategory } from '@/types/schedule';
 import {
 	GET_SCHEDULES,
 	ADD_SCHEDULES,
@@ -10,6 +10,7 @@ import {
 	SET_LOADING, // suspanse로 바꿔야함
 	SET_SELECTED_SCHEDULE,
 	CLEAR_SCHEDULES,
+	SET_FILTER_CATEGORY,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
@@ -56,6 +57,11 @@ export const selectDate = (date: Date) => ({
 export const filterSchedules = (schedules: TSchedule[]) => ({
 	type: FILTERED_SCHEDULES,
 	payload: schedules,
+});
+
+export const setfilterCategory = (filterCategoryKey: TScheduleCategory) => ({
+	type: SET_FILTER_CATEGORY,
+	payload: filterCategoryKey,
 });
 
 // Supabase에 스케줄 추가

@@ -2,16 +2,10 @@ import styled from 'styled-components';
 import type { ToggleButtonState, LeftSectionState, RightSectionState } from '@/types/main';
 
 export const MainContainer = styled.div`
-	width: 100%;
-	height: 100vh;
-	overflow: hidden;
-`;
-
-export const FlexContainer = styled.div`
 	display: flex;
+	justify-content: space-between;
 	height: 100%;
-	gap: var(--space-medium);
-	padding: var(--space-medium);
+	max-width: 95vw;
 `;
 
 export const ToggleButton = styled.button<ToggleButtonState>`
@@ -32,13 +26,9 @@ export const ToggleButton = styled.button<ToggleButtonState>`
 `;
 
 export const LeftSection = styled.div<LeftSectionState>`
-	/* width: 256px; */
-	/* height: 810px; */
-	/* background-color: var(--color-white); */
-	/* border-radius: var(--small-border-radius); */
-	/* box-shadow: var(--box-shadow-large); */
-	/* flex-grow: 1; */
-	/* padding: var(--space-medium); */
+	flex: 0.1;
+	border-radius: var(--small-border-radius);
+	box-shadow: var(--box-shadow-large);
 	transition: transform 0.3s ease;
 
 	@media (max-width: 1165px) {
@@ -48,58 +38,32 @@ export const LeftSection = styled.div<LeftSectionState>`
 		transform: translateX(${(props) => (props.$isExpanded ? '0' : '-100%')});
 		display: ${(props) => (props.$isExpanded ? 'block' : 'none')};
 	}
-	@media (max-height: 1200px) {
+	@media (max-height: 850px) {
 		height: 600px;
 	}
 `;
 
-export const CategoryTitle = styled.h2`
-	font-size: var(--font-medium);
-	font-weight: bold;
-	margin-bottom: var(--space-medium);
-`;
-
-export const CategoryList = styled.ul`
-	display: flex;
-	flex-direction: column;
-	gap: var(--space-small);
-`;
-
-export const CategoryItem = styled.li`
-	display: flex;
-	align-items: center;
-	gap: var(--space-small);
-`;
-
 export const MiddleSection = styled.div`
-	flex: 1;
-	flex-grow: 2;
-	min-width: 500px;
-	height: 810px;
-	background-color: var(--color-white);
-	border-radius: var(--small-border-radius);
-	box-shadow: var(--box-shadow-large);
-	padding: var(--space-medium);
-	justify-content: center;
-	display: flex;
+	flex: 0.5;
 
-	@media (max-height: 1200px) {
+	@media (max-height: 850px) {
 		height: 600px;
 	}
 `;
 
 export const RightSection = styled.div<RightSectionState>`
+	flex: 0.35;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-medium);
 	width: ${({ $isCollapsed }) => ($isCollapsed ? '400px' : '300px')};
 	height: 100%;
-	flex-grow: 0;
 	@media (max-width: 1165px) {
 		display: ${(props) => (props.$isCollapsed ? 'none' : 'flex')};
+		flex: 0.45;
 	}
 
-	@media (max-height: 1200px) {
+	@media (max-height: 850px) {
 		height: 600px;
 	}
 `;

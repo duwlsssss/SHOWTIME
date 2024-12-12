@@ -11,6 +11,7 @@ import {
 	SET_LOADING,
 	SET_SELECTED_SCHEDULE,
 	CLEAR_SCHEDULES,
+	SET_FILTER_CATEGORY,
 } from '../actionTypes';
 import { AnyAction } from 'redux';
 
@@ -34,6 +35,7 @@ const initialState: TScheduleState = {
 	filteredSchedules: [],
 	isLoading: false,
 	selectedSchedule: null,
+	filterCategoryKey: '',
 };
 
 export default function scheduleReducer(
@@ -95,6 +97,8 @@ export default function scheduleReducer(
 		}
 		case FILTERED_SCHEDULES:
 			return { ...state, filteredSchedules: action.payload };
+		case SET_FILTER_CATEGORY:
+			return { ...state, filterCategoryKey: action.payload };
 		default:
 			return state;
 	}

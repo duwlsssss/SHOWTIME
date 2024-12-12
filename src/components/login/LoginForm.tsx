@@ -3,7 +3,6 @@ import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import * as S from '@/components/login/Login.styles';
 import { auth } from '@/firebaseConfig';
 import { LoginFormData, LoginFormErrors } from '@/types/login';
-// import { User } from '@/types/auth';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { clearUser } from '@/redux/actions/userActions';
 import { validateLoginForm, getAuthErrorMessage } from '@/components/login/LoginValidation';

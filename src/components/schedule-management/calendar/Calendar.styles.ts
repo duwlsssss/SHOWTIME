@@ -3,24 +3,26 @@ import Calendar from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
 import { TScheduleCategory } from '@/types/schedule';
 
-export const CalenderContainer = styled.div`
-	padding: var(--space-medium);
-	border-radius: var(--medium-border-radius);
-	box-shadow: var(--box-shadow-large);
-	display: flex;
-	justify-content: space-between;
+export const CalenderWrapper = styled.div<{ $isManagementPage: boolean }>`
+	width: 700px;
 	height: 100%;
+	border-radius: var(--medium-border-radius);
+	${({ $isManagementPage }) =>
+		$isManagementPage
+			? 'border: 1px solid var(--color-pale-gray)'
+			: 'box-shadow: var(--box-shadow-large)'};
 `;
 
-export const StyledCalendar = styled(Calendar)`
-	font-family: 'Pretendard', sans-serif;
-	width: 700px;
+export const StyledCalendar = styled(Calendar)<{ $isManagementPage: boolean }>`
+	height: 100%;
+	width: 100%;
 	border-radius: var(--medium-border-radius);
 	border: 1px solid var(--color-pale-gray);
+	font-family: 'Pretendard', sans-serif;
 	/* 네비게이션 */
 	.react-calendar__navigation {
 		border-bottom: 1.5px solid var(--color-pale-gray);
-		height: 60px;
+		${({ $isManagementPage }) => ($isManagementPage ? 'height: 60px' : 'height: 80px')};
 
 		span {
 			font-size: var(--font-large);
@@ -46,7 +48,8 @@ export const StyledCalendar = styled(Calendar)`
 
 	/* 월 뷰 */
 	.react-calendar__month-view {
-		margin-top: -7px;
+		${({ $isManagementPage }) => ($isManagementPage ? 'margin-top: -7px' : 'margin-top: 7px')};
+
 		padding: 0 var(--space-xsmall) var(--space-xsmall) var(--space-xsmall);
 		abbr {
 			/* 텍스트 */
