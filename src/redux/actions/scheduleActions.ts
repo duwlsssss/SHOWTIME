@@ -11,6 +11,8 @@ import {
 	SET_SELECTED_SCHEDULE,
 	CLEAR_SCHEDULES,
 	SET_FILTER_CATEGORY,
+	SET_MONTH,
+	SET_YEAR,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
@@ -62,6 +64,16 @@ export const filterSchedules = (schedules: TSchedule[]) => ({
 export const setfilterCategory = (filterCategoryKey: TScheduleCategory) => ({
 	type: SET_FILTER_CATEGORY,
 	payload: filterCategoryKey,
+});
+
+export const setYear = (year: number) => ({
+	type: SET_YEAR,
+	payload: year,
+});
+
+export const setMonth = (month: number) => ({
+	type: SET_MONTH,
+	payload: month,
 });
 
 // Supabase에 스케줄 추가

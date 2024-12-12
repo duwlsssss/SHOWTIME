@@ -1,15 +1,16 @@
-import { useEffect } from 'react';
 import * as S from './Calendar.styles';
 import { TSchedule, TCalendarComponentProps, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
+import useFiltereSchedulesByCategory from '@/hooks/useFiltereSchedulesByCategory';
 import useIsAdmin from '@/hooks/useIsAdmin';
-import { getSchedulesFromSupabase, selectDate } from '@/redux/actions/scheduleActions';
+import { selectDate, setYear, setMonth } from '@/redux/actions/scheduleActions';
 import { formatCalendarDay } from '@/utils/dateFormatter';
 
 export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps) => {
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
+	const filterCategoryKey = useAppSelector((state) => state.schedule.filterCategoryKey);
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
 	// const modalState = useAppSelector((state) => state.modal);
@@ -20,26 +21,19 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 	const isAdmin = useIsAdmin();
 
 	// supabase에서 스케줄 가져오기
-	const init = async () => {
-		if (isAdmin) {
-			await dispatch(getSchedulesFromSupabase());
-		} else {
-			if (!userId) throw new Error('userId가 없음');
-			await dispatch(getSchedulesFromSupabase(userId));
-		}
-	};
-	useEffect(() => {
-		init();
-	}, [userId]);
+	useFiltereSchedulesByCategory({ isAdmin, userId, filterCategoryKey });
 
 	// 클릭한 날짜 필터링
 	const handleDateClick = (date: Date) => {
-		if (!isManagementPage) {
-			// 홈 페이지면 오늘 날짜로 한 번만 설정
-			dispatch(selectDate(new Date()));
-			return;
-		}
 		dispatch(selectDate(date));
+	};
+
+	// 년, 월 바뀌면 전역 상태에 저장
+	const handleMonthChange = ({ activeStartDate }) => {
+		const year = activeStartDate.getFullYear();
+		const month = activeStartDate.getMonth() + 1;
+		dispatch(setYear(year));
+		dispatch(setMonth(month));
 	};
 
 	// 일정 있는 날짜에 바 표시
@@ -74,6 +68,7 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 		<S.CalenderWrapper $isManagementPage={isManagementPage ?? false}>
 			<S.StyledCalendar
 				locale="ko-KR"
+				onActiveStartDateChange={handleMonthChange}
 				onClickDay={handleDateClick}
 				value={selectedDate}
 				view="month"

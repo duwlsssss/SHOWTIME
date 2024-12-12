@@ -1,5 +1,5 @@
 import { TSchedule, TScheduleState } from '@/types/schedule';
-import { filterSchedulesByDateAndSort } from '@/utils/filterSchedulesByDate';
+import { filterSchedulesByDateAndSort } from '@/utils/filterSchedules';
 
 import {
 	GET_SCHEDULES,
@@ -12,6 +12,8 @@ import {
 	SET_SELECTED_SCHEDULE,
 	CLEAR_SCHEDULES,
 	SET_FILTER_CATEGORY,
+	SET_YEAR,
+	SET_MONTH,
 } from '../actionTypes';
 import { AnyAction } from 'redux';
 
@@ -21,8 +23,8 @@ function dedupeSchedules(schedules: TSchedule[]): TSchedule[] {
 		new Map(schedules.map((schedule) => [schedule.schedule_id, schedule])).values(),
 	);
 }
-// 필터링 업데이트 함수
-const updateFilteredSchedules = (
+// 필터링 업데이트 함수 - 선택 날짜에 따라
+const updateFilteredSchedulesByDate = (
 	schedules: TSchedule[],
 	selectedDate: Date | null,
 ): TSchedule[] => {
@@ -36,6 +38,8 @@ const initialState: TScheduleState = {
 	isLoading: false,
 	selectedSchedule: null,
 	filterCategoryKey: '',
+	year: 0,
+	month: 0,
 };
 
 export default function scheduleReducer(
@@ -49,14 +53,14 @@ export default function scheduleReducer(
 			return { ...state, selectedSchedule: action.payload };
 		case GET_SCHEDULES: {
 			const schedules = dedupeSchedules(action.payload);
-			const filteredSchedules = updateFilteredSchedules(schedules, state.selectedDate);
+			const filteredSchedules = updateFilteredSchedulesByDate(schedules, state.selectedDate);
 			return { ...state, schedules, filteredSchedules };
 		}
 		case CLEAR_SCHEDULES:
 			return initialState;
 		case ADD_SCHEDULES: {
 			const schedules = dedupeSchedules([...state.schedules, ...action.payload]);
-			const filteredSchedules = updateFilteredSchedules(schedules, state.selectedDate);
+			const filteredSchedules = updateFilteredSchedulesByDate(schedules, state.selectedDate);
 			return {
 				...state,
 				schedules,
@@ -71,7 +75,7 @@ export default function scheduleReducer(
 				scheduleMap.set(schedule.schedule_id, schedule),
 			);
 			const schedules = Array.from(scheduleMap.values());
-			const filteredSchedules = updateFilteredSchedules(schedules, state.selectedDate);
+			const filteredSchedules = updateFilteredSchedulesByDate(schedules, state.selectedDate);
 			return {
 				...state,
 				schedules,
@@ -83,7 +87,7 @@ export default function scheduleReducer(
 			const schedules = state.schedules.filter(
 				(schedule) => !scheduleIds.includes(schedule.schedule_id),
 			);
-			const filteredSchedules = updateFilteredSchedules(schedules, state.selectedDate);
+			const filteredSchedules = updateFilteredSchedulesByDate(schedules, state.selectedDate);
 			return {
 				...state,
 				schedules,
@@ -92,13 +96,18 @@ export default function scheduleReducer(
 		}
 		case SELECT_DATE: {
 			const selectedDate = new Date(action.payload);
-			const filteredSchedules = updateFilteredSchedules(state.schedules, selectedDate);
+			const filteredSchedules = updateFilteredSchedulesByDate(state.schedules, selectedDate);
 			return { ...state, selectedDate, filteredSchedules };
 		}
 		case FILTERED_SCHEDULES:
 			return { ...state, filteredSchedules: action.payload };
-		case SET_FILTER_CATEGORY:
+		case SET_FILTER_CATEGORY: {
 			return { ...state, filterCategoryKey: action.payload };
+		}
+		case SET_YEAR:
+			return { ...state, year: action.payload };
+		case SET_MONTH:
+			return { ...state, month: action.payload };
 		default:
 			return state;
 	}

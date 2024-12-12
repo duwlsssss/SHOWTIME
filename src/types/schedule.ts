@@ -31,6 +31,8 @@ export interface TCalendarState {
 	isLoading: boolean;
 	selectedSchedule: TSchedule | null;
 	filterCategoryKey: TScheduleCategory;
+	year: number;
+	month: number;
 }
 
 export type TScheduleState = TSchedules & TCalendarState;

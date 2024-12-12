@@ -37,18 +37,23 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const [pendingScheduleData, setPendingScheduleData] = useState<TSchedule | null>(null); // 수정할 데이터
 	const [searchListOpen, setSearchListOpen] = useState<boolean>(true);
 	const [searchTerm, setSearchTerm] = useState<string>('');
+
 	const dispatch = useAppDispatch();
-	const searchRef = useRef<HTMLDivElement | null>(null);
+
 	const user = useAppSelector((state) => state.user.user);
-	const schedules = useAppSelector((state) => state.schedule.schedules);
-	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
-	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
-	const debounce = useDebounce(searchTerm, 800);
-	const employeeSchedules = useAppSelector((state) => state.employee.schedules);
-	const searchUserId = useAppSelector((state) => state.adminSearchUserId);
 	const userId = user?.id;
 	const userName = user?.userName;
 	const userAlias = user?.userAlias;
+	const schedules = useAppSelector((state) => state.schedule.schedules);
+	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
+	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
+	const employeeSchedules = useAppSelector((state) => state.employee.schedules);
+	const searchUserId = useAppSelector((state) => state.adminSearchUserId);
+	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
+
+	const debounce = useDebounce(searchTerm, 800);
+
+	const searchRef = useRef<HTMLDivElement | null>(null);
 
 	const getUserIdToSend = () => {
 		return type === 'scheduleAdmin' && mode === 'add' ? searchUserId : userId;
@@ -68,7 +73,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		mode: 'onChange',
 		defaultValues: {
 			category: '',
-			start_date_time: '',
+			start_date_time: formatDateTime(new Date(selectedDate)),
 			time: '',
 			repeat: undefined,
 			repeat_end_date: undefined,
