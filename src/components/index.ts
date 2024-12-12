@@ -13,6 +13,7 @@ export { Modal, ConfirmModal } from './modal/Modal';
 export { RegisterForm } from './register/RegisterForm';
 export { LoginForm } from './login/LoginForm';
 
+export { CheckboxGroup } from './checkbox/CheckboxGroup';
 export { CalendarComponent } from './schedule-management/calendar/Calender';
 export { ScheduleList } from './schedule-management/schedule-list/ScheduleList';
 export { ScheduleModal } from './schedule-management/schedule-modal/ScheduleModal';

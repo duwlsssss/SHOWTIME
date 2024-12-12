@@ -1,5 +1,5 @@
 import * as S from './ScheduleManagement.styles';
-import { ScheduleList, CalendarComponent, Loading } from '@/components';
+import { ScheduleList, CalendarComponent, Loading, CheckboxGroup } from '@/components';
 import { useAppSelector } from '@/hooks/useRedux';
 
 export function ScheduleManagement() {
@@ -11,7 +11,10 @@ export function ScheduleManagement() {
 
 	return (
 		<S.ScheduleManagementContainer>
-			<CalendarComponent isManagementPage={true} />
+			<S.CalenderSection>
+				<CheckboxGroup />
+				<CalendarComponent isManagementPage={true} />
+			</S.CalenderSection>
 			<ScheduleList />
 		</S.ScheduleManagementContainer>
 	);

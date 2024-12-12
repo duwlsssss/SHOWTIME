@@ -1,45 +1,36 @@
-import { fiteredCalendar } from '@/constants/fiteredCalendar';
-import CheckboxItem from './CheckboxItem';
 import styled from 'styled-components';
+import CheckboxItem from './CheckboxItem';
+import { SCHEDULE_FILTER_CATEGORY_LABEL, TScheduleCategory } from '@/types/schedule';
 
-const CheckboxGroup = () => {
-	const categoryMap = {
-		매표: 'ticket',
-		매점: 'snack',
-		플로어: 'floor',
-	} as const;
-
+export const CheckboxGroup = () => {
 	return (
 		<CheckboxContiner>
 			<h3>카테고리</h3>
 			<CheckboxUL>
-				{Object.entries(fiteredCalendar).map(([key, value]) => (
-					<>
-						{/* <CheckboxItem item={value} key={key} /> */}
-						{/* 빌드 오류로 CheckboxItem 컴포넌트 호출 부분 수정 */}
-						<CheckboxItem item={categoryMap[value]} key={key} />
-					</>
+				{Object.entries(SCHEDULE_FILTER_CATEGORY_LABEL).map(([key, value]) => (
+					<CheckboxItem item={value} categoryKey={key as TScheduleCategory} key={key} />
 				))}
 			</CheckboxUL>
 		</CheckboxContiner>
 	);
 };
 
-export default CheckboxGroup;
-
 const CheckboxContiner = styled.div`
 	display: flex;
 	flex-direction: column;
-	font-size: 20px;
+	padding: var(--space-large) var(--space-xlarge) var(--space-large) var(--space-medium);
+	gap: var(--space-large);
+	white-space: nowrap;
+	overflow-y: auto;
 
-	justify-content: center;
-	width: 400px;
+	h3 {
+		font-size: var(--font-medium);
+		font-weight: 700;
+	}
 `;
 
 const CheckboxUL = styled.ul`
 	display: flex;
 	flex-direction: column;
-	justify-content: space-between;
-
-	margin-top: 20px;
+	gap: var(--space-small);
 `;

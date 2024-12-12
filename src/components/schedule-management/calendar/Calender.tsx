@@ -1,12 +1,12 @@
 import { useEffect } from 'react';
 import * as S from './Calendar.styles';
-import { TSchedule, CalendarComponentProps, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
+import { TSchedule, TCalendarComponentProps, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
 import useIsAdmin from '@/hooks/useIsAdmin';
 import { getSchedulesFromSupabase, selectDate } from '@/redux/actions/scheduleActions';
 import { formatCalendarDay } from '@/utils/dateFormatter';
 
-export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) => {
+export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps) => {
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
@@ -18,11 +18,6 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 	// }, [modalState]);
 
 	const isAdmin = useIsAdmin();
-
-	// 디버깅용
-	useEffect(() => {
-		console.log('isManagementPage:', isManagementPage);
-	}, [isManagementPage]);
 
 	// supabase에서 스케줄 가져오기
 	const init = async () => {
@@ -39,6 +34,11 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 
 	// 클릭한 날짜 필터링
 	const handleDateClick = (date: Date) => {
+		if (!isManagementPage) {
+			// 홈 페이지면 오늘 날짜로 한 번만 설정
+			dispatch(selectDate(new Date()));
+			return;
+		}
 		dispatch(selectDate(date));
 	};
 
@@ -71,8 +71,7 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 	};
 
 	return (
-		<S.CalenderContainer>
-			{/* <div className="calener-category">카테고리 체크</div> */}
+		<S.CalenderWrapper $isManagementPage={isManagementPage ?? false}>
 			<S.StyledCalendar
 				locale="ko-KR"
 				onClickDay={handleDateClick}
@@ -83,7 +82,8 @@ export const CalendarComponent = ({ isManagementPage }: CalendarComponentProps) 
 				prev2Label={null} /* 년 단위 이동 없앰 */
 				next2Label={null} /* 년 단위 이동 없앰 */
 				tileContent={tileContent}
+				$isManagementPage={isManagementPage ?? false}
 			/>
-		</S.CalenderContainer>
+		</S.CalenderWrapper>
 	);
 };

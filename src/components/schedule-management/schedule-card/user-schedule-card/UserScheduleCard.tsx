@@ -1,9 +1,9 @@
 import * as S from './UserScheduleCard.styles';
-import { UserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
+import { TUserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
 import { ConfirmModal, ModalPortal, ScheduleModal } from '@/components';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import useScheduleManage from '@/hooks/useScheduleManage';
-import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
+import { setSelectedSchedule, setfilterCategory } from '@/redux/actions/scheduleActions';
 import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
@@ -11,7 +11,7 @@ import {
 import { isSameDay, formatTime } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
-export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardProps) => {
+export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCardProps) => {
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
@@ -40,6 +40,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 	const handleEditIconClick = (schedule: TSchedule) => {
 		dispatch(setSelectedSchedule(schedule));
 		dispatch(setIsScheduleEditModalOpen(true));
+		dispatch(setfilterCategory('')); // 카테고리 필터 해제
 	};
 
 	const handleDeleteIconClick = async (schedule: TSchedule) => {
@@ -53,6 +54,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: UserScheduleCardP
 		} else {
 			await handleDeleteSchedule(schedule, false); // 하나면 그냥 삭제
 		}
+		dispatch(setfilterCategory('')); // 카테고리 필터 해제
 	};
 
 	const handleConfirmDelete = async (deleteAll: boolean) => {

@@ -3,9 +3,8 @@ import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import * as S from '@/components/login/Login.styles';
 import { auth } from '@/firebaseConfig';
 import { LoginFormData, LoginFormErrors } from '@/types/login';
-// import { User } from '@/types/auth';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { clearUser } from '@/redux/actions/userAction';
+import { clearUser } from '@/redux/actions/userActions';
 import { validateLoginForm, getAuthErrorMessage } from '@/components/login/LoginValidation';
 import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
 import { Loading } from '@/components';
@@ -22,6 +21,7 @@ export function LoginForm() {
 	const { user, isAuthInitialized } = useAppSelector((state) => state.user);
 
 	// 파이어베이스 auth 상태 변경 감지 -> 로그인 상태 확인
+	useLoginAuthObserver();
 	useLoginAuthObserver();
 
 	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -63,6 +63,7 @@ export function LoginForm() {
 
 		try {
 			await signInWithEmailAndPassword(auth, formData.email, formData.password);
+			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
 		} catch (error) {
 			const errorMessage = getAuthErrorMessage();

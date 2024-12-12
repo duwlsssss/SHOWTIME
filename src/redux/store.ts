@@ -1,12 +1,12 @@
+import { TSchedule } from '@/types/schedule';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { thunk, ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { AnyAction } from 'redux';
+import { thunk, ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { createTransform, persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import userReducer from './reducers/userReducer';
 import modalReducer from './reducers/modalReducer';
 import scheduleReducer from './reducers/scheduleReducer';
-import { TSchedule } from '@/types/schedule';
 import adminUserIdReducer from './reducers/adminUserIdReducer';
 import employeeReducer from './reducers/employeeReducer';
 

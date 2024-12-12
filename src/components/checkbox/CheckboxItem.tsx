@@ -1,16 +1,50 @@
 import styled from 'styled-components';
+import { TScheduleCategory, categoryColors } from '@/types/schedule';
+import useIsAdmin from '@/hooks/useIsAdmin';
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { getSchedulesFromSupabase, setfilterCategory } from '@/redux/actions/scheduleActions';
 
-interface CheckboxItemProps {
-	item: 'ticket' | 'snack' | 'floor';
+interface TCheckboxItemProps {
+	categoryKey: TScheduleCategory;
+	item: string;
 }
 
-const CheckboxItem = ({ item }: CheckboxItemProps) => {
+const CheckboxItem = ({ categoryKey, item }: TCheckboxItemProps) => {
+	const dispatch = useAppDispatch();
+	const user = useAppSelector((state) => state.user.user);
+	const filterCategoryKey = useAppSelector((state) => state.schedule.filterCategoryKey);
+	const isAdmin = useIsAdmin();
+	const userId = user?.id;
+
+	const handleFilteredClick = (e: React.ChangeEvent<HTMLInputElement>) => {
+		const id = e.target.id as TScheduleCategory;
+		dispatch(setfilterCategory(id));
+		positionFilteredSchedules({ isAdmin, userId, id });
+	};
+
+	const positionFilteredSchedules = ({
+		isAdmin,
+		userId,
+		id,
+	}: {
+		isAdmin: boolean;
+		userId?: string;
+		id: TScheduleCategory;
+	}) => {
+		dispatch(getSchedulesFromSupabase(isAdmin ? undefined : userId, id === '' ? undefined : id));
+	};
+
 	return (
-		<ListItem>
+		<ListItem key={categoryKey}>
 			<Label htmlFor={item}>
-				<HiddenCheckbox id={item} type="checkbox" />
-				<CustomCheckbox />
-				<CheckboxText>{item}</CheckboxText>
+				<RadioInput
+					type="radio"
+					name="option"
+					id={categoryKey}
+					onChange={(e) => handleFilteredClick(e)}
+					checked={filterCategoryKey === categoryKey}
+				/>
+				<RadioText>{item}</RadioText>
 			</Label>
 		</ListItem>
 	);
@@ -21,56 +55,32 @@ export default CheckboxItem;
 const ListItem = styled.li`
 	list-style: none;
 	margin-bottom: 8px;
-
 	display: flex;
-	&:nth-child(3) {
-		display: block;
-		border-bottom: 1px solid black;
-		padding-bottom: 10px;
-		width: 100px;
-	}
-	&:nth-child(4) {
-		margin-top: 10px;
-	}
+	align-items: center;
 `;
 
 const Label = styled.label`
 	display: flex;
 	align-items: center;
-	cursor: pointer;
+	gap: 10px;
 `;
 
-const HiddenCheckbox = styled.input.attrs({ type: 'checkbox' })`
-	display: none;
-`;
-
-const CustomCheckbox = styled.div`
-	width: 20px;
-	height: 20px;
+const RadioInput = styled.input.attrs({ type: 'radio' })`
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	width: 18px;
+	height: 18px;
 	border: 2px solid #ccc;
-	border-radius: 4px;
-	margin-right: 8px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background-color: transparent;
-	transition: all 0.2s ease;
-
-	${HiddenCheckbox}:checked + & {
-		border-color: var(--color-green);
-		background-color: var(--color-green);
-		&::after {
-			content: '';
-			display: block;
-			width: 5px;
-			height: 10px;
-			border: solid white;
-			border-width: 0 2px 2px 0;
-			transform: rotate(45deg);
-		}
+	border-radius: 50%;
+	outline: none;
+	cursor: pointer;
+	margin-bottom: 3px;
+	&:checked {
+		background-color: ${(props) => categoryColors[props.id as TScheduleCategory]};
 	}
 `;
 
-const CheckboxText = styled.span`
-	font-size: 16px;
+const RadioText = styled.span`
+	font-size: var(--font-medium);
 `;

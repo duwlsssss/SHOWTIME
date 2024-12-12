@@ -1,5 +1,5 @@
 import { AppThunk } from '@/redux/store';
-import { TScheduleApiResponse, TSchedule } from '@/types/schedule';
+import { TScheduleApiResponse, TSchedule, TScheduleCategory } from '@/types/schedule';
 import {
 	GET_SCHEDULES,
 	ADD_SCHEDULES,
@@ -10,6 +10,7 @@ import {
 	SET_LOADING, // suspanse로 바꿔야함
 	SET_SELECTED_SCHEDULE,
 	CLEAR_SCHEDULES,
+	SET_FILTER_CATEGORY,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
 
@@ -58,6 +59,11 @@ export const filterSchedules = (schedules: TSchedule[]) => ({
 	payload: schedules,
 });
 
+export const setfilterCategory = (filterCategoryKey: TScheduleCategory) => ({
+	type: SET_FILTER_CATEGORY,
+	payload: filterCategoryKey,
+});
+
 // Supabase에 스케줄 추가
 export const addScheduleToSupabase = (
 	userId: string,
@@ -104,16 +110,20 @@ export const addScheduleToSupabase = (
 // Supabase에서 스케줄 조회
 export const getSchedulesFromSupabase = (
 	userId?: string,
+	value?: string,
 ): AppThunk<Promise<TScheduleApiResponse<void>>> => {
 	return async (dispatch): Promise<TScheduleApiResponse<void>> => {
 		try {
 			let query = supabase.from('schedules').select('*');
+
+			if (value) {
+				query = query.or(`category.like.${value}%`);
+			}
+
 			if (userId) {
 				query = query.eq('user_id', userId);
 			}
-
 			const { data, error } = await query;
-
 			if (error) throw error;
 
 			const convertedSchedules = data.map((schedule) => ({
