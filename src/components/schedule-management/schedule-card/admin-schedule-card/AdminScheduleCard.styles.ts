@@ -5,7 +5,6 @@ import { TScheduleCategory } from '@/types/schedule';
 export const ScheduleCardContainer = styled.div<{ $category: TScheduleCategory }>`
 	position: relative;
 	padding: 10px;
-	border-radius: 8px;
 	margin-bottom: 10px;
 	display: flex;
 	flex-direction: column;
@@ -19,14 +18,13 @@ export const ScheduleCardContainer = styled.div<{ $category: TScheduleCategory }
 		left: 0;
 		top: 0;
 		bottom: 0;
-		width: 4px;
+		width: 2px;
 		background-color: ${({ $category }) =>
 			$category === 'ticket'
 				? 'var(--color-blue)'
 				: $category === 'snack'
 					? 'var(--color-caramel)'
 					: 'var(--color-coral)'};
-		border-radius: 4px 0 0 4px; /* 둥근 모서리 */
 	}
 `;
 

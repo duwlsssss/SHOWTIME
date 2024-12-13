@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import { TScheduleCategory, categoryColors } from '@/types/schedule';
 import useIsAdmin from '@/hooks/useIsAdmin';
+import useFiltereSchedulesByCategory from '@/hooks/useFiltereSchedulesByCategory';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
-import { getSchedulesFromSupabase, setfilterCategory } from '@/redux/actions/scheduleActions';
+import { setfilterCategory } from '@/redux/actions/scheduleActions';
 
 interface TCheckboxItemProps {
 	categoryKey: TScheduleCategory;
@@ -18,21 +19,11 @@ const CheckboxItem = ({ categoryKey, item }: TCheckboxItemProps) => {
 
 	const handleFilteredClick = (e: React.ChangeEvent<HTMLInputElement>) => {
 		const id = e.target.id as TScheduleCategory;
-		dispatch(setfilterCategory(id));
-		positionFilteredSchedules({ isAdmin, userId, id });
+		dispatch(setfilterCategory(id)); // filterCategoryKey 변경
 	};
 
-	const positionFilteredSchedules = ({
-		isAdmin,
-		userId,
-		id,
-	}: {
-		isAdmin: boolean;
-		userId?: string;
-		id: TScheduleCategory;
-	}) => {
-		dispatch(getSchedulesFromSupabase(isAdmin ? undefined : userId, id === '' ? undefined : id));
-	};
+	// filterCategoryKey 변화에 따라 스케줄 필터링
+	useFiltereSchedulesByCategory({ isAdmin, userId, filterCategoryKey });
 
 	return (
 		<ListItem key={categoryKey}>

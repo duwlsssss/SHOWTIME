@@ -18,10 +18,9 @@ export const ModalOverlay = styled.div`
 
 export const ModalContent = styled.form`
 	background: white;
+	width: 40vw;
 	padding: var(--space-large);
 	border-radius: var(--small-border-radius);
-	width: 500px;
-	height: 430px;
 	display: flex;
 	flex-direction: column;
 	gap: var(--space-medium);
@@ -56,21 +55,17 @@ export const SearchInputContainer = styled.div`
 `;
 
 export const InputWrapper = styled.div`
-	position: relative; /* 부모 요소가 새로운 스택 컨텍스트를 형성 */
-`;
-
-export const SearchIcon = styled.div`
-	font-size: var(--font-large);
-	cursor: pointer;
+	position: relative;
 `;
 
 export const ModalSearchInput = styled(Input)`
-	width: 300px;
+	width: 200px;
 `;
 
 export const ErrorMessage = styled.p`
 	position: absolute;
 	margin-top: var(--space-xsmall);
+	word-break: keep-all;
 	font-size: var(--font-small);
 	color: var(--color-coral-dark);
 `;
@@ -83,7 +78,6 @@ export const ModalScheduleDateInput = styled.div`
 
 export const DateTimeInput = styled(Input)`
 	border: none;
-	font-size: 14px;
 	&:focus {
 		border: none;
 		outline: none;
@@ -114,8 +108,8 @@ export const ModalToggleContainer = styled.div`
 	display: flex;
 	align-items: center;
 	gap: var(--space-medium);
-	margin: var(--space-medium) 0;
-	min-height: 30px;
+	height: 100px;
+	overflow: hidden;
 `;
 
 export const StyledSelect = styled.select<{ $error?: boolean }>`
@@ -182,17 +176,43 @@ export const ButtonContainer = styled.div`
 	align-self: flex-end;
 `;
 
-export const SearchList = styled.div<{ $searchListOpen: boolean }>`
-	display: ${({ $searchListOpen }) => (!$searchListOpen ? 'flex' : 'none')};
+export const SearchList = styled.div<{ $searchListOpen: boolean; $isEmpty: boolean }>`
+	display: ${({ $searchListOpen }) => ($searchListOpen ? 'flex' : 'none')};
 	flex-direction: column;
-	border-radius: 10px;
-	background-color: white;
-	z-index: 10;
+	border-radius: var(--small-border-radius);
+	background-color: var(--color-pale-gray);
+	z-index: 1;
 	position: absolute;
 	top: 100%;
 	left: 0;
 	width: 100%;
-	gap: 0.4rem;
-	height: 100px;
-	overflow-y: scroll;
+	max-height: 110px;
+	height: ${({ $isEmpty }) => $isEmpty && '110px'}; /* 검색 결과 없을때만 높이 설정 */
+
+	/* 스크롤바 */
+	overflow-y: auto;
+	/* 스크롤바 전체 */
+	&::-webkit-scrollbar {
+		width: 5px; /* 세로축 스크롤바 폭 너비 */
+		height: 5px; /* 가로축 스크롤바 폭 너비 */
+	}
+	/* 스크롤바 막대 */
+	&::-webkit-scrollbar-thumb {
+		background: var(--color-light-gray);
+		border-radius: var(--small-border-radius);
+	}
+	/* 스크롤바 트랙 */
+	&::-webkit-scrollbar-track {
+		background: var(--color-pale-gray);
+	}
+`;
+
+export const NoSearchResultText = styled.p`
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+	color: var(--color-regular-gray);
+	white-space: nowrap;
 `;

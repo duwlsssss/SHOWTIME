@@ -1,6 +1,5 @@
 import * as S from './UserScheduleCard.styles';
 import { TUserScheduleCardProps, SCHEDULE_CATEGORY_LABELS, TSchedule } from '@/types/schedule';
-import { ConfirmModal, ModalPortal, ScheduleModal } from '@/components';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import useScheduleManage from '@/hooks/useScheduleManage';
 import { setSelectedSchedule, setfilterCategory } from '@/redux/actions/scheduleActions';
@@ -16,12 +15,6 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const user = useAppSelector((state) => state.user.user);
-	const isScheduleEditModalOpen = useAppSelector((state) => state.modal.isScheduleEditModalOpen);
-	const isScheduleDeleteModalOpen = useAppSelector(
-		(state) => state.modal.isScheduleDeleteModalOpen,
-	);
-	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
-
 	const userId = user?.id;
 
 	const { handleDeleteSchedule } = useScheduleManage(userId ?? null, schedules);
@@ -57,18 +50,6 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 		dispatch(setfilterCategory('')); // 카테고리 필터 해제
 	};
 
-	const handleConfirmDelete = async (deleteAll: boolean) => {
-		try {
-			if (!selectedSchedule) return;
-
-			await handleDeleteSchedule(selectedSchedule, deleteAll);
-			dispatch(setIsScheduleDeleteModalOpen(false));
-			dispatch(setSelectedSchedule(null)); // 선택된 스케줄 초기화
-		} catch (error) {
-			console.error('스케줄 삭제 실패:', error);
-		}
-	};
-
 	return (
 		<>
 			<S.ScheduleCardContainer>
@@ -102,24 +83,6 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 					<S.TimeTextDown>{endTime}</S.TimeTextDown>
 				</S.TimeContainerDown>
 			</S.ScheduleCardContainer>
-			{isScheduleEditModalOpen && <ScheduleModal type="scheduleUser" mode="edit" />}
-			{isScheduleDeleteModalOpen && (
-				<ModalPortal>
-					<ConfirmModal
-						onClose={() => {
-							dispatch(setIsScheduleDeleteModalOpen(false));
-						}}
-						message={{
-							confirm: '반복되는 일정을 모두 삭제하시겠습니까?',
-							leftBtn: '모두 삭제',
-							rightBtn: '이 일정만 삭제',
-						}}
-						color={'red'}
-						onClickLeftBtn={() => handleConfirmDelete(true)}
-						onClickRightBtn={() => handleConfirmDelete(false)}
-					/>
-				</ModalPortal>
-			)}
 		</>
 	);
 };

@@ -1,22 +1,21 @@
 import { ADMIN_GET_EMPLOYEE } from '../actionTypes';
-import { TScheduleState } from '@/types/schedule';
+import { TSchedule } from '@/types/schedule';
 import { AnyAction } from 'redux';
 
-const initialState: TScheduleState = {
+const initialState = {
 	schedules: [],
-	selectedDate: new Date(),
-	filteredSchedules: [],
-	isLoading: false,
-	selectedSchedule: null,
 };
 
-export default function employeeReducer(
-	state: TScheduleState = initialState,
-	action: AnyAction,
-): TScheduleState {
+export default function employeeReducer(state = initialState, action: AnyAction) {
 	switch (action.type) {
 		case ADMIN_GET_EMPLOYEE: {
-			return { ...state, schedules: [...action.payload], isLoading: false };
+			const newSchedules: TSchedule[] = action.payload;
+
+			const updatedSchedules = newSchedules.filter(
+				(schedule, index, self) => index === self.findIndex((s) => s.user_id === schedule.user_id),
+			); // ✅ 회원가입 로직 수정 후(같은 이름, 별명 못 입력) 중복 검사 삭제 필요 -
+
+			return { ...state, schedules: updatedSchedules };
 		}
 
 		default:

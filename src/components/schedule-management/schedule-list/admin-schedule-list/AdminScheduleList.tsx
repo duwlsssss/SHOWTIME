@@ -39,7 +39,7 @@ export const AdminScheduleList = () => {
 						))}
 					</ul>
 				) : (
-					<p>오늘은 쉬는 날 😚</p>
+					<p>오늘은 업무가 있는 직원이 없어요</p>
 				)}
 				<ScheduleAddButton
 					className="schedule-add-button"

@@ -1,7 +1,8 @@
 import { TSchedule } from '@/types/schedule';
 import { isSameDay } from './dateFormatter';
 
-// 데이터 가져올때 - 시작, 끝나는 시간 체크, 시작시간으로 정렬
+// 데이터 필터링
+// 시작, 끝나는 시간 체크, 시작시간으로 정렬
 export function filterSchedulesByDateAndSort(
 	schedules: TSchedule[],
 	selectedDate: Date,

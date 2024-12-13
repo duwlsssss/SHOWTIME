@@ -1,13 +1,12 @@
 import { TSchedule } from '@/types/schedule';
 import { applyMiddleware, combineReducers, createStore } from 'redux';
-import { AnyAction } from 'redux';
+import { AnyAction, Reducer } from 'redux';
 import { thunk, ThunkAction, ThunkDispatch } from 'redux-thunk';
 import { createTransform, persistStore, persistReducer } from 'redux-persist';
 import storage from 'redux-persist/lib/storage';
 import userReducer from './reducers/userReducer';
 import modalReducer from './reducers/modalReducer';
 import scheduleReducer from './reducers/scheduleReducer';
-import adminUserIdReducer from './reducers/adminUserIdReducer';
 import employeeReducer from './reducers/employeeReducer';
 
 const dateTransform = createTransform(
@@ -38,7 +37,7 @@ const dateTransform = createTransform(
 const persistConfig = {
 	key: 'root',
 	storage,
-	whitelist: ['user', 'modal', 'schedule', 'employee', 'adminSearchUserId'],
+	whitelist: ['user', 'modal', 'schedule', 'employee'],
 	transforms: [dateTransform],
 };
 
@@ -47,12 +46,14 @@ const rootReducer = combineReducers({
 	modal: modalReducer,
 	schedule: scheduleReducer,
 	employee: employeeReducer,
-	adminSearchUserId: adminUserIdReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
 
-const persistedReducer = persistReducer<RootState>(persistConfig, rootReducer);
+const persistedReducer = persistReducer<RootState>(
+	persistConfig,
+	rootReducer as Reducer<RootState, AnyAction>,
+);
 
 export const store = createStore(persistedReducer, applyMiddleware(thunk));
 export const persistor = persistStore(store);

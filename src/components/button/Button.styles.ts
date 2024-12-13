@@ -11,7 +11,7 @@ export const StyledButton = styled.button<{ $padding?: string; $color?: string; 
 	&:disabled {
 		cursor: not-allowed;
 		color: var(--color-white);
-		border: none;
+		border: 2px solid var(--color-regular-gray);
 		background-color: var(--color-regular-gray);
 		&:hover {
 			background-color: var(--color-regular-gray);

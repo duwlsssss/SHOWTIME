@@ -155,3 +155,25 @@ export const PayrollTitle = styled.h3`
 	font-size: var(--font-medium);
 	font-weight: bold;
 `;
+
+export const SalaryManageList = styled.div`
+	padding: var(--space-large) var(--space-medium);
+`;
+
+export const SalaryManageContent = styled.div`
+	border-radius: var(--large-border-radius);
+	font-weight: 700;
+	padding: var(--space-medium);
+	display: flex;
+	justify-content: space-evenly;
+	margin-top: var(--space-medium);
+	border: 3px solid var(--color-blue);
+
+	&:first-child {
+		margin-top: 0;
+	}
+
+	&:hover {
+		cursor: pointer;
+	}
+`;

@@ -1,16 +1,22 @@
 import * as S from './Navbar.styles';
-import { Link } from 'react-router-dom';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/firebaseConfig';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { persistor } from '@/redux/store';
-import { clearSchedules } from '@/redux//actions/scheduleActions';
+import { clearSchedules } from '@/redux/actions/scheduleActions';
 import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
+import { NavbarItem } from './NavbarItem';
+import { useState } from 'react';
 
+type MenuItem = {
+	path: string;
+	label: string;
+	onClick?: () => void;
+};
 export function Navbar() {
 	const dispatch = useAppDispatch();
 	const user = useAppSelector((state) => state.user.user);
-
+	const [activePath, setActivePath] = useState<string>(window.location.pathname);
 	useLoginAuthObserver();
 
 	const handleLogout = async () => {
@@ -19,28 +25,42 @@ export function Navbar() {
 			dispatch(clearSchedules()); // Redux 상태 초기화
 			await signOut(auth);
 		} catch (error) {
-			console.error('로그아웃 에러:', error);
+			console.error('로그아웃 중 오류가 발생했습니다:', error);
 		}
 	};
 
+	const guestMenu: MenuItem[] = [
+		{ path: '/register', label: '회원가입' },
+		{ path: '/login', label: '로그인' },
+	];
+
+	const userMenu: MenuItem[] = [
+		{ path: '/', label: '홈' },
+		{ path: '/salary-details', label: '급여 내역' },
+		{ path: '/schedule-management', label: '일정 관리' },
+		{ path: '/profile', label: '프로필' },
+		{ path: '#', label: '로그아웃', onClick: handleLogout },
+	];
+
+	const menus = user ? userMenu : guestMenu;
+
+	const handleMenuClick = (path: string) => {
+		setActivePath(path);
+	};
 	return (
 		<S.NavContainer>
-			<Link to={user ? '/' : '/login'}>홈</Link>
-			{user ? (
-				<>
-					<Link to="/salary-details">급여 내역</Link>
-					<Link to="/schedule-management">일정 관리</Link>
-					<Link to="/profile">프로필</Link>
-					<Link to="#" onClick={handleLogout}>
-						로그아웃
-					</Link>
-				</>
-			) : (
-				<>
-					<Link to="/register">회원가입</Link>
-					<Link to="/login">로그인</Link>
-				</>
-			)}
+			{menus.map(({ path, label, onClick }) => (
+				<NavbarItem
+					key={path}
+					url={path}
+					onClick={() => {
+						handleMenuClick(path);
+						if (onClick) onClick();
+					}}
+					label={label}
+					isActive={activePath === path}
+				/>
+			))}
 		</S.NavContainer>
 	);
 }
