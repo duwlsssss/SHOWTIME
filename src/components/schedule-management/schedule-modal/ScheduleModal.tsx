@@ -23,10 +23,10 @@ import { getAdminEmployeeSchedules } from '@/redux/actions/employeeActions';
 import { Toggle } from '../../toggle/Toggle';
 import { Button } from '../../button/Button';
 import { ModalPortal, ConfirmModal } from '@/components';
-import SearchEmplyeeList from '@/components/search/SearchEmplyeeList';
+import SearchEmployeeList from '@/components/schedule-management/search/SearchEmployeeList';
 import useScheduleManage from '@/hooks/useScheduleManage';
 import useDebounce from '@/hooks/useDebounce';
-import { formatDate, formatDateTime } from '@/utils/dateFormatter';
+import { formatDate, formatDateTime, fixMinute } from '@/utils/dateFormatter';
 import calculateScheduleShiftType from '@/utils/calculateScheduleShiftType';
 import calculateEndDateTime from '@/utils/calculateEndDateTime';
 import generateRepeatingSchedules from '@/utils/generateRepeatingSchedules';
@@ -35,28 +35,35 @@ import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const [isRepeatActive, setIsRepeatActive] = useState<boolean>(false); // 토글 상태
 	const [pendingScheduleData, setPendingScheduleData] = useState<TSchedule | null>(null); // 수정할 데이터
-	const [searchListOpen, setSearchListOpen] = useState<boolean>(true);
+	const [searchListOpen, setSearchListOpen] = useState<boolean>(false);
 	const [searchTerm, setSearchTerm] = useState<string>('');
-
+	const [searchUserId, setSearchUserId] = useState<string>('');
 	const dispatch = useAppDispatch();
+
+	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
+	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
+	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
+	const employeeSchedules = useAppSelector((state) => state.employee.schedules);
+
+	// 관리자에서 searchUserId로 사용자 이름, 별명 추출
+	const getUserDetailsById = (searchUserId: string) => {
+		if (!employeeSchedules || employeeSchedules.length === 0) return null;
+		return employeeSchedules.find((employee) => employee.user_id === searchUserId);
+	};
 
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
-	const userName = user?.userName;
-	const userAlias = user?.userAlias;
+	const selectedEmployee =
+		type === 'scheduleAdmin' && searchUserId ? getUserDetailsById(searchUserId) : null;
+	const userName = type === 'scheduleAdmin' ? selectedEmployee?.user_name : user?.userName;
+	const userAlias = type === 'scheduleAdmin' ? selectedEmployee?.user_alias : user?.userAlias;
 	const schedules = useAppSelector((state) => state.schedule.schedules);
-	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
-	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
-	const employeeSchedules = useAppSelector((state) => state.employee.schedules);
-	const searchUserId = useAppSelector((state) => state.adminSearchUserId);
-	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
 
-	const debounce = useDebounce(searchTerm, 800);
-
+	const debouncedSearchTerm = useDebounce(searchTerm, 200);
 	const searchRef = useRef<HTMLDivElement | null>(null);
 
 	const getUserIdToSend = () => {
-		return type === 'scheduleAdmin' && mode === 'add' ? searchUserId : userId;
+		return (type === 'scheduleAdmin' && mode === 'add' ? searchUserId : userId) ?? '';
 	};
 
 	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(getUserIdToSend(), schedules);
@@ -72,8 +79,9 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		resolver: zodResolver(scheduleSchema),
 		mode: 'onChange',
 		defaultValues: {
+			// type === 'scheduleAdmin' && mode === 'add' && user_id: '',
 			category: '',
-			start_date_time: formatDateTime(new Date(selectedDate)),
+			start_date_time: fixMinute(formatDateTime(new Date(selectedDate))),
 			time: '',
 			repeat: undefined,
 			repeat_end_date: undefined,
@@ -100,7 +108,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		isRepeatActive &&
 		repeatEndDate &&
 		startDateTime &&
-		new Date(repeatEndDate) < new Date(startDateTime)
+		new Date(repeatEndDate).setHours(0, 0, 0, 0) < new Date(startDateTime).setHours(0, 0, 0, 0)
 			? '반복 종료일은 시작일 이후여야 합니다'
 			: null;
 
@@ -111,6 +119,8 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	// 	noneRepeatCycleError: noneRepeatCycleError,
 	// 	noneEndDateError: noneEndDateError,
 	// 	repeatEndDateError: repeatEndDateError,
+	// 	repeatEndDate: repeatEndDate ? new Date(repeatEndDate) : '',
+	// 	startDateTime: new Date(startDateTime),
 	// 	isSubmitting: isSubmitting,
 	// 	data: watch(),
 	// 	currentUser: user,
@@ -118,13 +128,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 
 	// 날짜 선택시 분을 00으로 초기화
 	const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		const value = e.target.value;
-		if (value) {
-			const [date, time] = value.split('T');
-			const [hours] = time.split(':');
-			const fixedValue = `${date}T${hours}:00`; // 분을 '00'으로 고정
-			e.target.value = fixedValue; // 값 수정
-		}
+		e.target.value = fixMinute(e.target.value);
 	};
 
 	// edit 모드일때 초기값 설정
@@ -134,7 +138,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 			// datetime-local input을 위한 날짜 포맷팅
 			setValue('start_date_time', formatDateTime(new Date(selectedSchedule.start_date_time)));
 			setValue('time', selectedSchedule.time);
-			setValue('description', selectedSchedule.description || '');
+			setValue('description', selectedSchedule.description ?? '');
 			if (selectedSchedule.repeat && selectedSchedule.repeat_end_date) {
 				setIsRepeatActive(true);
 				// date input을 위한 날짜 포맷팅
@@ -236,38 +240,43 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 			repeatEndDateError ||
 			userIdError,
 	);
+
+	// 직원 검색
 	const handleEmployeeSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 		setSearchTerm(e.target.value);
 	};
 
-	const handleEmplyoeeSearhClick = () => {
-		dispatch(getAdminEmployeeSchedules(searchTerm));
-	};
+	useEffect(() => {
+		if (debouncedSearchTerm.length > 0) {
+			setSearchListOpen(true);
+			dispatch(getAdminEmployeeSchedules(debouncedSearchTerm));
+		} else {
+			setSearchListOpen(false);
+			dispatch(getAdminEmployeeSchedules(''));
+		}
+	}, [debouncedSearchTerm]);
 
 	const handleClickOutside = (event: MouseEvent) => {
 		if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-			setSearchListOpen(true);
+			setSearchListOpen(false);
 		}
 	};
+
+	// 디버깅용
+	// console.log('current Search', {
+	//   searchListOpen: searchListOpen,
+	// 	debouncedSearchTerm: debouncedSearchTerm,
+	// 	employeeSchedules: employeeSchedules,
+	// 	searchUserId: searchUserId,
+	// });
 
 	useEffect(() => {
 		document.addEventListener('click', handleClickOutside);
 		return () => {
-			document.removeEventListener('click', handleClickOutside); // 컴포넌트 언마운트 시 이벤트 리스너 제거
+			document.removeEventListener('click', handleClickOutside);
 		};
 	}, []);
 
-	useEffect(() => {
-		if (debounce) {
-			if (debounce.length > 0) {
-				setSearchListOpen(false);
-				dispatch(getAdminEmployeeSchedules(debounce));
-			} else {
-				dispatch(getAdminEmployeeSchedules(''));
-			}
-		}
-	}, [debounce]);
-	// console.log(searchListOpen);
 	return (
 		<ModalPortal>
 			{isConfirmModalOpen ? (
@@ -301,22 +310,34 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 											{...register('user_id')}
 											placeholder="이름이나 닉네임을 입력해주세요."
 											onChange={(e) => handleEmployeeSearchChange(e)}
+											error={touchedFields.user_id && errors.user_id ? true : undefined}
 										/>
-										<S.SearchList $searchListOpen={searchListOpen}>
-											{!searchListOpen &&
-												employeeSchedules.map((value) => (
-													<SearchEmplyeeList
-														schedulesItem={value}
-														key={value.schedule_id}
-														onSetSearchListOpen={setSearchListOpen}
-														onSetSearchTerm={setSearchTerm}
-													/>
-												))}
+										<S.SearchList
+											$searchListOpen={searchListOpen}
+											$isEmpty={employeeSchedules.length === 0}
+										>
+											{searchListOpen ? (
+												employeeSchedules.length > 0 ? (
+													employeeSchedules.map((value) => (
+														<SearchEmployeeList
+															schedulesItem={value}
+															key={value.schedule_id}
+															onSetSearchListOpen={setSearchListOpen}
+															onSetSearchUserId={() => {
+																setSearchUserId(value.user_id);
+																setValue('user_id', value.user_name);
+															}}
+														/>
+													))
+												) : (
+													<S.NoSearchResultText>검색 결과가 없습니다.</S.NoSearchResultText>
+												)
+											) : null}
 										</S.SearchList>
-
-										{errors.user_id && <S.ErrorMessage>{errors.user_id.message}</S.ErrorMessage>}
+										{touchedFields.user_id && errors.user_id && (
+											<S.ErrorMessage>{errors.user_id.message}</S.ErrorMessage>
+										)}
 									</S.InputWrapper>
-									<S.SearchIcon onClick={() => handleEmplyoeeSearhClick}>🔍</S.SearchIcon>
 								</S.SearchInputContainer>
 							</>
 						)}
@@ -398,9 +419,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 										{touchedFields.repeat_end_date && noneEndDateError && (
 											<S.ErrorMessage>{noneEndDateError}</S.ErrorMessage>
 										)}
-										{touchedFields.repeat_end_date && repeatEndDateError && (
-											<S.ErrorMessage>{repeatEndDateError}</S.ErrorMessage>
-										)}
+										{repeatEndDateError && <S.ErrorMessage>{repeatEndDateError}</S.ErrorMessage>}
 									</S.InputWrapper>
 								</>
 							)}
@@ -418,7 +437,14 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 											{...register('category')}
 											value={value}
 										/>
-										<label htmlFor={value}>{label}</label>
+										<label
+											htmlFor={value}
+											onClick={(e) => {
+												e.preventDefault();
+											}}
+										>
+											{label}
+										</label>
 									</S.WorkLi>
 								))}
 							</S.WorkUl>

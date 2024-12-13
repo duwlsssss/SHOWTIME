@@ -8,7 +8,6 @@ import {
 	Profile,
 	SalaryManagement,
 	SalaryDetails,
-	CorrectionRequest,
 	ScheduleManagement,
 	NotFound,
 } from '../pages';
@@ -38,7 +37,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: '/salary-details',
+				path: '/salary-details', //사용자
 				element: (
 					<ProtectedRoute>
 						<SalaryDetails />
@@ -46,15 +45,7 @@ export const router = createBrowserRouter([
 				),
 			},
 			{
-				path: '/correction-request',
-				element: (
-					<ProtectedRoute>
-						<CorrectionRequest />
-					</ProtectedRoute>
-				),
-			},
-			{
-				path: '/schedule-management',
+				path: '/schedule-management', //관리자
 				element: (
 					<ProtectedRoute>
 						<ScheduleManagement />

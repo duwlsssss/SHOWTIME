@@ -1,4 +1,3 @@
-import { AppThunk } from '@/redux/store';
 import { TScheduleApiResponse, TSchedule, TScheduleCategory } from '@/types/schedule';
 import {
 	GET_SCHEDULES,
@@ -15,6 +14,7 @@ import {
 	SET_YEAR,
 } from '../actionTypes';
 import { supabase } from '../../../supabaseConfig';
+import { AppThunk } from '@/redux/store';
 
 // suspanse로 바꿔야함
 export const setisLoading = (isLoading: boolean) => ({

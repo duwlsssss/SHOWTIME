@@ -46,9 +46,6 @@ export function RegisterForm({ onSubmit, isSubmitting, submitError }: RegisterFo
 	return (
 		<S.RegisterContainer>
 			<S.LeftSection>
-				<S.Logo>
-					<img src="/logo.png" alt="로고" />
-				</S.Logo>
 				<S.WelcomeText>
 					<h1>환영합니다!</h1>
 					<p>Showtime 급여 및 일정 관리 사이트입니다.</p>

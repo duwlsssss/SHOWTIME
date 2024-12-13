@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import * as S from './Calendar.styles';
 import { TSchedule, TCalendarComponentProps, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
 import { useAppSelector, useAppDispatch } from '@/hooks/useRedux';
@@ -19,6 +20,14 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 	// }, [modalState]);
 
 	const isAdmin = useIsAdmin();
+
+	// 년, 월 초기 설정
+	useEffect(() => {
+		const year = selectedDate.getFullYear();
+		const month = selectedDate.getMonth() + 1;
+		dispatch(setYear(year));
+		dispatch(setMonth(month));
+	}, []);
 
 	// supabase에서 스케줄 가져오기
 	useFiltereSchedulesByCategory({ isAdmin, userId, filterCategoryKey });

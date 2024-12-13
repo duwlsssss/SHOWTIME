@@ -1,15 +1,14 @@
 import styled from 'styled-components';
 
 export const RegisterContainer = styled.main`
-	max-height: 88vh;
-	min-height: 88vh;
 	display: flex;
+	height: 100%;
 	background-color: var(--color-pale-gray);
 `;
 
 export const LeftSection = styled.div`
 	display: none;
-	width: 40%;
+	width: 50%;
 	background-color: var(--color-blue);
 	color: var(--color-white);
 	flex-direction: column;
@@ -42,7 +41,6 @@ export const RightSection = styled.div`
 	align-items: center;
 	justify-content: center;
 	position: relative;
-	background-color: var(--color-pale-gray);
 	min-height: 700px;
 
 	@media (min-width: 1024px) {

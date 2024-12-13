@@ -87,8 +87,12 @@ export function LoginForm() {
 					{user ? (
 						<>
 							<S.FormTitle>환영합니다</S.FormTitle>
-							<p>{user.email}</p>
-							<p>uid: {user.id}</p>
+							<S.UserInfo>
+								email: <S.StrongText>{user.email}</S.StrongText>
+							</S.UserInfo>
+							<S.UserInfo>
+								name: <S.StrongText>{user.userName}</S.StrongText>
+							</S.UserInfo>
 							<S.SubmitButton onClick={handleLogout}>로그아웃</S.SubmitButton>
 						</>
 					) : (

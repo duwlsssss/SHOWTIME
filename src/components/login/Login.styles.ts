@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const LoginContainer = styled.main`
-	min-height: 80vh;
+	height: 100%;
 	display: flex;
 	background-color: var(--color-pale-gray);
 `;
@@ -9,7 +9,6 @@ export const LoginContainer = styled.main`
 export const LeftSection = styled.div`
 	display: none;
 	width: 50%;
-	background-color: var(--color-pale-gray);
 	align-items: center;
 	justify-content: center;
 	overflow: hidden;
@@ -55,8 +54,8 @@ export const FormContainer = styled.div`
 export const FormTitle = styled.h1`
 	text-align: center;
 	font-size: var(--font-large);
-	font-weight: bold;
-	margin-bottom: var(--space-xlarge);
+	font-weight: 700;
+	margin-bottom: var(--space-large);
 `;
 
 export const FormField = styled.div`
@@ -118,27 +117,12 @@ export const SubmitButton = styled.button`
 	}
 `;
 
-export const Logo = styled.div`
-	margin-bottom: var(--space-large);
-
-	img {
-		width: 150px;
-		height: auto;
-	}
+export const UserInfo = styled.p`
+	text-align: center;
+	font-size: var(--font-large);
+	margin-bottom: var(--space-medium);
 `;
 
-export const WelcomeText = styled.div`
-	text-align: center;
-	margin-bottom: var(--space-large);
-
-	h1 {
-		font-size: var(--font-xlarge);
-		font-weight: bold;
-		margin-bottom: var(--space-medium);
-	}
-
-	p {
-		font-size: var(--font-medium);
-		opacity: 0.9;
-	}
+export const StrongText = styled.span`
+	font-weight: 700;
 `;

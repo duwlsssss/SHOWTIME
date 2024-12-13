@@ -50,3 +50,10 @@ export const isSameTime = (d1: Date, d2: Date): boolean => {
 export const isSameDay = (d1: Date, d2: Date): boolean => {
 	return formatDate(d1) === formatDate(d2);
 };
+
+// 분을 '00'으로 고정
+export const fixMinute = (value: string) => {
+	const [date, time] = value.split('T');
+	const [hours] = time.split(':');
+	return `${date}T${hours}:00`;
+};
