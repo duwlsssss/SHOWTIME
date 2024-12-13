@@ -7,6 +7,7 @@ import Pagination from '@/components/pagination/pagination';
 import SalarySelect from '@/components/salaryselect/SalarySelect';
 import { createClient } from '@supabase/supabase-js';
 import { TMessage } from '@/types/modal';
+import { useAppSelector } from '@/hooks/useRedux';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -231,8 +232,17 @@ export function SalaryManagement() {
 
 	const headerItems: string[] = ['신청인', '급여월', '급여지급일', '지급예정금액', '상태'];
 	const [attendanceRequestData, setAttendanceRequestData] = useState<ManageRowItem[]>([]);
-	const [selectedYear, setSelectedYear] = useState<string>('2024');
-	const [selectedMonth, setSelectedMonth] = useState<string>('01');
+
+	const year = useAppSelector((state) => state.schedule.year);
+	const month = useAppSelector((state) => state.schedule.month);
+	const now = new Date();
+
+	const [selectedYear, setSelectedYear] = useState<string>(
+		year.toString() || now.getFullYear().toString(),
+	);
+	const [selectedMonth, setSelectedMonth] = useState<string>(
+		month.toString() || now.getMonth().toString().padStart(2, '0'),
+	);
 
 	const handleSelectChange = (event) => {
 		setFormData({
