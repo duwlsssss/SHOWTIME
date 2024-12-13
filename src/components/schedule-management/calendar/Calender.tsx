@@ -6,7 +6,6 @@ import useFiltereSchedulesByCategory from '@/hooks/useFiltereSchedulesByCategory
 import useIsAdmin from '@/hooks/useIsAdmin';
 import { selectDate, setYear, setMonth } from '@/redux/actions/scheduleActions';
 import { formatCalendarDay } from '@/utils/dateFormatter';
-import { useEffect } from 'react';
 
 export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps) => {
 	const dispatch = useAppDispatch();

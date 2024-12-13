@@ -47,6 +47,7 @@ export function Navbar() {
 	const handleMenuClick = (path: string) => {
 		setActivePath(path);
 	};
+
 	return (
 		<S.NavContainer>
 			{menus.map(({ path, label, onClick }) => (
@@ -54,11 +55,11 @@ export function Navbar() {
 					key={path}
 					url={path}
 					onClick={() => {
-						handleMenuClick(path);
 						if (onClick) onClick();
+						handleMenuClick(path);
 					}}
 					label={label}
-					isActive={activePath === path}
+					$isActive={activePath === path}
 				/>
 			))}
 		</S.NavContainer>

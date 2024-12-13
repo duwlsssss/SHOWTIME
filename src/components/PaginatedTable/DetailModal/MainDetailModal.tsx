@@ -6,8 +6,8 @@ import { useAppSelector } from '@/hooks/useRedux';
 export default function MainDetailModal() {
 	const year = useAppSelector((state) => state.schedule.year);
 	const month = useAppSelector((state) => state.schedule.month);
-	console.log('전역 year', year);
-	console.log('전역 month', month);
+	// console.log('전역 year', year);
+	// console.log('전역 month', month);
 
 	const { rowItems: rowItems } = useSupabaseData();
 	const filteredYear = rowItems.filter((cur) => Number(cur.급여해) === year);
