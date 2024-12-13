@@ -43,9 +43,25 @@ export default function PaginatedTable() {
 	const { rowItems: rowItems } = useSupabaseData();
 
 	//정정신청가능/불가능 판별
+	// useEffect(() => {
+	// 	if (rowItems.length > 0) {
+	// 		const salaryDate = rowItems[Number(selectedMonth) - 1].급여지급일;
+	// 		console.log('급여지급일:', salaryDate);
+
+	// 		const supabaseDate = dayjs(salaryDate, 'YYYY-MM-DD');
+	// 		if (supabaseDate.isValid()) {
+	// 			const today = dayjs();
+	// 			const difference = supabaseDate.diff(today, 'day');
+	// 			setDiffInDays(difference);
+	// 		} else {
+	// 			console.error('유효하지 않은 날짜 형식:', salaryDate);
+	// 		}
+	// 	}
+	// }, [filteredItems]);
+
 	useEffect(() => {
-		if (rowItems.length > 0) {
-			const salaryDate = rowItems[Number(selectedMonth) - 1].급여지급일;
+		if (filteredItems.length > 0) {
+			const salaryDate = filteredItems[0].급여지급일;
 			console.log('급여지급일:', salaryDate);
 
 			const supabaseDate = dayjs(salaryDate, 'YYYY-MM-DD');
@@ -55,9 +71,12 @@ export default function PaginatedTable() {
 				setDiffInDays(difference);
 			} else {
 				console.error('유효하지 않은 날짜 형식:', salaryDate);
+				setDiffInDays(null);
 			}
+		} else {
+			setDiffInDays(null);
 		}
-	}, [rowItems, filteredItems]);
+	}, [filteredItems]);
 
 	const btnText =
 		diffInDays !== null ? (diffInDays >= -14 ? '정정신청' : '정정신청불가') : '정정신청불가';
@@ -73,7 +92,7 @@ export default function PaginatedTable() {
 	const endIndex = startIndex + itemsPerPage;
 	const paginatedData: RowItem[] = filteredItems.slice(startIndex, endIndex);
 
-	const totalPages = Math.ceil(paginatedData.length / itemsPerPage);
+	const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
 	//select로 데이터 필터해서 테이블에 데이터 띄울 훅
 	useEffect(() => {
@@ -104,31 +123,41 @@ export default function PaginatedTable() {
 					setSelectedMonth(value1);
 				}}
 			/>
-			<Table
-				data={paginatedData}
-				headerItems={headerItems}
-				btnContent={getBtnContent}
-				btnEdit={{
-					btnText: btnText,
-					btnColor: 'blue',
-					onClickBtn: () => openModal('edit'),
-				}}
-				condition={diffInDays}
-			>
-				{isModalOpen && (
-					<ModalPortal>
-						<Modal onClose={closeModal}>
-							{modalType === 'detail' && <DetailModal data={paginatedData[0]} />}
-							{modalType === 'edit' && <EditModal data={paginatedData[0] as RowItem} />}
-						</Modal>
-					</ModalPortal>
-				)}
-			</Table>
-			<Pagination
-				currentPage={currentPage}
-				totalPages={totalPages}
-				onPageChange={handlePageChange}
-			/>
+
+			{filteredItems.length > 0 ? (
+				<Table
+					data={paginatedData}
+					headerItems={headerItems}
+					btnContent={getBtnContent}
+					btnEdit={{
+						btnText: btnText,
+						btnColor: 'blue',
+						onClickBtn: () => openModal('edit'),
+					}}
+					condition={diffInDays}
+				>
+					{isModalOpen && (
+						<ModalPortal>
+							<Modal onClose={closeModal}>
+								{modalType === 'detail' && <DetailModal data={paginatedData[0]} />}
+								{modalType === 'edit' && <EditModal data={paginatedData[0] as RowItem} />}
+							</Modal>
+						</ModalPortal>
+					)}
+				</Table>
+			) : (
+				<p style={{ textAlign: 'center', marginTop: 40 }}>
+					해당 기간의 급여 내역이 존재하지 않습니다.
+				</p>
+			)}
+
+			{filteredItems.length > 0 && (
+				<Pagination
+					currentPage={currentPage}
+					totalPages={totalPages}
+					onPageChange={handlePageChange}
+				/>
+			)}
 		</>
 	);
 }
