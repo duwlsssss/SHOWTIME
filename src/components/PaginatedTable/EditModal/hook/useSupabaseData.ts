@@ -15,6 +15,7 @@ type RowItem = {
 	지급총액: string;
 	실지급액: string;
 	보험공제: string;
+	세금공제: string;
 };
 
 export default function useSupabaseData() {
@@ -37,7 +38,8 @@ export default function useSupabaseData() {
 					지급총액: item.base_salary,
 					실지급액: item.total_salary,
 					이름: item.user_name,
-					보험공제: item.tax_deduction,
+					세금공제: item.tax_deduction,
+					보험공제: item.insurance_deduction,
 					id: item.id,
 				}));
 				setRowItems(reorderedData);

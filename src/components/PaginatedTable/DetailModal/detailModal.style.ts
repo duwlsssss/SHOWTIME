@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 export const PayrollContainer = styled.div`
-	width: 80%;
+	width: 100%;
 	margin: 0 auto;
 	padding: 20px;
 	border-radius: 8px;
@@ -10,7 +10,7 @@ export const PayrollContainer = styled.div`
 
 export const PayrollHeader = styled.header`
 	text-align: center;
-	margin: 0 50px 30px 50px;
+	margin-bottom: 20px;
 	display: flex;
 	justify-content: space-between;
 `;
@@ -19,6 +19,7 @@ export const PayrollTitle = styled.h1`
 	font-size: 24px;
 	font-weight: bold;
 	margin-bottom: 30px;
+	text-align: center;
 `;
 
 export const PayrollDetails = styled.section`
