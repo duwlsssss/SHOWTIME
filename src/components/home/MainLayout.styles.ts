@@ -147,13 +147,17 @@ export const PayrollContainer = styled.div`
 	background-color: var(--color-white);
 	border-radius: var(--small-border-radius);
 	box-shadow: var(--box-shadow-large);
-	padding: var(--space-medium);
+	padding: var(--space-large);
 	flex: 1;
 `;
 
 export const PayrollTitle = styled.h3`
 	font-size: var(--font-medium);
 	font-weight: bold;
+`;
+
+export const PayrollMargin = styled.div`
+	margin-top: var(--space-large);
 `;
 
 export const SalaryManageList = styled.div`

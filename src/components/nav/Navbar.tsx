@@ -21,8 +21,8 @@ export function Navbar() {
 
 	const handleLogout = async () => {
 		try {
-			await persistor.purge(); // Redux Persist 저장소 초기화
-			dispatch(clearSchedules()); // Redux 상태 초기화
+			await persistor.purge();
+			dispatch(clearSchedules());
 			await signOut(auth);
 		} catch (error) {
 			console.error('로그아웃 중 오류가 발생했습니다:', error);
@@ -36,7 +36,10 @@ export function Navbar() {
 
 	const userMenu: MenuItem[] = [
 		{ path: '/', label: '홈' },
-		{ path: '/salary-details', label: '급여 내역' },
+		{
+			path: user?.role === 'admin' ? '/salary-management' : '/salary-details',
+			label: '급여 내역',
+		},
 		{ path: '/schedule-management', label: '일정 관리' },
 		{ path: '/profile', label: '프로필' },
 		{ path: '#', label: '로그아웃', onClick: handleLogout },

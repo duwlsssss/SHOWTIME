@@ -3,12 +3,26 @@ import * as S from './MainLayout.styles';
 import { CheckboxGroup, CalendarComponent } from '@/components';
 import { TOGGLE_BUTTON_TEXT } from '@/types/main';
 import { useMainViewportWidth } from '@/hooks/useMainViewportWidth';
+import { useAppSelector } from '@/hooks/useRedux';
+import { WorkingHours } from './WorkingHours';
+
 import MainDetailModal from '../PaginatedTable/DetailModal/MainDetailModal';
 
+import { SalaryManage } from './SalaryManage';
+
 export function MainLayout() {
+	const user = useAppSelector((state) => state.user);
+	const isAuthInitialized = useAppSelector((state) => state.user.isAuthInitialized);
+
+	console.log('MainLayout user:', user, 'isAuthInitialized:', isAuthInitialized);
+
+	// user 정보가 초기화되지 않았다면 로딩 표시
+	if (!isAuthInitialized) {
+		return <div>Loading...</div>;
+	}
+
 	const [isLeftSectionExpanded, setIsLeftSectionExpanded] = useState(true);
 	const viewportWidth = useMainViewportWidth();
-	const workPercentage = 75;
 
 	useEffect(() => {
 		if (viewportWidth <= 1165) {
@@ -36,26 +50,19 @@ export function MainLayout() {
 			</S.MiddleSection>
 
 			<S.RightSection $isCollapsed={isLeftSectionExpanded}>
-				<S.WorkingHoursContainer>
-					<S.WorkingHoursWrapper>
-						<S.WorkingHoursInfo>
-							<S.InfoLabel>이번 주 근무 시간</S.InfoLabel>
-							<S.InfoValue>10시간 10분</S.InfoValue>
-						</S.WorkingHoursInfo>
-						<S.WorkingHoursInfo>
-							<S.InfoLabel>이번 달 근무 시간</S.InfoLabel>
-							<S.InfoValue>40시간 20분</S.InfoValue>
-						</S.WorkingHoursInfo>
-					</S.WorkingHoursWrapper>
-					<S.ChartContainer>
-						<S.WorkTimeChart $percentage={workPercentage}>
-							<S.ChartCenter>{workPercentage}%</S.ChartCenter>
-						</S.WorkTimeChart>
-					</S.ChartContainer>
-				</S.WorkingHoursContainer>
+				<WorkingHours />
 
 				<S.PayrollContainer>
-					<MainDetailModal />
+					<S.PayrollTitle>급여 명세서</S.PayrollTitle>
+					{isAuthInitialized && user?.user?.role === 'admin' ? (
+						<>
+							<SalaryManage />
+						</>
+					) : isAuthInitialized && user?.user?.role === 'user' ? (
+						<S.PayrollMargin>
+							<MainDetailModal />
+						</S.PayrollMargin>
+					) : null}
 				</S.PayrollContainer>
 			</S.RightSection>
 		</S.MainContainer>

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import dayjs from 'dayjs';
-import useSupabaseData from './EditModal/hook/useSupabaseData';
+import useSalaryUserData from '../../hooks/useSalaryUserData';
 import Table, { RowItem } from '../table/Table';
 import Pagination from '../pagination/pagination';
 import { Modal, ModalPortal } from '@/components';
@@ -40,7 +40,7 @@ export default function PaginatedTable() {
 	const [diffInDays, setDiffInDays] = useState<number | null>(null);
 
 	//supabase 조회 커스텀훅
-	const { rowItems: rowItems } = useSupabaseData();
+	const { rowItems: rowItems } = useSalaryUserData();
 
 	//정정신청가능/불가능 판별
 	// useEffect(() => {

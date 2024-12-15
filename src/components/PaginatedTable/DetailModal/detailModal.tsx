@@ -1,11 +1,8 @@
-import React from 'react';
 import {
-	PayrollContainer,
 	PayrollHeader,
 	PayrollTable,
 	PayrollSummary,
 	PayrollDetails,
-	PayrollTitle,
 	TableData,
 	TableHeader,
 	SummaryItem,
@@ -15,8 +12,7 @@ import {
 
 export default function DetailModal({ data }) {
 	return (
-		<PayrollContainer>
-			<PayrollTitle>급여 명세서</PayrollTitle>
+		<>
 			<PayrollHeader>
 				<p>회사명: ShowTime</p>
 				<p>직원명: {data.이름}</p>
@@ -57,6 +53,6 @@ export default function DetailModal({ data }) {
 					<SummaryValue>{data.지급총액 - data.세금공제 - data.보험공제} 원</SummaryValue>
 				</SummaryItem>
 			</PayrollSummary>
-		</PayrollContainer>
+		</>
 	);
 }
