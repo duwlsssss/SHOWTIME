@@ -65,6 +65,7 @@ export const ModalSearchInput = styled(Input)`
 export const ErrorMessage = styled.p`
 	position: absolute;
 	margin-top: var(--space-xsmall);
+	margin-left: var(--space-xsmall);
 	word-break: keep-all;
 	font-size: var(--font-small);
 	color: var(--color-coral-dark);
