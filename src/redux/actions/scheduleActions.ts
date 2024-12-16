@@ -97,6 +97,8 @@ export const addScheduleToSupabase = (
 				created_at: new Date().toISOString(),
 			}));
 
+			console.log('formattedSchedules', formattedSchedules);
+
 			const { error: supabaseError } = await supabase.from('schedules').insert(formattedSchedules);
 
 			if (supabaseError) throw supabaseError;

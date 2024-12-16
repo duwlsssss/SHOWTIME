@@ -10,6 +10,7 @@ import {
 } from '@/components';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import useScheduleManage from '@/hooks/useScheduleManage';
+import useIsAdmin from '@/hooks/useIsAdmin';
 import { setSelectedSchedule } from '@/redux/actions/scheduleActions';
 import { setIsScheduleDeleteModalOpen } from '@/redux/actions/modalActions';
 
@@ -17,15 +18,13 @@ export function ScheduleManagement() {
 	const dispatch = useAppDispatch();
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
-	const user = useAppSelector((state) => state.user.user);
 	const isScheduleEditModalOpen = useAppSelector((state) => state.modal.isScheduleEditModalOpen);
 	const isScheduleDeleteModalOpen = useAppSelector(
 		(state) => state.modal.isScheduleDeleteModalOpen,
 	);
+	const isAdmin = useIsAdmin();
 
-	const userId = user?.id;
-
-	const { handleDeleteSchedule } = useScheduleManage(userId ?? null, schedules);
+	const { handleDeleteSchedule } = useScheduleManage(selectedSchedule?.user_id ?? null, schedules);
 
 	const handleConfirmDelete = async (deleteAll: boolean) => {
 		try {
@@ -53,7 +52,10 @@ export function ScheduleManagement() {
 				</S.CalenderSection>
 				<ScheduleList />
 			</S.ScheduleManagementContainer>
-			{isScheduleEditModalOpen && selectedSchedule && (
+			{isScheduleEditModalOpen && isAdmin && selectedSchedule && (
+				<ScheduleModal type="scheduleAdmin" mode="edit" />
+			)}
+			{isScheduleEditModalOpen && !isAdmin && selectedSchedule && (
 				<ScheduleModal type="scheduleUser" mode="edit" />
 			)}
 			{isScheduleDeleteModalOpen && selectedSchedule && (

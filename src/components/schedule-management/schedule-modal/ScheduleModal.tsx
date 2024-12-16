@@ -46,15 +46,18 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const employeeSchedules = useAppSelector((state) => state.employee.schedules);
 
 	// 관리자에서 searchUserId로 사용자 이름, 별명 추출
-	const getUserDetailsById = (searchUserId: string) => {
-		if (!employeeSchedules || employeeSchedules.length === 0) return null;
-		return employeeSchedules.find((employee) => employee.user_id === searchUserId);
+	const getUserDetailsById = (userId?: string) => {
+		if (!userId || !employeeSchedules?.length) return null;
+		return employeeSchedules.find((employee) => employee.user_id === userId);
 	};
+
+	const isAdminAddMode = type === 'scheduleAdmin' && mode === 'add';
 
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
-	const selectedEmployee =
-		type === 'scheduleAdmin' && searchUserId ? getUserDetailsById(searchUserId) : null;
+	const selectedEmployee = getUserDetailsById(
+		isAdminAddMode ? searchUserId : selectedSchedule?.user_id,
+	);
 	const userName = type === 'scheduleAdmin' ? selectedEmployee?.user_name : user?.userName;
 	const userAlias = type === 'scheduleAdmin' ? selectedEmployee?.user_alias : user?.userAlias;
 	const schedules = useAppSelector((state) => state.schedule.schedules);
@@ -62,8 +65,13 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const debouncedSearchTerm = useDebounce(searchTerm, 200);
 	const searchRef = useRef<HTMLDivElement | null>(null);
 
-	const getUserIdToSend = () => {
-		return (type === 'scheduleAdmin' && mode === 'add' ? searchUserId : userId) ?? '';
+	const getUserIdToSend = (): string => {
+		if (type === 'scheduleAdmin') {
+			return mode === 'add' ? searchUserId : (selectedSchedule?.user_id ?? '');
+		}
+
+		if (!userId) throw new Error('userId가 필요합니다');
+		return userId;
 	};
 
 	const { handleAddSchedule, handleEditSchedule } = useScheduleManage(getUserIdToSend(), schedules);
@@ -79,7 +87,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		resolver: zodResolver(scheduleSchema),
 		mode: 'onChange',
 		defaultValues: {
-			// type === 'scheduleAdmin' && mode === 'add' && user_id: '',
+			user_id: isAdminAddMode ? '' : undefined,
 			category: '',
 			start_date_time: fixMinute(formatDateTime(new Date(selectedDate))),
 			time: '',
@@ -97,8 +105,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const startDateTime = watch('start_date_time'); // 시작 일시 값 감시
 	const repeatCycle = watch('repeat'); // 반복 주기 감시
 	const repeatEndDate = watch('repeat_end_date'); // 종료일 값 감시
-	const userIdValue = watch('user_id'); // 종료일 값 감시
-	const userIdError = type === 'scheduleAdmin' && !userIdValue ? 'user_id가 없습니다.' : null;
+	const userIdValue = watch('user_id'); // 관리자 폼에서 직원 입력 감시
 
 	// 실시간으로 에러 메시지 생성
 	const noneStartDateTimeError = !startDateTime ? '시작일시를 선택해주세요' : null;
@@ -111,20 +118,26 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		new Date(repeatEndDate).setHours(0, 0, 0, 0) < new Date(startDateTime).setHours(0, 0, 0, 0)
 			? '반복 종료일은 시작일 이후여야 합니다'
 			: null;
+	const userIdError =
+		(isAdminAddMode && !userIdValue) || !searchUserId ? '직원을 선택해주세요' : null;
 
 	// 디버깅용
-	// console.log({
-	// 	errors: errors,
-	// 	noneStartDateTimeError: noneStartDateTimeError,
-	// 	noneRepeatCycleError: noneRepeatCycleError,
-	// 	noneEndDateError: noneEndDateError,
-	// 	repeatEndDateError: repeatEndDateError,
-	// 	repeatEndDate: repeatEndDate ? new Date(repeatEndDate) : '',
-	// 	startDateTime: new Date(startDateTime),
-	// 	isSubmitting: isSubmitting,
-	// 	data: watch(),
-	// 	currentUser: user,
-	// });
+	console.log('current form', {
+		errors: errors,
+		noneStartDateTimeError: noneStartDateTimeError,
+		noneRepeatCycleError: noneRepeatCycleError,
+		noneEndDateError: noneEndDateError,
+		repeatEndDateError: repeatEndDateError,
+		userIdError: userIdError,
+		repeatEndDate: repeatEndDate ? new Date(repeatEndDate) : '',
+		startDateTime: new Date(startDateTime),
+		user_id: getUserIdToSend(),
+		userName: userName,
+		userAlias: userAlias,
+		isSubmitting: isSubmitting,
+		data: watch(),
+		currentUser: user,
+	});
 
 	// 날짜 선택시 분을 00으로 초기화
 	const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -160,11 +173,10 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 
 	const onSubmitForm = handleSubmit(async (data) => {
 		try {
-			if (type === 'scheduleAdmin' && mode === 'add') {
+			if (isAdminAddMode) {
 				if (!searchUserId) throw new Error('searchUserId 없음');
-			} else {
-				if (!userId) throw new Error('userId 없음');
 			}
+			if (!userId) throw new Error('userId 없음');
 
 			const scheduleData: TSchedule = {
 				schedule_id: mode === 'edit' ? (selectedSchedule?.schedule_id ?? uuidv4()) : uuidv4(), // 한 개 수정시 이전 schedule_id 필요
@@ -237,8 +249,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 			isSubmitting ||
 			noneStartDateTimeError ||
 			noneEndDateError ||
-			repeatEndDateError ||
-			userIdError,
+			repeatEndDateError,
 	);
 
 	// 직원 검색
@@ -263,12 +274,14 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	};
 
 	// 디버깅용
-	// console.log('current Search', {
-	//   searchListOpen: searchListOpen,
-	// 	debouncedSearchTerm: debouncedSearchTerm,
-	// 	employeeSchedules: employeeSchedules,
-	// 	searchUserId: searchUserId,
-	// });
+	console.log('current Search', {
+		searchListOpen: searchListOpen,
+		debouncedSearchTerm: debouncedSearchTerm,
+		employeeSchedules: employeeSchedules,
+		searchUserId: searchUserId,
+		mode: mode,
+		type: type,
+	});
 
 	useEffect(() => {
 		document.addEventListener('click', handleClickOutside);
@@ -301,7 +314,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 							<S.CloseIcon onClick={handleClose} />
 						</S.ModalContentTitle>
 
-						{type === 'scheduleAdmin' && (
+						{isAdminAddMode && (
 							<>
 								<S.ModalWrapperSubTitle>직원</S.ModalWrapperSubTitle>
 								<S.SearchInputContainer>
@@ -310,7 +323,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 											{...register('user_id')}
 											placeholder="이름이나 닉네임을 입력해주세요."
 											onChange={(e) => handleEmployeeSearchChange(e)}
-											error={touchedFields.user_id && errors.user_id ? true : undefined}
+											error={touchedFields.user_id && userIdError ? true : undefined}
 										/>
 										<S.SearchList
 											$searchListOpen={searchListOpen}
@@ -334,8 +347,8 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 												)
 											) : null}
 										</S.SearchList>
-										{touchedFields.user_id && errors.user_id && (
-											<S.ErrorMessage>{errors.user_id.message}</S.ErrorMessage>
+										{touchedFields.user_id && userIdError && (
+											<S.ErrorMessage>{userIdError}</S.ErrorMessage>
 										)}
 									</S.InputWrapper>
 								</S.SearchInputContainer>

@@ -5,6 +5,7 @@ export const ScheduleListContainer = styled.div`
 	padding-left: 45px;
 	width: 300px;
 	height: 100%;
+	max-height: 746px;
 	border-radius: var(--medium-border-radius);
 	box-shadow: var(--box-shadow-large);
 	overflow-y: auto;

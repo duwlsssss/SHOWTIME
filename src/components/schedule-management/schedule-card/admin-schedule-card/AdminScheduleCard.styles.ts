@@ -3,29 +3,21 @@ import { MdDelete, MdEdit } from 'react-icons/md';
 import { TScheduleCategory } from '@/types/schedule';
 
 export const ScheduleCardContainer = styled.div<{ $category: TScheduleCategory }>`
-	position: relative;
-	padding: 10px;
-	margin-bottom: 10px;
 	display: flex;
 	flex-direction: column;
-	height: 120px;
-	justify-content: space-between;
-	gap: 10px;
-	/* 왼쪽 색상 막대 추가 */
-	&::before {
-		content: '';
-		position: absolute;
-		left: 0;
-		top: 0;
-		bottom: 0;
-		width: 2px;
-		background-color: ${({ $category }) =>
+	gap: var(--space-medium);
+	padding: var(--space-small);
+	border-left: 3px solid
+		${({ $category }) =>
 			$category === 'ticket'
 				? 'var(--color-blue)'
 				: $category === 'snack'
 					? 'var(--color-caramel)'
 					: 'var(--color-coral)'};
-	}
+`;
+
+export const YesterdayScheduleText = styled.p`
+	color: var(--color-light-gray);
 `;
 
 export const ScheduleCardHeader = styled.div`
@@ -34,30 +26,19 @@ export const ScheduleCardHeader = styled.div`
 	justify-content: space-between;
 `;
 
-export const ScheduleCardHeaderIcon = styled.div`
-	padding-left: 10px;
-	display: flex;
-	gap: 5px;
+export const UserInfo = styled.div``;
+
+export const UserName = styled.span`
+	font-weight: 700;
 `;
 
-export const ScheduleCardTime = styled.div`
-	display: flex;
-	width: 100%;
-	justify-content: space-between;
-`;
-
-export const ScheduleCardDescrption = styled.div`
-	display: flex;
-	width: 100%;
-	white-space: nowrap;
-	overflow: hidden;
+export const UserAlias = styled.span`
+	margin-left: var(--space-small);
 `;
 
 export const ButtonContainer = styled.div`
 	display: flex;
 	gap: var(--space-xsmall);
-	margin-left: 110px;
-	margin-top: -2px;
 	opacity: 0;
 	transition: opacity 0.2s;
 
@@ -82,26 +63,21 @@ export const DeleteIcon = styled(MdDelete)`
 	}
 `;
 
-export const ContentContainer = styled.div`
-	padding: var(--space-large) var(--space-medium) 40px;
-`;
-
-export const CategoryText = styled.div`
-	font-size: var(--font-large);
-`;
-
-export const DescriptionText = styled.div`
-	font-size: var(--font-medium);
-	color: var(--color-dark-gray);
-	margin-top: var(--space-small);
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-`;
-
-export const TimeContainerDown = styled.div`
+export const ScheduleCardMain = styled.div`
 	display: flex;
-	align-items: center;
 	gap: var(--space-small);
-	z-index: 1;
+	font-weight: 700;
+`;
+
+export const ScheduleCategory = styled.span``;
+
+export const ScheduleTime = styled.span`
+	color: var(--color-regular-gray);
+`;
+
+export const ScheduleDescription = styled.div`
+	display: flex;
+	color: var(--color-regular-gray);
+	white-space: nowrap;
+	overflow: hidden;
 `;
