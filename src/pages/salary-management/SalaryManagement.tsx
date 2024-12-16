@@ -131,7 +131,7 @@ export function SalaryManagement() {
 
 		try {
 			if (status === '승인') {
-				// attendance의 total_salary 변경
+				// attendance의 overtime_pay 변경
 				const { error: attendanceError } = await supabase
 					.from('attendance')
 					.update({
@@ -241,7 +241,7 @@ export function SalaryManagement() {
 		year.toString() || now.getFullYear().toString(),
 	);
 	const [selectedMonth, setSelectedMonth] = useState<string>(
-		month.toString() || now.getMonth().toString().padStart(2, '0'),
+		month.toString().padStart(2, '0') || now.getMonth().toString().padStart(2, '0'),
 	);
 
 	const handleSelectChange = (event) => {
@@ -314,13 +314,15 @@ export function SalaryManagement() {
 					)
 				`,
 				)
-				.like('attendance.payment_month', `${selectedYear}-${selectedMonth}%`)
+				.like(
+					'attendance.payment_month',
+					`${selectedYear}-${String(selectedMonth).padStart(2, '0')}%`,
+				)
 				.order('created_at', { ascending: false })
 				.range(startIndex, endIndex - 1);
 			if (error) {
 				console.error('Error fetching data:', error);
 			} else {
-				console.log(data);
 				const reorderedData: ManageRowItem[] = data.map((item: RequestData) => {
 					const attendance = Array.isArray(item.attendance) ? item.attendance[0] : item.attendance;
 					return {
