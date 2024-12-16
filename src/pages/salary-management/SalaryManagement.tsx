@@ -135,7 +135,7 @@ export function SalaryManagement() {
 				const { error: attendanceError } = await supabase
 					.from('attendance')
 					.update({
-						total_salary: formData.requestSalary,
+						overtime_pay: formData.requestSalary,
 					})
 					.eq('id', `${formData.attendanceId}`);
 

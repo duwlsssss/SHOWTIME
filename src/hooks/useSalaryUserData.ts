@@ -28,6 +28,7 @@ export default function useSalaryUserData() {
 					이름: item.user_name,
 					세금공제: item.tax_deduction,
 					보험공제: item.insurance_deduction,
+					수정금액: item.overtime_pay,
 					id: item.id,
 				}));
 				setRowItems(reorderedData);

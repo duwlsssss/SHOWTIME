@@ -77,6 +77,7 @@ export default function PaginatedTable() {
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
 	const paginatedData: RowItem[] = filteredItems.slice(startIndex, endIndex);
+	console.log(paginatedData);
 
 	const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 
