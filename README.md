@@ -1,66 +1,74 @@
-# <img src="https://github.com/user-attachments/assets/9d2778e5-2eac-4528-8b65-8fd5a9df6eb8" width="45" height="45" align='center' /> ShowTime 토이프로젝트2 1조
+# 🍿 ShowTime 
+
+### 토이프로젝트2 1조
 
 ![Image20241216121904](https://github.com/user-attachments/assets/8186a324-6f5e-468c-95fa-e360250ba0c6)
 
-<div align=left>
+&nbsp;
+
+## 💁 구성원
 
 | [<img src="https://avatars.githubusercontent.com/u/55516901?v=4" width="150" height="150"/>](https://github.com/rondido) | [<img src="https://avatars.githubusercontent.com/u/92291790?v=4" width="150" height="150"/>](https://github.com/duwlsssss) | [<img src="https://avatars.githubusercontent.com/u/109134495?v=4" width="150" height="150"/>](https://github.com/choiyoungae) | [<img src="https://avatars.githubusercontent.com/u/182200395?v=4" width="150" height="150"/>](https://github.com/Hoonshi) | [<img src="https://avatars.githubusercontent.com/u/35955189?v=4" width="150" height="150"/>](https://github.com/whwjdan) |
 | :-: | :-: | :-: | :-: | :-: |
 | 🐯<br/>[박진현](https://github.com/rondido)<br/> 역할: 캘린더<br/>관리자 | 🐰<br/>[김여진](https://github.com/duwlsssss)<br/> 역할: 캘린더<br/>사용자 | 🐶<br/>[최영애](https://github.com/choiyoungae)<br/> 역할: 근태내역<br/>관리자 | 🐱<br/>[전영훈](https://github.com/Hoonshi)<br/> 역할: 근태내역 <br/>사용자 | 🐱<br/>[조정무](https://github.com/whwjdan)<br/> 역할: 회원관련 <br/>기능 |
 
-</div>
+&nbsp;
 
-## ❓ 프로젝트 소개
+## 📂 프로젝트 소개
+
+### **효율적인 근무를 위한 가상의 영화관 쇼타임의 급여 및 업무 관리 서비스입니다.**
+
+&nbsp;
 
 ## 🧑‍💻 Tech Stack
 
 ![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white) <br/> 모던한 웹 애플리케이션 개발에서 효율적이고 유지보수 가능한 코드 작성을 위해 React, TypeScript, Redux를 사용
 
-<br/>
 
-## 🔩 프로젝트 설정 및 실행 방법
-
-1. 프로젝트 클론하기 먼저, Git 저장소에서 프로젝트를 로컬로 클론해야 합니다. 터미널(또는 명령 프롬프트)을 열고 아래 명령어를 입력합니다.
-
-```
-git clone https://github.com/Dev-FE-2/toy-project2-team1.git
-```
-
-해당 명령어는 지정된 Git 저장소에서 프로젝트를 로컬 컴퓨터로 복사해옵니다.
-
-2. 의존성 설치 프로젝트가 로컬에 클론된 후, 프로젝트 폴더로 이동한 다음, 필요한 패키지들을 설치해야 합니다. Node.js 기반 프로젝트인 경우, npm 명령어를 사용하여 의존성을 설치할 수 있습니다.
-
-```
-npm install
-```
-
-이 명령어는 `package.json` 파일에 정의된 모든 의존성(dependencies)을 자동으로 설치해 줍니다.
-
-3. 개발 서버 실행 모든 의존성이 설치되면, 개발 서버를 실행하여 프로젝트를 로컬에서 테스트할 수 있습니다.
-
-```
-npm run dev
-```
-
-이 명령어를 통해 개발 모드에서 서버를 시작하며, 변경 사항이 있을 때 자동으로 갱신됩니다. 이후, 브라우저에서 http://localhost:5173 주소로 접속하여 애플리케이션을 확인할 수 있습니다.
-
-#### 💻 Database 💻
+#### 💻 Database 
 
 ![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white) ![Supabase](https://shields.io/badge/supabase-black?logo=supabase&style=for-the-badge) <br/> firestore, 인증, 호스팅 등을 사용하여 빠르고 효율적인 개발을 위해 Firebase를 사용
 
-<br/>
 
-#### 🛠 Tools 🛠
+#### 🛠 Tools 
 
 ![eslint](https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E) ![Lint-Staged](https://img.shields.io/badge/✔%20Lint--Staged-4B32C3?style=for-the-badge) ![Husky](https://img.shields.io/badge/🐶%20Husky-blue?style=for-the-badge) <br/> 모던 웹 개발에서 스타일링, 코드 품질, 일관된 코드 포맷팅을 효율적으로 관리하기 위한 eslint, prettier 설정,
 
-</div>
+&nbsp;
 
----
+## 🔩 프로젝트 설정 및 실행 방법
+
+1. 프로젝트 클론하기: 먼저, Git 저장소에서 프로젝트를 로컬로 클론해야 합니다. 터미널(또는 명령 프롬프트)을 열고 아래 명령어를 입력합니다.
+   
+   ```
+   git clone https://github.com/Dev-FE-2/toy-project2-team1.git
+   ```
+   
+   해당 명령어는 지정된 Git 저장소에서 프로젝트를 로컬 컴퓨터로 복사해옵니다.
+
+2. 의존성 설치: 프로젝트가 로컬에 클론된 후, 프로젝트 폴더로 이동한 다음, 필요한 패키지들을 설치해야 합니다. Node.js 기반 프로젝트인 경우, npm 명령어를 사용하여 의존성을 설치할 수 있습니다.
+
+   ```
+   npm install
+   ```
+   
+   이 명령어는 `package.json` 파일에 정의된 모든 의존성(dependencies)을 자동으로 설치해 줍니다.
+
+3. 개발 서버 실행 모든 의존성이 설치되면, 개발 서버를 실행하여 프로젝트를 로컬에서 테스트할 수 있습니다.
+
+   ```
+   npm run dev
+   ```
+   
+   이 명령어를 통해 개발 모드에서 서버를 시작하며, 변경 사항이 있을 때 자동으로 갱신됩니다. 이후, 브라우저에서 http://localhost:5173 주소로 접속하여 애플리케이션을 확인할 수 있습니다.
+
+&nbsp;
 
 ## 💬 시스템 아키텍처
 
-![image_720](https://github.com/user-attachments/assets/eadc8364-965b-4b75-a850-86ba8a636f97)
+![시스템아키텍처](https://github.com/user-attachments/assets/eadc8364-965b-4b75-a850-86ba8a636f97)
+
+&nbsp;
 
 ## 📄 폴더 구조
 
@@ -85,6 +93,7 @@ npm run dev
     ┣ Main.tsx
     ┣ firebaseConfig.ts
 ```
+&nbsp;
 
 ## 🙌🏻 컨벤션
 
@@ -107,29 +116,33 @@ npm run dev
   - 함수, 변수 이름: Camel Case (ex: userName, handleOnclick)
   - 클래스 컴포넌트 이름: Title Case (ex: Button)
 
----
+&nbsp;
 
 ## 🕓 프로젝트 진행 과정
 
-기획 및 ERD,API 문서화 (2024.11.22 ~ 2024.11.26) <br/> 기획 및 ERD, API 문서화를 진행하였습니다.
+### 기획 및 ERD,API 문서화 (2024.11.22 ~ 2024.11.26) <br/> 기획 및 ERD, API 문서화를 진행하였습니다.
 
 [사전 세팅(Figma)](https://www.figma.com/design/HW9kfkMlUT5xp9cT03XTTr/ShowTime1%EC%A1%B0?node-id=0-1&p=f&t=CYErJSZLoCisDW14-0) 및 레이아웃 (2024.11.22 ~ 2024.11.28) <br/> Figma 작업 및 기본 마크업 작업 과 레이아웃 작업을 진행하였습니다.
 
-프로젝트 기능 개발(2024.11.29 ~ 2024.12.13) <br/>
+### 기능 개발(2024.11.29 ~ 2024.12.13) <br/>
 
 역할을 분담해 전체적인 기능을 보완하고 서버를 연동했습니다.
 
-테스트 및 기타 문서 정리(2024.12.14 ~ 2024.12.16) <br/>
+### 테스트 및 기타 문서 정리(2024.12.14 ~ 2024.12.16) <br/>
 
 개발 기능에 대한 테스트 및 기능에 대한 문서를 정리하였습니다.
 
+&nbsp;
+
 ## 📄 프로젝트 ERD
 
-![image (1)](https://github.com/user-attachments/assets/3f1e3ded-1311-4bff-b0fa-197ee2323ada)
+![ERD](https://github.com/user-attachments/assets/3f1e3ded-1311-4bff-b0fa-197ee2323ada)
+
+&nbsp;
 
 ## 📝 KPT 회고
 
-🌻조정무
+#### 🌻 조정무
 
 - KEEP
 
@@ -144,7 +157,7 @@ npm run dev
 - TRY
   - 마일스톤이나 기능명세서 같은 부분 초기에 확실하게 정해놓고 시작하기
 
-🌻전영훈
+#### 🌻 전영훈
 
 - KEEP
 
@@ -162,7 +175,7 @@ npm run dev
   - 초기에 필요사항들을 확실히 알고 시작하기
   - 서두르지 않고 꼼꼼하게 작업하기
 
-🌻김여진
+#### 🌻 김여진
 
 - KEEP
 
@@ -178,7 +191,7 @@ npm run dev
   - 코드 리뷰 적극적으로 하고, 수용하기
   - 각자 하고 있는 작업 정확하고 빠르게 공유하기
 
-🌻최영애
+#### 🌻 최영애
 
 - KEEP
 
@@ -193,7 +206,7 @@ npm run dev
   - 더 적극적으로 소통하기
   - 코드 리뷰를 신경쓰기
 
-🌻박진현
+#### 🌻 박진현
 
 - KEEP
 
