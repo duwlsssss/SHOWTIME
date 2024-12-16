@@ -76,9 +76,6 @@ export const WorkingHoursContainer = styled.div`
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
-	@media (max-height: 1200px) {
-		height: 120px;
-	}
 `;
 
 export const WorkingHoursWrapper = styled.div`

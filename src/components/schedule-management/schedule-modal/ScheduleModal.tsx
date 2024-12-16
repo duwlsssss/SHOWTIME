@@ -122,22 +122,22 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		(isAdminAddMode && !userIdValue) || !searchUserId ? '직원을 선택해주세요' : null;
 
 	// 디버깅용
-	console.log('current form', {
-		errors: errors,
-		noneStartDateTimeError: noneStartDateTimeError,
-		noneRepeatCycleError: noneRepeatCycleError,
-		noneEndDateError: noneEndDateError,
-		repeatEndDateError: repeatEndDateError,
-		userIdError: userIdError,
-		repeatEndDate: repeatEndDate ? new Date(repeatEndDate) : '',
-		startDateTime: new Date(startDateTime),
-		user_id: getUserIdToSend(),
-		userName: userName,
-		userAlias: userAlias,
-		isSubmitting: isSubmitting,
-		data: watch(),
-		currentUser: user,
-	});
+	// console.log('current form', {
+	// 	errors: errors,
+	// 	noneStartDateTimeError: noneStartDateTimeError,
+	// 	noneRepeatCycleError: noneRepeatCycleError,
+	// 	noneEndDateError: noneEndDateError,
+	// 	repeatEndDateError: repeatEndDateError,
+	// 	userIdError: userIdError,
+	// 	repeatEndDate: repeatEndDate ? new Date(repeatEndDate) : '',
+	// 	startDateTime: new Date(startDateTime),
+	// 	user_id: getUserIdToSend(),
+	// 	userName: userName,
+	// 	userAlias: userAlias,
+	// 	isSubmitting: isSubmitting,
+	// 	data: watch(),
+	// 	currentUser: user,
+	// });
 
 	// 날짜 선택시 분을 00으로 초기화
 	const handleDateTimeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -274,14 +274,14 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	};
 
 	// 디버깅용
-	console.log('current Search', {
-		searchListOpen: searchListOpen,
-		debouncedSearchTerm: debouncedSearchTerm,
-		employeeSchedules: employeeSchedules,
-		searchUserId: searchUserId,
-		mode: mode,
-		type: type,
-	});
+	// console.log('current Search', {
+	// 	searchListOpen: searchListOpen,
+	// 	debouncedSearchTerm: debouncedSearchTerm,
+	// 	employeeSchedules: employeeSchedules,
+	// 	searchUserId: searchUserId,
+	// 	mode: mode,
+	// 	type: type,
+	// });
 
 	useEffect(() => {
 		document.addEventListener('click', handleClickOutside);
