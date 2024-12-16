@@ -72,8 +72,7 @@ export const WorkingHoursContainer = styled.div`
 	background-color: var(--color-white);
 	border-radius: var(--small-border-radius);
 	box-shadow: var(--box-shadow-large);
-	padding: var(--space-xsmall) var(--space-medium);
-	height: 190px;
+	padding: var(--space-medium);
 	display: flex;
 	justify-content: space-between;
 	align-items: center;
