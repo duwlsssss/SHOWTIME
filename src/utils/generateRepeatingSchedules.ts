@@ -15,6 +15,10 @@ export default function generateRepeatingSchedules(schedule: TSchedule): TSchedu
 	}
 
 	const endDate = new Date(repeat_end_date); // 반복 종료 날짜
+	// 오전 12시가 아닐때만 endDate를 하루의 끝으로 설정
+	if (currDate.getUTCHours() !== 15) {
+		endDate.setUTCHours(23, 59, 59, 999);
+	}
 
 	// 첫번째 스케줄은 기존 ID 유지
 	let isFirst = true;

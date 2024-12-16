@@ -1,15 +1,12 @@
 import { supabase } from '../../supabaseConfig';
 
-// PostgreSQL의 EXTRACT(WEEK FROM date)와 동일한 방식으로 주차 계산
+// PostgreSQL의 DATE_PART('week', date)와 동일한 계산
 export const getWeekNumber = (date: Date) => {
-	const d = new Date(date);
-	d.setHours(0, 0, 0, 0);
-	d.setDate(d.getDate() + 3 - ((d.getDay() + 6) % 7));
-	const week1 = new Date(d.getFullYear(), 0, 4);
-	return (
-		1 +
-		Math.round(((d.getTime() - week1.getTime()) / 86400000 - 3 + ((week1.getDay() + 6) % 7)) / 7)
-	);
+	const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+	const dayNum = d.getUTCDay() || 7;
+	d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+	const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+	return Math.ceil(((d.getTime() - yearStart.getTime()) / 86400000 + 1) / 7);
 };
 
 interface WorkHoursResult {
@@ -33,24 +30,43 @@ export const useWorkingHours = () => {
 		const currentWeek = getWeekNumber(now);
 
 		const [weekResult, monthResult] = await Promise.all([
+			// 주간 합계
 			supabase
 				.from('work_hours')
-				.select('*')
+				.select('weekly_hours')
 				.eq('user_id', userId)
 				.eq('year', currentYear)
 				.eq('month', currentMonth)
-				.eq('week_number', currentWeek)
-				.maybeSingle(),
+				.eq('week_number', currentWeek),
+
+			// 월간 합계
 			supabase
 				.from('work_hours')
-				.select('*')
+				.select('monthly_hours')
 				.eq('user_id', userId)
 				.eq('year', currentYear)
-				.eq('month', currentMonth)
-				.maybeSingle(),
+				.eq('month', currentMonth),
 		]);
 
-		return { weekResult, monthResult };
+		// 합계 계산
+		const weeklyTotal =
+			weekResult.data?.reduce((sum, record) => sum + (record.weekly_hours || 0), 0) || 0;
+
+		const monthlyTotal =
+			monthResult.data?.reduce((sum, record) => sum + (record.monthly_hours || 0), 0) || 0;
+
+		return {
+			weekResult: {
+				data: {
+					weekly_hours: weeklyTotal,
+				},
+			},
+			monthResult: {
+				data: {
+					monthly_hours: monthlyTotal,
+				},
+			},
+		};
 	};
 
 	return {
