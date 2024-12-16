@@ -1,7 +1,5 @@
 # 🍿 ShowTime 
 
-### 토이프로젝트2 1조
-
 ![Image20241216121904](https://github.com/user-attachments/assets/8186a324-6f5e-468c-95fa-e360250ba0c6)
 
 &nbsp;
@@ -22,17 +20,17 @@
 
 ## 🧑‍💻 Tech Stack
 
-![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white) <br/> 모던한 웹 애플리케이션 개발에서 효율적이고 유지보수 가능한 코드 작성을 위해 React, TypeScript, Redux를 사용
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB) ![typescript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white) ![redux](https://img.shields.io/badge/Redux-593D88?style=for-the-badge&logo=redux&logoColor=white) <br/> 효율적이고 유지보수 가능한 코드 작성을 위해 React, TypeScript, Redux를 사용
 
 
 #### 💻 Database 
 
-![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white) ![Supabase](https://shields.io/badge/supabase-black?logo=supabase&style=for-the-badge) <br/> firestore, 인증, 호스팅 등을 사용하여 빠르고 효율적인 개발을 위해 Firebase를 사용
+![Firebase](https://img.shields.io/badge/Firebase-039BE5?style=for-the-badge&logo=Firebase&logoColor=white) ![Supabase](https://shields.io/badge/supabase-black?logo=supabase&style=for-the-badge) <br/> 사용자 인증에는 Firebase, 그 외 데이터 관리에는 supabase를 사용
 
 
 #### 🛠 Tools 
 
-![eslint](https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E) ![Lint-Staged](https://img.shields.io/badge/✔%20Lint--Staged-4B32C3?style=for-the-badge) ![Husky](https://img.shields.io/badge/🐶%20Husky-blue?style=for-the-badge) <br/> 모던 웹 개발에서 스타일링, 코드 품질, 일관된 코드 포맷팅을 효율적으로 관리하기 위한 eslint, prettier 설정,
+![eslint](https://img.shields.io/badge/eslint-3A33D1?style=for-the-badge&logo=eslint&logoColor=white) ![prettier](https://img.shields.io/badge/prettier-1A2C34?style=for-the-badge&logo=prettier&logoColor=F7BA3E) ![Lint-Staged](https://img.shields.io/badge/✔%20Lint--Staged-4B32C3?style=for-the-badge) ![Husky](https://img.shields.io/badge/🐶%20Husky-blue?style=for-the-badge) <br/> 스타일링, 코드 품질, 일관된 코드 포맷팅을 효율적으로 관리하기 위한 eslint, prettier 설정
 
 &nbsp;
 
@@ -120,9 +118,11 @@
 
 ## 🕓 프로젝트 진행 과정
 
-### 기획 및 ERD,API 문서화 (2024.11.22 ~ 2024.11.26) <br/> 기획 및 ERD, API 문서화를 진행하였습니다.
+### 기획 및 ERD,API 문서화 (2024.11.22 ~ 2024.11.26) <br/> 
+기획 및 ERD, API 문서화를 진행하였습니다.
 
-[사전 세팅(Figma)](https://www.figma.com/design/HW9kfkMlUT5xp9cT03XTTr/ShowTime1%EC%A1%B0?node-id=0-1&p=f&t=CYErJSZLoCisDW14-0) 및 레이아웃 (2024.11.22 ~ 2024.11.28) <br/> Figma 작업 및 기본 마크업 작업 과 레이아웃 작업을 진행하였습니다.
+### [사전 세팅(Figma)](https://www.figma.com/design/HW9kfkMlUT5xp9cT03XTTr/ShowTime1%EC%A1%B0?node-id=0-1&p=f&t=CYErJSZLoCisDW14-0) 및 레이아웃 (2024.11.22 ~ 2024.11.28) <br/> 
+Figma 작업 및 기본 마크업 작업 과 레이아웃 작업을 진행하였습니다.
 
 ### 기능 개발(2024.11.29 ~ 2024.12.13) <br/>
 
