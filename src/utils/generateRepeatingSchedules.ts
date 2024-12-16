@@ -14,14 +14,12 @@ export default function generateRepeatingSchedules(schedule: TSchedule): TSchedu
 		return [schedule];
 	}
 
-	// 반복 종료 날짜를 종료일의 다음날 자정으로 설정 (종료일 포함)
-	const endDate = new Date(repeat_end_date);
-	endDate.setUTCDate(endDate.getUTCDate() + 1);
+	const endDate = new Date(repeat_end_date); // 반복 종료 날짜
 
 	// 첫번째 스케줄은 기존 ID 유지
 	let isFirst = true;
 
-	while (currDate < endDate) {
+	while (currDate <= endDate) {
 		// UTC로 저장
 		schedules.push({
 			...schedule,
