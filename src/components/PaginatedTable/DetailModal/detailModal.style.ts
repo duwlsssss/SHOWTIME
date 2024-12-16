@@ -13,6 +13,7 @@ export const PayrollHeader = styled.header`
 	margin-bottom: 20px;
 	display: flex;
 	justify-content: space-between;
+	font-size: 16px;
 `;
 
 export const PayrollTitle = styled.h1`

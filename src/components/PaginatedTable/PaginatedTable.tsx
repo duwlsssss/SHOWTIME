@@ -1,12 +1,15 @@
 import { useState, useEffect } from 'react';
-import dayjs from 'dayjs';
+import { NavLink } from 'react-router-dom';
 import useSalaryUserData from '../../hooks/useSalaryUserData';
+
+import dayjs from 'dayjs';
 import Table, { RowItem } from '../table/Table';
 import Pagination from '../pagination/pagination';
 import { Modal, ModalPortal } from '@/components';
 import SalarySelect from '@/components/salaryselect/SalarySelect';
 import EditModal from './EditModal/editModal';
 import DetailModal from './DetailModal/detailModal';
+import CheckingResult from './CheckingResult/checkingResult';
 
 const headerItems: string[] = [
 	'급여월',
@@ -41,23 +44,6 @@ export default function PaginatedTable() {
 
 	//supabase 조회 커스텀훅
 	const { rowItems: rowItems } = useSalaryUserData();
-
-	//정정신청가능/불가능 판별
-	// useEffect(() => {
-	// 	if (rowItems.length > 0) {
-	// 		const salaryDate = rowItems[Number(selectedMonth) - 1].급여지급일;
-	// 		console.log('급여지급일:', salaryDate);
-
-	// 		const supabaseDate = dayjs(salaryDate, 'YYYY-MM-DD');
-	// 		if (supabaseDate.isValid()) {
-	// 			const today = dayjs();
-	// 			const difference = supabaseDate.diff(today, 'day');
-	// 			setDiffInDays(difference);
-	// 		} else {
-	// 			console.error('유효하지 않은 날짜 형식:', salaryDate);
-	// 		}
-	// 	}
-	// }, [filteredItems]);
 
 	useEffect(() => {
 		if (filteredItems.length > 0) {
@@ -124,6 +110,9 @@ export default function PaginatedTable() {
 				}}
 			/>
 
+			<NavLink to="/application-details">
+				<CheckingResult />
+			</NavLink>
 			{filteredItems.length > 0 ? (
 				<Table
 					data={paginatedData}
