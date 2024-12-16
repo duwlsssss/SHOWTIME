@@ -9,6 +9,8 @@ import { createClient } from '@supabase/supabase-js';
 import { TMessage } from '@/types/modal';
 import { useAppSelector } from '@/hooks/useRedux';
 
+//추후 수정될 파일입니다.
+
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 

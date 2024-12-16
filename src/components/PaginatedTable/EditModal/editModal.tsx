@@ -103,7 +103,7 @@ export default function EditModal({ data }) {
 				<Info>
 					<p>기존금액: {data['실지급액']}</p>
 					<p>
-						정정신청급액:{' '}
+						미반영 정정신청 금액:{' '}
 						<input
 							type="text"
 							value={updatedAmount}
