@@ -17,6 +17,7 @@ type EmployeeSalary = {
 export function SalaryManage() {
 	const year = useAppSelector((state) => state.schedule.year);
 	const month = useAppSelector((state) => state.schedule.month);
+	const user = useAppSelector((state) => state.user);
 
 	const [salaryList, setSalaryList] = useState<EmployeeSalary[]>();
 
@@ -40,7 +41,7 @@ export function SalaryManage() {
 		};
 
 		fetchEmployeeSalaryData();
-	}, [year, month]);
+	}, [year, month, user]);
 
 	const goToSalaryManagePage = () => {
 		window.location.href = '/salary-management';

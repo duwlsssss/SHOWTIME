@@ -12,6 +12,7 @@ export const AdminScheduleList = () => {
 	const isScheduleAddModalOpen = useAppSelector((state) => state.modal.isScheduleAddModalOpen);
 
 	const dispatch = useAppDispatch();
+
 	return (
 		<>
 			<S.ScheduleListContainer>
@@ -27,15 +28,7 @@ export const AdminScheduleList = () => {
 				{filteredSchedules.length > 0 ? (
 					<ul>
 						{filteredSchedules.map((schedule) => (
-							<AdminScheduleCard
-								schedulesItem={{
-									...schedule,
-									repeat: schedule.repeat || undefined,
-									repeat_end_date: schedule.repeat_end_date || undefined,
-									description: schedule.description || undefined,
-								}}
-								key={schedule.schedule_id}
-							/>
+							<AdminScheduleCard key={schedule.schedule_id} schedule={schedule} />
 						))}
 					</ul>
 				) : (

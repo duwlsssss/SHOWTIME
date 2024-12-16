@@ -1,4 +1,4 @@
-import useSupabaseData from '../EditModal/hook/useSupabaseData';
+import useSalaryUserData from '../../../hooks/useSalaryUserData';
 import DetailModal from './detailModal';
 import { useAppSelector } from '@/hooks/useRedux';
 
@@ -6,8 +6,10 @@ export default function MainDetailModal() {
 	const year = useAppSelector((state) => state.schedule.year);
 	const month = useAppSelector((state) => state.schedule.month);
 
-	const { rowItems: rowItems } = useSupabaseData();
+	const { rowItems: rowItems } = useSalaryUserData();
+
 	const filteredYear = rowItems.filter((cur) => Number(cur.급여해) === year);
+
 	const filterMonth = filteredYear.filter((cur) => Number(cur.급여월.slice(5, 7)) === month);
 
 	return (

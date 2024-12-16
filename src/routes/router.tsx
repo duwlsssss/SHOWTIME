@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import Layout from '@/layout/Layout';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ApplicationDetails } from '@/pages/application details/ApplicationDetails';
 import {
 	Home,
 	Login,
@@ -57,6 +58,14 @@ export const router = createBrowserRouter([
 				element: (
 					<ProtectedRoute>
 						<SalaryManagement />
+					</ProtectedRoute>
+				),
+			},
+			{
+				path: '/application-details',
+				element: (
+					<ProtectedRoute>
+						<ApplicationDetails />
 					</ProtectedRoute>
 				),
 			},

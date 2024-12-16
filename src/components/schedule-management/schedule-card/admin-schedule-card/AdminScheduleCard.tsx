@@ -1,6 +1,5 @@
 import * as S from './AdminScheduleCard.styles';
-import { TSchedule, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
-import { ScheduleModal, ModalPortal, ConfirmModal } from '@/components';
+import { TSchedule, TAdminScheduleCardProps, SCHEDULE_CATEGORY_LABELS } from '@/types/schedule';
 import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import useScheduleManage from '@/hooks/useScheduleManage';
 import { setSelectedSchedule, setfilterCategory } from '@/redux/actions/scheduleActions';
@@ -8,23 +7,15 @@ import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
 } from '@/redux/actions/modalActions';
-import { formatTime } from '@/utils/dateFormatter';
+import { isSameDay, formatTime } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
-interface AdminScheduleCardProps {
-	schedulesItem: TSchedule;
-}
-
-const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
+const AdminScheduleCard = ({ schedule }: TAdminScheduleCardProps) => {
 	const dispatch = useAppDispatch();
-	const isScheduleEditModalOpen = useAppSelector((state) => state.modal.isScheduleEditModalOpen);
 	const schedules = useAppSelector((state) => state.schedule.schedules);
-	const isScheduleDeleteModalOpen = useAppSelector(
-		(state) => state.modal.isScheduleDeleteModalOpen,
-	);
-	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
+	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 
-	const { handleDeleteSchedule } = useScheduleManage(schedulesItem.user_id ?? '', schedules);
+	const { handleDeleteSchedule } = useScheduleManage(schedule.user_id ?? '', schedules);
 
 	const handleEditSchulde = (schedule: TSchedule) => {
 		dispatch(setSelectedSchedule(schedule));
@@ -46,60 +37,37 @@ const AdminScheduleCard = ({ schedulesItem }: AdminScheduleCardProps) => {
 		dispatch(setfilterCategory('')); // 카테고리 필터 해제
 	};
 
-	const handleConfirmDelete = async (deleteAll: boolean) => {
-		try {
-			if (!selectedSchedule) return;
+	// 전 날과 이어지는 스케줄인지 체크
+	const compareDate = new Date(selectedDate);
+	const startDate = new Date(schedule.start_date_time);
+	const isYesterdaySchedule = !isSameDay(compareDate, startDate);
 
-			await handleDeleteSchedule(selectedSchedule, deleteAll);
-			dispatch(setIsScheduleDeleteModalOpen(false));
-			dispatch(setSelectedSchedule(null)); // 선택된 스케줄 초기화
-		} catch (error) {
-			console.error('스케줄 삭제 실패:', error);
-		}
-	};
+	const hasDescription = !!schedule.description;
 
 	return (
-		<>
-			<S.ScheduleCardContainer $category={schedulesItem.category} id={schedulesItem.user_id}>
-				<S.ScheduleCardHeader>
-					<span>{schedulesItem.user_name}</span>
-					<span>{schedulesItem.user_alias}</span>
-					<S.ScheduleCardHeaderIcon>
-						<S.EditIcon onClick={() => handleEditSchulde(schedulesItem)} />
-						<S.DeleteIcon onClick={() => handleDeleteIconClick(schedulesItem)} />
-					</S.ScheduleCardHeaderIcon>
-				</S.ScheduleCardHeader>
-				<div>
-					<span>{SCHEDULE_CATEGORY_LABELS[schedulesItem.category]}</span>
-				</div>
-				<S.ScheduleCardTime>
-					<span>{formatTime(new Date(schedulesItem.end_date_time))}</span>
-				</S.ScheduleCardTime>
-				<div>
-					<span>{schedulesItem.description}</span>
-				</div>
-			</S.ScheduleCardContainer>
-			{isScheduleEditModalOpen && (
-				<ScheduleModal type="scheduleUser" mode="edit" adminUserId={schedulesItem.user_id} />
+		<S.ScheduleCardContainer $category={schedule.category}>
+			{isYesterdaySchedule && (
+				<S.YesterdayScheduleText>전 날과 이어지는 스케줄이에요</S.YesterdayScheduleText>
 			)}
-			{isScheduleDeleteModalOpen && (
-				<ModalPortal>
-					<ConfirmModal
-						onClose={() => {
-							dispatch(setIsScheduleDeleteModalOpen(false));
-						}}
-						message={{
-							confirm: '반복되는 일정을 모두 삭제하시겠습니까?',
-							leftBtn: '모두 삭제',
-							rightBtn: '이 일정만 삭제',
-						}}
-						color={'red'}
-						onClickLeftBtn={() => handleConfirmDelete(true)}
-						onClickRightBtn={() => handleConfirmDelete(false)}
-					/>
-				</ModalPortal>
-			)}
-		</>
+			<S.ScheduleCardHeader>
+				<S.UserInfo>
+					<S.UserName>{schedule.user_name}</S.UserName>
+					<S.UserAlias>{schedule.user_alias}</S.UserAlias>
+				</S.UserInfo>
+				<S.ButtonContainer>
+					<S.EditIcon onClick={() => handleEditSchulde(schedule)} />
+					<S.DeleteIcon onClick={() => handleDeleteIconClick(schedule)} />
+				</S.ButtonContainer>
+			</S.ScheduleCardHeader>
+			<S.ScheduleCardMain>
+				<S.ScheduleCategory>{SCHEDULE_CATEGORY_LABELS[schedule.category]}</S.ScheduleCategory>
+				<S.ScheduleTime>
+					{formatTime(new Date(schedule.start_date_time))} -{' '}
+					{formatTime(new Date(schedule.end_date_time))}
+				</S.ScheduleTime>
+			</S.ScheduleCardMain>
+			{hasDescription && <S.ScheduleDescription>{schedule.description}</S.ScheduleDescription>}
+		</S.ScheduleCardContainer>
 	);
 };
 

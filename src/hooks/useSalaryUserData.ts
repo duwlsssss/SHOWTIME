@@ -1,28 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
 import { useState, useEffect } from 'react';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { supabase } from '../../supabaseConfig';
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { SalaryUserData } from '@/types/salary';
 
-type RowItem = {
-	급여해: string;
-	id: number;
-	이름: string;
-	급여월: string;
-	급여지급일: string;
-	지급총액: string;
-	실지급액: string;
-	보험공제: string;
-	세금공제: string;
-};
-
-export default function useSupabaseData() {
-	const [rowItems, setRowItems] = useState<RowItem[]>([]);
+export default function useSalaryUserData() {
+	const [rowItems, setRowItems] = useState<SalaryUserData[]>([]);
 
 	useEffect(() => {
 		const fetchAttendanceData = async () => {
+			console.log('급여 데이터 fetch 시작');
+
 			const { data, error } = await supabase
 				.from('attendance')
 				.select('*')
@@ -31,7 +19,7 @@ export default function useSupabaseData() {
 			if (error) {
 				console.error('Error fetching data:', error);
 			} else {
-				const reorderedData: RowItem[] = data.map((item) => ({
+				const reorderedData: SalaryUserData[] = data.map((item) => ({
 					급여해: item.year,
 					급여월: item.payment_month,
 					급여지급일: item.payment_day,
@@ -48,5 +36,6 @@ export default function useSupabaseData() {
 
 		fetchAttendanceData();
 	}, []);
+
 	return { rowItems };
 }

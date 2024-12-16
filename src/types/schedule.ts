@@ -46,6 +46,10 @@ export interface TUserScheduleCardProps {
 	shouldShowTime: boolean;
 }
 
+export interface TAdminScheduleCardProps {
+	schedule: TSchedule;
+}
+
 export interface TScheduleModalProps {
 	type: 'scheduleUser' | 'scheduleAdmin';
 	mode: 'add' | 'edit';
@@ -110,7 +114,7 @@ export interface TFormValues {
 }
 
 // 유효성 검사 관련
-const DESCRIPTION_MAX_LENGTH = 30;
+const DESCRIPTION_MAX_LENGTH = 20;
 const TIME_MAX_LENGTH = 2;
 const TIME_MIN_NUMBER = 1;
 const TIME_MAX_NUMBER = 10;

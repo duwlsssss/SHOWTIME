@@ -15,7 +15,7 @@ const formatDate = (dateString: string) => {
 };
 
 export function Profile() {
-	const { user, isAuthInitialized } = useAppSelector((state) => state.user);
+	const { user } = useAppSelector((state) => state.user);
 	const [isEditing, setIsEditing] = useState(false);
 	const [formData, setFormData] = useState<TUser | null>(null);
 	const [isSubmitting, setIsSubmitting] = useState(false);
@@ -77,11 +77,8 @@ export function Profile() {
 		}
 	};
 
-	// 인증 초기화 전이면 로딩 표시
-	if (!isAuthInitialized) return <div>Initializing...</div>;
-
-	// 인증은 됐지만 user가 없으면 로그인 페이지로 리다이렉트
-	if (isAuthInitialized && !user) {
+	// user가 없으면 로그인 페이지로 리다이렉트
+	if (!user) {
 		return <Navigate to="/login" />;
 	}
 
