@@ -8,7 +8,7 @@
 
 | [<img src="https://avatars.githubusercontent.com/u/55516901?v=4" width="150" height="150"/>](https://github.com/rondido) | [<img src="https://avatars.githubusercontent.com/u/92291790?v=4" width="150" height="150"/>](https://github.com/duwlsssss) | [<img src="https://avatars.githubusercontent.com/u/109134495?v=4" width="150" height="150"/>](https://github.com/choiyoungae) | [<img src="https://avatars.githubusercontent.com/u/182200395?v=4" width="150" height="150"/>](https://github.com/Hoonshi) | [<img src="https://avatars.githubusercontent.com/u/35955189?v=4" width="150" height="150"/>](https://github.com/whwjdan) |
 | :-: | :-: | :-: | :-: | :-: |
-| 🐯<br/>[박진현](https://github.com/rondido)<br/> 역할: 캘린더<br/>관리자 | 🐰<br/>[김여진](https://github.com/duwlsssss)<br/> 역할: 캘린더<br/>사용자 | 🐶<br/>[최영애](https://github.com/choiyoungae)<br/> 역할: 근태내역<br/>관리자 | 🐱<br/>[전영훈](https://github.com/Hoonshi)<br/> 역할: 근태내역 <br/>사용자 | 🐱<br/>[조정무](https://github.com/whwjdan)<br/> 역할: 회원관련 <br/>기능 |
+| 🐯<br/>[박진현](https://github.com/rondido) <br/> 관리자 일정 관리 페이지 | 🐰<br/>[김여진](https://github.com/duwlsssss) <br/> layout 설정 <br/> 디자인 토큰, 폰트 설정 <br/> 버튼, 로딩, 에러 공통 컴포넌트 작업 <br/> redux, redux-persist 작성 <br/> supabase, redux 활용한 일정 관리 CRUD 구현 <br/> 스케줄 추가, 수정 폼 구현 <br/> react-calendar 사용해 캘린더와 관련 사용자 인터랙션 구현 <br/> 사용자 일정 관리 페이지 <br/> 메인 페이지 캘린더 영역 작성 | 🐶<br/>[최영애](https://github.com/choiyoungae) <br/> 모달 공통 컴포넌트 작업 <br/> 급여 정정 신청에 대한 조회, 처리 페이지 <br/> 메인페이지 직원별 급여 목록 조회 | 🐱<br/>[전영훈](https://github.com/Hoonshi) <br/> 페이지네이션, 테이블, 인풋 공통 컴포넌트 작업 <br/> 급여 내역 유저 데이터 조회 기능 구현 <br/> 급여 내역 데이터 정정 신청 기능 구현 | 🐱<br/>[조정무](https://github.com/whwjdan) <br/> 프로젝트 기본 세팅 및 eslint, prettier, git 컨벤션 세팅 <br/> Firebase 및 supabase 기본 세팅과 사용자와 근무 시간 관련 db 작업 <br/> 로그인 및 회원가입, 프로필 등 사용자 관련 페이지 작성 <br/> 메인페이지 레이아웃, 근무시간 영역 작업 |
 
 &nbsp;
 
@@ -137,6 +137,53 @@ Figma 작업 및 기본 마크업 작업 과 레이아웃 작업을 진행하였
 ## 📄 프로젝트 ERD
 
 ![ERD](https://github.com/user-attachments/assets/3f1e3ded-1311-4bff-b0fa-197ee2323ada)
+
+&nbsp;
+
+## 🎲 주요 기능
+
+### ✔️ 메인페이지
+
+- 근무 시간: supabase에서 배치작업으로 한시간마다 현재 근무가 끝난 일정을 반영하고 work_hours에서 불러와 표시
+- 캘린더: 개인 스케줄(사용자), 전체 직원 스케줄(관리자) 표시
+- 급여 명세서: 캘린더에서 선택된 날짜의 달에 해당하는 급여 명세서(사용자), 직원들의 급여 목록(관리자) 표시
+  
+### ✔️ 급여 내역 페이지 
+
+(사용자)
+- 신청 : 미반영 금액, 사유, 첨부 자료를 입력해 supabase에 추가
+- 신청 내역 확인
+
+(관리자)
+- 신청 조회 : 연, 월을 기준으로 supabase에서 데이터를 받아와 조회
+- 신청 처리 : 승인/반려 처리
+  
+### ✔️ 캘린더 
+
+- react-calendar 사용해 month view의 캘린더 구현
+- 업무 카테고리에 따라 필터링 기능 구현
+- 추가, 수정, 삭제 아이콘 클릭해 일정 관리 가능
+
+### ✔️ 일정 관리
+
+- 일정 추가
+   - 유효성 검사
+      - 반복 설정(반복주기, 반복 끝나는 날짜), description 외 모든 필드 값 있어야 함
+      - 반복 설정 있을때 끝나는 날짜가 시작 날짜 이후여야 함
+      - description 글자 수 제한
+   - 관리자는 사용자를 검색해 해당 사용자의 user_id로 스케줄 추가
+   - redux-thunk를 사용해 supabase, 전역 상태에 비동기로 데이터 추가
+     
+- 일정 조회
+   - 쿼리문 조작해 supabase에서 userId 있으면 사용자, 없으면 관리자(전체 스케줄 가져오기), value 있으면 특정 카테고리, 없으면 전체 스케줄 가져오게 함
+   - 전역 상태에 조회된 데이터 넣음
+     
+- 일정 수정
+  - 유효성 검사 실행
+  - 반복 일정 전체 수정 or 단일 일정 수정 받아 처리
+    
+- 일정 삭제
+  - 반복 일정 전체 삭제 or 단일 일정 삭제 받아 처리
 
 &nbsp;
 
