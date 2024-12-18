@@ -33,15 +33,6 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 		dispatch(selectDate(date));
 	};
 
-	const today = new Date();
-
-	const disablePastDates = ({ date, view }) => {
-		if (view === 'month') {
-			return date < today;
-		}
-		return false;
-	};
-
 	// 년, 월 바뀌면 전역 상태에 저장
 	const handleMonthChange = ({ activeStartDate }) => {
 		const year = activeStartDate.getFullYear();
@@ -93,7 +84,6 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 				next2Label={null} /* 년 단위 이동 없앰 */
 				tileContent={tileContent}
 				$isManagementPage={isManagementPage ?? false}
-				tileDisabled={disablePastDates}
 			/>
 		</S.CalenderWrapper>
 	);

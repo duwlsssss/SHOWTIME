@@ -50,6 +50,10 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 		dispatch(setfilterCategory('')); // 카테고리 필터 해제
 	};
 
+	// 오늘 이후의 스케줄만 수정, 삭제 가능
+	const isPrevStartDate =
+		new Date(startDate).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0);
+
 	return (
 		<>
 			<S.ScheduleCardContainer>
@@ -65,8 +69,14 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 							{shouldShowTime ? ` - ${endTime}` : ''}
 						</S.TimeText>
 						<S.ButtonContainer>
-							<S.EditIcon onClick={() => handleEditIconClick(schedule)} />
-							<S.DeleteIcon onClick={() => handleDeleteIconClick(schedule)} />
+							<S.EditIcon
+								onClick={() => !isPrevStartDate && handleEditIconClick(schedule)}
+								$disabled={isPrevStartDate}
+							/>
+							<S.DeleteIcon
+								onClick={() => !isPrevStartDate && handleDeleteIconClick(schedule)}
+								$disabled={isPrevStartDate}
+							/>
 						</S.ButtonContainer>
 					</S.TimeButtonWrapper>
 				</S.TimeContainerUp>

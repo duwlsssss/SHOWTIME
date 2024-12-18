@@ -109,6 +109,10 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 
 	// 실시간으로 에러 메시지 생성
 	const noneStartDateTimeError = !startDateTime ? '시작일시를 선택해주세요' : null;
+	const prevStartDateTimeError =
+		new Date(startDateTime).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)
+			? '오늘 이후의 스케줄만 입력해주세요'
+			: null;
 	const noneRepeatCycleError = isRepeatActive && !repeatCycle ? '반복주기를 선택해주세요' : null;
 	const noneEndDateError = isRepeatActive && !repeatEndDate ? '종료일을 선택해주세요' : null;
 	const repeatEndDateError =
@@ -121,10 +125,13 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	const userIdError =
 		(isAdminAddMode && !userIdValue) || !searchUserId ? '직원을 선택해주세요' : null;
 
-	// 디버깅용
+	//디버깅용
 	// console.log('current form', {
 	// 	errors: errors,
 	// 	noneStartDateTimeError: noneStartDateTimeError,
+	// 	today: new Date().setHours(0, 0, 0, 0),
+	// 	prevStartDateTime: new Date(startDateTime).setHours(0, 0, 0, 0),
+	//   prevStartDateTimeError: prevStartDateTimeError,
 	// 	noneRepeatCycleError: noneRepeatCycleError,
 	// 	noneEndDateError: noneEndDateError,
 	// 	repeatEndDateError: repeatEndDateError,
@@ -248,6 +255,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 		Object.keys(errors).length > 0 ||
 			isSubmitting ||
 			noneStartDateTimeError ||
+			prevStartDateTimeError ||
 			noneEndDateError ||
 			repeatEndDateError,
 	);
@@ -366,10 +374,18 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 											handleDateTimeChange(e);
 										},
 									})}
-									error={touchedFields.start_date_time && noneStartDateTimeError ? true : undefined}
+									error={
+										(touchedFields.start_date_time && noneStartDateTimeError) ||
+										prevStartDateTimeError
+											? true
+											: undefined
+									}
 								/>
 								{touchedFields.start_date_time && noneStartDateTimeError && (
 									<S.ErrorMessage>{noneStartDateTimeError}</S.ErrorMessage>
+								)}
+								{prevStartDateTimeError && (
+									<S.ErrorMessage>{prevStartDateTimeError}</S.ErrorMessage>
 								)}
 							</S.InputWrapper>
 							<S.InputWrapper>

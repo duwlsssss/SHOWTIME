@@ -93,6 +93,7 @@ export const StyledCalendar = styled(Calendar)<{ $isManagementPage: boolean }>`
 			}
 		}
 	}
+
 	/* hover, focus, 선택됐을 시 */
 	.react-calendar__tile:enabled:hover,
 	.react-calendar__tile:enabled:focus,
@@ -106,6 +107,9 @@ export const StyledCalendar = styled(Calendar)<{ $isManagementPage: boolean }>`
 	.react-calendar__tile--now {
 		background-color: var(--color-pale-gray-light);
 		border-radius: var(--small-border-radius);
+		abbr {
+			font-weight: 700;
+		}
 	}
 `;
 
