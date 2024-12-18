@@ -19,6 +19,7 @@ export const StyledCalendar = styled(Calendar)<{ $isManagementPage: boolean }>`
 	border-radius: var(--medium-border-radius);
 	border: 1px solid var(--color-pale-gray);
 	font-family: 'Pretendard', sans-serif;
+
 	/* 네비게이션 */
 	.react-calendar__navigation {
 		border-bottom: 1.5px solid var(--color-pale-gray);

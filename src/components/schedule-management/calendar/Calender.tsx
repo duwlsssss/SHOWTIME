@@ -14,10 +14,6 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 	const filterCategoryKey = useAppSelector((state) => state.schedule.filterCategoryKey);
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
-	// const modalState = useAppSelector((state) => state.modal);
-	// useEffect(() => {
-	// 	console.log('전체 모달 상태:', modalState);
-	// }, [modalState]);
 
 	const isAdmin = useIsAdmin();
 
@@ -35,6 +31,15 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 	// 클릭한 날짜 필터링
 	const handleDateClick = (date: Date) => {
 		dispatch(selectDate(date));
+	};
+
+	const today = new Date();
+
+	const disablePastDates = ({ date, view }) => {
+		if (view === 'month') {
+			return date < today;
+		}
+		return false;
 	};
 
 	// 년, 월 바뀌면 전역 상태에 저장
@@ -88,6 +93,7 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 				next2Label={null} /* 년 단위 이동 없앰 */
 				tileContent={tileContent}
 				$isManagementPage={isManagementPage ?? false}
+				tileDisabled={disablePastDates}
 			/>
 		</S.CalenderWrapper>
 	);
