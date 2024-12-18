@@ -28,7 +28,6 @@ export interface TSchedules {
 export interface TCalendarState {
 	selectedDate: Date;
 	filteredSchedules: TSchedule[];
-	isLoading: boolean;
 	selectedSchedule: TSchedule | null;
 	filterCategoryKey: TScheduleCategory;
 	year: number;
@@ -54,12 +53,6 @@ export interface TScheduleModalProps {
 	type: 'scheduleUser' | 'scheduleAdmin';
 	mode: 'add' | 'edit';
 	adminUserId?: string;
-}
-
-export interface TScheduleApiResponse<T> {
-	success: boolean;
-	message: string;
-	data?: T;
 }
 
 // 카테코리별 라벨

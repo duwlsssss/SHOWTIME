@@ -1,5 +1,5 @@
 import { TSchedule } from '@/types/schedule';
-import { isSameDay } from './dateFormatter';
+import { isSameDate } from './dateFormatter';
 
 // 데이터 필터링
 // 시작, 끝나는 시간 체크, 시작시간으로 정렬
@@ -12,8 +12,8 @@ export function filterSchedulesByDateAndSort(
 			const scheduleDate = new Date(schedule.start_date_time);
 			const compareDate = new Date(selectedDate);
 			return (
-				isSameDay(scheduleDate, compareDate) ||
-				(schedule.end_date_time ? isSameDay(new Date(schedule.end_date_time), compareDate) : true)
+				isSameDate(scheduleDate, compareDate) ||
+				(schedule.end_date_time ? isSameDate(new Date(schedule.end_date_time), compareDate) : true)
 			);
 		})
 		.sort((a, b) => {

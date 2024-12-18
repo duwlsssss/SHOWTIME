@@ -59,6 +59,7 @@ export const UserScheduleList = () => {
 				<ScheduleAddButton
 					className="schedule-add-button"
 					onClick={() => dispatch(setIsScheduleAddModalOpen(true))}
+					disabled={new Date(selectedDate).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0)}
 				/>
 			</S.ScheduleListContainer>
 			{isScheduleAddModalOpen && <ScheduleModal type="scheduleUser" mode="add" />}

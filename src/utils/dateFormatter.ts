@@ -47,8 +47,13 @@ export const isSameTime = (d1: Date, d2: Date): boolean => {
 };
 
 // KST 기준으로 날짜 비교
-export const isSameDay = (d1: Date, d2: Date): boolean => {
+export const isSameDate = (d1: Date, d2: Date): boolean => {
 	return formatDate(d1) === formatDate(d2);
+};
+
+// KST 기준으로 날짜, 시간 비교
+export const isSameDateTime = (d1: Date, d2: Date): boolean => {
+	return formatDateTime(d1) === formatDateTime(d2);
 };
 
 // 분을 '00'으로 고정
