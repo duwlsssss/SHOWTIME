@@ -174,8 +174,9 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 				setValue('repeat', selectedSchedule.repeat);
 				setValue('repeat_end_date', formatDate(new Date(selectedSchedule.repeat_end_date)));
 			}
+			trigger(['category', 'time']); // 유효성 검사 트리거
 		}
-	}, [mode, selectedSchedule, setValue]);
+	}, [mode, selectedSchedule, setValue, trigger]);
 
 	// 모달 닫을 때
 	const handleClose = () => {
