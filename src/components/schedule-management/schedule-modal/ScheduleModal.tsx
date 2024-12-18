@@ -134,6 +134,9 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	// 디버깅용
 	console.log('current form', {
 		errors: errors,
+		selectedSchedule: selectedSchedule ? selectedSchedule : null,
+		카테고리: selectedSchedule && selectedSchedule.category,
+		시간: selectedSchedule && selectedSchedule.time,
 		noneStartDateTimeError: noneStartDateTimeError,
 		today: new Date().setHours(0, 0, 0, 0),
 		prevStartDateTime: new Date(startDateTime).setHours(0, 0, 0, 0),
