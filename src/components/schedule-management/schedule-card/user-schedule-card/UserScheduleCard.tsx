@@ -7,7 +7,7 @@ import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
 } from '@/redux/actions/modalActions';
-import { isSameDay, formatTime } from '@/utils/dateFormatter';
+import { isSameDate, formatTime } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
 export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCardProps) => {
@@ -17,15 +17,15 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
 
-	const { handleDeleteSchedule } = useScheduleManage(userId ?? null, schedules);
+	const { handleDeleteSchedule } = useScheduleManage(userId ?? '', schedules);
 
 	// 넘어가는 날짜 원 처리용
 	const compareDate = new Date(selectedDate);
 	const startDate = new Date(schedule.start_date_time);
 	const endDate = new Date(schedule.end_date_time);
 
-	const showStartTime = isSameDay(compareDate, startDate);
-	const showEndTime = isSameDay(compareDate, endDate);
+	const showStartTime = isSameDate(compareDate, startDate);
+	const showEndTime = isSameDate(compareDate, endDate);
 
 	const startTime = formatTime(startDate);
 	const endTime = formatTime(endDate);

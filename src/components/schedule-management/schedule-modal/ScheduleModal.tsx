@@ -188,7 +188,7 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 				time: data.time,
 				end_date_time: new Date(calculateEndDateTime(data.start_date_time, data.time)),
 				schedule_shift_type: calculateScheduleShiftType(data.start_date_time),
-				repeat: (data.repeat as TScheduleRepeatCycle) || undefined,
+				repeat: (data.repeat as TScheduleRepeatCycle) || null,
 				repeat_end_date: data.repeat_end_date ? new Date(data.repeat_end_date) : undefined,
 				created_at: new Date(),
 				description: (data.description as string) || undefined,

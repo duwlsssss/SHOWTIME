@@ -93,11 +93,9 @@ export const addScheduleToSupabase = (
 				end_date_time: new Date(schedule.end_date_time).toISOString(),
 				repeat_end_date: schedule.repeat_end_date
 					? new Date(schedule.repeat_end_date).toISOString()
-					: undefined,
+					: null,
 				created_at: new Date().toISOString(),
 			}));
-
-			console.log('formattedSchedules', formattedSchedules);
 
 			const { error: supabaseError } = await supabase.from('schedules').insert(formattedSchedules);
 
@@ -144,7 +142,7 @@ export const getSchedulesFromSupabase = (
 				...schedule,
 				start_date_time: new Date(schedule.start_date_time),
 				end_date_time: new Date(schedule.end_date_time),
-				repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : undefined,
+				repeat_end_date: schedule.repeat_end_date ? new Date(schedule.repeat_end_date) : null,
 				created_at: new Date(schedule.created_at),
 			}));
 
@@ -213,14 +211,18 @@ export const editScheduleToSupabase = (
 				end_date_time: new Date(schedule.end_date_time).toISOString(),
 				repeat_end_date: schedule.repeat_end_date
 					? new Date(schedule.repeat_end_date).toISOString()
-					: undefined,
+					: null,
 			}));
 
-			const { error } = await supabase.from('schedules').upsert(formattedSchedules, {
-				onConflict: 'schedule_id',
-			});
+			// 병렬로 여러 스케줄 업데이트
+			const promises = formattedSchedules.map((schedule) =>
+				supabase.from('schedules').upsert([schedule], { onConflict: 'schedule_id' }),
+			);
 
-			if (error) throw error;
+			const results = await Promise.all(promises);
+
+			const errors = results.filter((result) => result.error);
+			if (errors.length > 0) throw new Error('일부 스케줄 수정 실패');
 
 			dispatch(editSchedules(updatedSchedules));
 

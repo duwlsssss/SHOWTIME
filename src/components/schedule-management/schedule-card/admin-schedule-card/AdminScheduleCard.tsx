@@ -7,7 +7,7 @@ import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
 } from '@/redux/actions/modalActions';
-import { isSameDay, formatTime } from '@/utils/dateFormatter';
+import { isSameDate, formatTime } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
 const AdminScheduleCard = ({ schedule }: TAdminScheduleCardProps) => {
@@ -40,7 +40,7 @@ const AdminScheduleCard = ({ schedule }: TAdminScheduleCardProps) => {
 	// 전 날과 이어지는 스케줄인지 체크
 	const compareDate = new Date(selectedDate);
 	const startDate = new Date(schedule.start_date_time);
-	const isYesterdaySchedule = !isSameDay(compareDate, startDate);
+	const isYesterdaySchedule = !isSameDate(compareDate, startDate);
 
 	const hasDescription = !!schedule.description;
 

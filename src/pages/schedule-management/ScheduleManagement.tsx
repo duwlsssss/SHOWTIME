@@ -24,7 +24,7 @@ export function ScheduleManagement() {
 	);
 	const isAdmin = useIsAdmin();
 
-	const { handleDeleteSchedule } = useScheduleManage(selectedSchedule?.user_id ?? null, schedules);
+	const { handleDeleteSchedule } = useScheduleManage(selectedSchedule?.user_id ?? '', schedules);
 
 	const handleConfirmDelete = async (deleteAll: boolean) => {
 		try {
