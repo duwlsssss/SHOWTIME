@@ -13,10 +13,27 @@ import { isSameDate, isSameDateTime } from '@/utils/dateFormatter';
 export default function useScheduleManage(userId: string, schedules: TSchedule[]) {
 	const dispatch = useAppDispatch();
 
+	let loadingPromise: Promise<void> | null = null;
+
+	// 로딩 상태 함수
+	const executeWithLoading = async (callback: () => Promise<void>) => {
+		loadingPromise = new Promise((resolve, reject) => {
+			callback()
+				.then(resolve)
+				.catch((error) => {
+					loadingPromise = null; // Promise 정리
+					reject(error); // ErrorBoundary로 전달
+				})
+				.finally(() => {
+					loadingPromise = null;
+				});
+		});
+		await loadingPromise;
+	};
+
 	// 스케줄 삭제 함수
 	const deleteSchedules = async (scheduleIds: string[]) => {
-		const deleteResult = await dispatch(removeScheduleFromSupabase(userId, scheduleIds));
-		if (!deleteResult.success) throw new Error('스케줄 삭제 실패');
+		await dispatch(removeScheduleFromSupabase(userId, scheduleIds));
 	};
 
 	// 반복 스케줄들에서 이전 스케줄들 종료 날짜 수정 함수
@@ -39,14 +56,7 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 
 	// 스케줄 추가 핸들러
 	const handleAddSchedule = async (schedules: TSchedule[]) => {
-		if (!userId) throw new Error('userId가 없음');
-		try {
-			const addResult = await dispatch(addScheduleToSupabase(userId, schedules));
-			if (!addResult.success) throw new Error('스케줄 추가 실패');
-		} catch (error) {
-			console.error('스케줄 추가 실패:', error);
-			throw error;
-		}
+		await executeWithLoading(async () => await dispatch(addScheduleToSupabase(userId, schedules)));
 	};
 
 	// 스케줄 수정 핸들러
@@ -55,20 +65,17 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 		newSchedule: TSchedule,
 		editAll: boolean,
 	) => {
-		if (!userId) throw new Error('userId가 없음');
-		if (!prevSchedule) throw new Error('이전 스케줄 정보 없음');
+		await executeWithLoading(async () => {
+			const isRepeatChanged = prevSchedule.repeat !== newSchedule.repeat;
+			const isRepeatEndDateChanged =
+				prevSchedule.repeat_end_date &&
+				newSchedule.repeat_end_date &&
+				!isSameDate(new Date(prevSchedule.repeat_end_date), new Date(newSchedule.repeat_end_date));
+			const isStartDateChanged = !isSameDateTime(
+				new Date(prevSchedule.start_date_time),
+				new Date(newSchedule.start_date_time),
+			);
 
-		const isRepeatChanged = prevSchedule.repeat !== newSchedule.repeat;
-		const isRepeatEndDateChanged =
-			prevSchedule.repeat_end_date &&
-			newSchedule.repeat_end_date &&
-			!isSameDate(new Date(prevSchedule.repeat_end_date), new Date(newSchedule.repeat_end_date));
-		const isStartDateChanged = !isSameDateTime(
-			new Date(prevSchedule.start_date_time),
-			new Date(newSchedule.start_date_time),
-		);
-
-		try {
 			// 기존 반복 스케줄 계산
 			const repeatSchedules = filteredRepeatSchedules(prevSchedule, schedules);
 
@@ -143,17 +150,12 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 
 			// 반복 설정 없음
 			await dispatch(editScheduleToSupabase([newSchedule]));
-		} catch (error) {
-			console.error('스케줄 수정 실패', error);
-			throw error;
-		}
+		});
 	};
 
 	// 스케줄 삭제 핸들러
 	const handleDeleteSchedule = async (schedule: TSchedule, deleteAll: boolean) => {
-		try {
-			if (!userId) throw new Error('userId가 없음');
-
+		await executeWithLoading(async () => {
 			const repeatSchedules = filteredRepeatSchedules(schedule, schedules);
 
 			const scheduleIds = deleteAll
@@ -169,15 +171,15 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 				);
 				await adjustPreviousSchedules(repeatSchedules, targetIndex, schedule.start_date_time);
 			}
-		} catch (error) {
-			console.error('스케줄 삭제 실패:', error);
-			throw error;
-		}
+		});
 	};
 
 	return {
 		handleAddSchedule,
 		handleEditSchedule,
 		handleDeleteSchedule,
+		readLoading: () => {
+			if (loadingPromise) throw loadingPromise; // Suspense와 연결 - promise를 throw해서 감지하게 함
+		},
 	};
 }

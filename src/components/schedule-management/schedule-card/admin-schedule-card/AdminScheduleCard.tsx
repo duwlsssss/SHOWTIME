@@ -15,7 +15,12 @@ const AdminScheduleCard = ({ schedule }: TAdminScheduleCardProps) => {
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 
-	const { handleDeleteSchedule } = useScheduleManage(schedule.user_id ?? '', schedules);
+	const { handleDeleteSchedule, readLoading } = useScheduleManage(
+		schedule.user_id ?? '',
+		schedules,
+	);
+
+	readLoading();
 
 	const handleEditSchulde = (schedule: TSchedule) => {
 		dispatch(setSelectedSchedule(schedule));

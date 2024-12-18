@@ -4,8 +4,8 @@ export { Navbar } from './nav/Navbar';
 export { MainLayout } from './home/MainLayout';
 
 export { Button } from './button/Button';
-export { Error } from './error/Error';
-export { Loading } from './loading/Loading';
+export { ErrorFallback } from './error/Error';
+export { DeferredLoader } from './loader/Loader';
 
 export { ModalPortal } from './modal/ModalPortal';
 export { Modal, ConfirmModal } from './modal/Modal';

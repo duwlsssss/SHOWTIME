@@ -2,7 +2,6 @@ import * as S from './ScheduleManagement.styles';
 import {
 	ScheduleList,
 	CalendarComponent,
-	Loading,
 	CheckboxGroup,
 	ScheduleModal,
 	ModalPortal,
@@ -24,24 +23,21 @@ export function ScheduleManagement() {
 	);
 	const isAdmin = useIsAdmin();
 
-	const { handleDeleteSchedule } = useScheduleManage(selectedSchedule?.user_id ?? '', schedules);
+	const { handleDeleteSchedule, readLoading } = useScheduleManage(
+		selectedSchedule?.user_id ?? '',
+		schedules,
+	);
+
+	// Suspense에서 상태 확인
+	readLoading();
 
 	const handleConfirmDelete = async (deleteAll: boolean) => {
-		try {
-			if (!selectedSchedule) return;
+		if (!selectedSchedule) return;
 
-			await handleDeleteSchedule(selectedSchedule, deleteAll);
-			dispatch(setIsScheduleDeleteModalOpen(false));
-			dispatch(setSelectedSchedule(null)); // 선택된 스케줄 초기화
-		} catch (error) {
-			console.error('스케줄 삭제 실패:', error);
-		}
+		await handleDeleteSchedule(selectedSchedule, deleteAll);
+		dispatch(setIsScheduleDeleteModalOpen(false));
+		dispatch(setSelectedSchedule(null)); // 선택된 스케줄 초기화
 	};
-
-	const isLoading = useAppSelector((state) => state.schedule.isLoading);
-	if (isLoading) {
-		return <Loading />;
-	}
 
 	return (
 		<>
