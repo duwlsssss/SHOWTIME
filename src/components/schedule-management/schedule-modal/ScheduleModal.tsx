@@ -276,14 +276,14 @@ export const ScheduleModal = ({ type, mode }: TScheduleModalProps) => {
 	};
 
 	// 디버깅용
-	// console.log('current Search', {
-	// 	searchListOpen: searchListOpen,
-	// 	debouncedSearchTerm: debouncedSearchTerm,
-	// 	employeeSchedules: employeeSchedules,
-	// 	searchUserId: searchUserId,
-	// 	mode: mode,
-	// 	type: type,
-	// });
+// 	console.log('current Search', {
+// 		searchListOpen: searchListOpen,
+// 		debouncedSearchTerm: debouncedSearchTerm,
+// 		employeeSchedules: employeeSchedules,
+// 		searchUserId: searchUserId,
+// 		mode: mode,
+// 		type: type,
+// 	});
 
 	useEffect(() => {
 		document.addEventListener('click', handleClickOutside);
