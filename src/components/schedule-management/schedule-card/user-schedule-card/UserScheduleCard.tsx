@@ -7,7 +7,7 @@ import {
 	setIsScheduleEditModalOpen,
 	setIsScheduleDeleteModalOpen,
 } from '@/redux/actions/modalActions';
-import { isSameDay, formatTime } from '@/utils/dateFormatter';
+import { isSameDate, formatTime } from '@/utils/dateFormatter';
 import filteredRepeatSchedules from '@/utils/filteredRepeatSchedules';
 
 export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCardProps) => {
@@ -17,15 +17,17 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
 
-	const { handleDeleteSchedule } = useScheduleManage(userId ?? null, schedules);
+	const { handleDeleteSchedule, readLoading } = useScheduleManage(userId ?? '', schedules);
+
+	readLoading();
 
 	// 넘어가는 날짜 원 처리용
 	const compareDate = new Date(selectedDate);
 	const startDate = new Date(schedule.start_date_time);
 	const endDate = new Date(schedule.end_date_time);
 
-	const showStartTime = isSameDay(compareDate, startDate);
-	const showEndTime = isSameDay(compareDate, endDate);
+	const showStartTime = isSameDate(compareDate, startDate);
+	const showEndTime = isSameDate(compareDate, endDate);
 
 	const startTime = formatTime(startDate);
 	const endTime = formatTime(endDate);
@@ -50,6 +52,10 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 		dispatch(setfilterCategory('')); // 카테고리 필터 해제
 	};
 
+	// 오늘 이후의 스케줄만 수정, 삭제 가능
+	const isPrevStartDate =
+		new Date(startDate).setHours(0, 0, 0, 0) <= new Date().setHours(0, 0, 0, 0);
+
 	return (
 		<>
 			<S.ScheduleCardContainer>
@@ -65,8 +71,14 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 							{shouldShowTime ? ` - ${endTime}` : ''}
 						</S.TimeText>
 						<S.ButtonContainer>
-							<S.EditIcon onClick={() => handleEditIconClick(schedule)} />
-							<S.DeleteIcon onClick={() => handleDeleteIconClick(schedule)} />
+							<S.EditIcon
+								onClick={() => !isPrevStartDate && handleEditIconClick(schedule)}
+								$disabled={isPrevStartDate}
+							/>
+							<S.DeleteIcon
+								onClick={() => !isPrevStartDate && handleDeleteIconClick(schedule)}
+								$disabled={isPrevStartDate}
+							/>
 						</S.ButtonContainer>
 					</S.TimeButtonWrapper>
 				</S.TimeContainerUp>

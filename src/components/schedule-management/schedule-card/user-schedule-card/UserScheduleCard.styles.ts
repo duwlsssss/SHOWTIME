@@ -63,19 +63,25 @@ export const ButtonContainer = styled.div`
 	}
 `;
 
-export const EditIcon = styled(MdEdit)`
-	cursor: pointer;
-	transition: opacity 0.2s;
+export const EditIcon = styled(MdEdit)<{ $disabled: boolean }>`
+	cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+	transition:
+		opacity 0.2s,
+		color 0.2s;
+
 	&:hover {
-		color: var(--color-blue);
+		color: ${({ $disabled }) => ($disabled ? 'inherit' : 'var(--color-blue)')};
 	}
 `;
 
-export const DeleteIcon = styled(MdDelete)`
-	cursor: pointer;
-	transition: opacity 0.2s;
+export const DeleteIcon = styled(MdDelete)<{ $disabled: boolean }>`
+	cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+	transition:
+		opacity 0.2s,
+		color 0.2s;
+
 	&:hover {
-		color: var(--color-blue);
+		color: ${({ $disabled }) => ($disabled ? 'inherit' : 'var(--color-blue)')};
 	}
 `;
 

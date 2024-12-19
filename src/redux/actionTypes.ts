@@ -17,8 +17,6 @@ export const ADMIN_USER_SEARCH_ID = 'ADMIN_USER_SEARCH_ID';
 export const SET_USER = 'SET_USER';
 export const CLEAR_USER = 'CLEAR_USER';
 
-export const SET_LOADING = 'SET_LOADING'; // suspanse로 바꿔야 함
-
 export const SET_MODAL_OPEN = 'SET_MODAL_OPEN';
 export const SET_CONFIRM_MODAL_OPEN = 'SET_CONFIRM_MODAL_OPEN';
 export const SET_SCHEDULE_ADD_MODAL_OPEN = 'SET_SCHEDULE_ADD_MODAL_OPEN';

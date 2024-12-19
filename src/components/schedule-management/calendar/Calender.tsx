@@ -14,10 +14,6 @@ export const CalendarComponent = ({ isManagementPage }: TCalendarComponentProps)
 	const filterCategoryKey = useAppSelector((state) => state.schedule.filterCategoryKey);
 	const user = useAppSelector((state) => state.user.user);
 	const userId = user?.id;
-	// const modalState = useAppSelector((state) => state.modal);
-	// useEffect(() => {
-	// 	console.log('전체 모달 상태:', modalState);
-	// }, [modalState]);
 
 	const isAdmin = useIsAdmin();
 

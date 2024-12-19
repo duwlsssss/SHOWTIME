@@ -8,7 +8,6 @@ import {
 	REMOVE_SCHEDULES,
 	SELECT_DATE,
 	FILTERED_SCHEDULES,
-	SET_LOADING,
 	SET_SELECTED_SCHEDULE,
 	CLEAR_SCHEDULES,
 	SET_FILTER_CATEGORY,
@@ -35,7 +34,6 @@ const initialState: TScheduleState = {
 	schedules: [],
 	selectedDate: new Date(),
 	filteredSchedules: [],
-	isLoading: false,
 	selectedSchedule: null,
 	filterCategoryKey: '',
 	year: 0,
@@ -47,8 +45,6 @@ export default function scheduleReducer(
 	action: AnyAction,
 ): TScheduleState {
 	switch (action.type) {
-		case SET_LOADING:
-			return { ...state, isLoading: action.payload };
 		case SET_SELECTED_SCHEDULE:
 			return { ...state, selectedSchedule: action.payload };
 		case GET_SCHEDULES: {

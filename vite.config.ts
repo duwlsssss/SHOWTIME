@@ -1,10 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import path from 'path';
-import dotenv from 'dotenv';
-
-// Load environment variables from .env file
-dotenv.config();
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,5 +9,8 @@ export default defineConfig({
 		alias: {
 			'@': path.resolve(__dirname, './src'),
 		},
+	},
+	define: {
+		'import.meta.env.VITE_DEBUG': JSON.stringify(true),
 	},
 });
