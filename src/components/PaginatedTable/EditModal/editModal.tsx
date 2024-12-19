@@ -3,6 +3,7 @@ import { useState, useRef } from 'react';
 import { Button } from '@/components';
 import { createClient } from '@supabase/supabase-js';
 import { ConfirmModal } from '@/components/modal/Modal';
+import { salaryFormatter } from '@/utils/salaryFormatter';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -101,7 +102,7 @@ export default function EditModal({ data }) {
 					<p>급여지급일: {data['급여지급일']}</p>
 				</Info>
 				<Info>
-					<p>기존금액: {data['실지급액']}</p>
+					<p>기존금액: {salaryFormatter(data['실지급액'])}</p>
 					<p>
 						미반영 정정신청 금액:{' '}
 						<input
