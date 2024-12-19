@@ -14,11 +14,6 @@ export function MainLayout() {
 	const user = useAppSelector((state) => state.user);
 	const isAuthInitialized = useAppSelector((state) => state.user.isAuthInitialized);
 
-	// user 정보가 초기화되지 않았다면 로딩 표시
-	if (!isAuthInitialized) {
-		return <div>Loading...</div>;
-	}
-
 	const [isLeftSectionExpanded, setIsLeftSectionExpanded] = useState(true);
 	const viewportWidth = useMainViewportWidth();
 

@@ -15,6 +15,7 @@ export const StyledButton = styled.button<{ $padding?: string; $color?: string; 
 		background-color: var(--color-regular-gray);
 		&:hover {
 			background-color: var(--color-regular-gray);
+			background-color: none;
 		}
 	}
 

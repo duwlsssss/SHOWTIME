@@ -7,7 +7,6 @@ import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
 import { clearUser } from '@/redux/actions/userActions';
 import { validateLoginForm, getAuthErrorMessage } from '@/components/login/LoginValidation';
 import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
-import { Loading } from '@/components';
 
 export function LoginForm() {
 	const [formData, setFormData] = useState<LoginFormData>({
@@ -18,7 +17,7 @@ export function LoginForm() {
 	const [isLoading, setIsLoading] = useState(false);
 
 	const dispatch = useAppDispatch();
-	const { user, isAuthInitialized } = useAppSelector((state) => state.user);
+	const { user } = useAppSelector((state) => state.user);
 
 	// 파이어베이스 auth 상태 변경 감지 -> 로그인 상태 확인
 	useLoginAuthObserver();
@@ -72,10 +71,6 @@ export function LoginForm() {
 			setIsLoading(false);
 		}
 	};
-
-	if (!isAuthInitialized) {
-		return <Loading />;
-	}
 
 	return (
 		<S.LoginContainer>

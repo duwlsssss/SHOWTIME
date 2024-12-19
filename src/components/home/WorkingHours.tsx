@@ -19,15 +19,11 @@ export function WorkingHours() {
 		const getWorkHours = async () => {
 			if (!user?.id) return;
 
-			try {
-				const { weekResult, monthResult } = await fetchWorkHours(user.id);
-				setHours({
-					weeklyHours: weekResult.data?.weekly_hours || 0,
-					monthlyHours: monthResult.data?.monthly_hours || 0,
-				});
-			} catch (err) {
-				console.error('Error fetching work hours:', err);
-			}
+			const { weekResult, monthResult } = await fetchWorkHours(user.id);
+			setHours({
+				weeklyHours: weekResult.data?.weekly_hours || 0,
+				monthlyHours: monthResult.data?.monthly_hours || 0,
+			});
 		};
 
 		getWorkHours();
