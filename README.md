@@ -4,6 +4,12 @@
 
 &nbsp;
 
+#### ✔️ 테스트 계정 
+- 관리자: admin10@email.com / 123456
+- 사용자: test10@email.com / 123456
+
+&nbsp;
+
 ## 💁 구성원
 
 <div align='center'>
