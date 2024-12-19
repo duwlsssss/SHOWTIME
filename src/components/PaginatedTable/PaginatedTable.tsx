@@ -37,18 +37,36 @@ export default function PaginatedTable() {
 	};
 
 	//데이터 상태
-	const [selectedYear, setSelectedYear] = useState<string>('2024');
-	const [selectedMonth, setSelectedMonth] = useState<string>('01');
+	const [selectedYear, setSelectedYear] = useState<string>('');
+	const [selectedMonth, setSelectedMonth] = useState<string>('');
 	const [filteredItems, setFilteredItems] = useState<RowItem[]>([]);
 	const [diffInDays, setDiffInDays] = useState<number | null>(null);
 
 	//supabase 조회 커스텀훅
 	const { rowItems: rowItems } = useSalaryUserData();
 
+	// rowItems에서 가장 최신 급여내역 연도, 월 추출
+	useEffect(() => {
+		if (rowItems.length > 0) {
+			const sortedItems = [...rowItems].sort((a, b) => {
+				const dateA = new Date(a.급여월);
+				const dateB = new Date(b.급여월);
+				return dateB.getTime() - dateA.getTime();
+			});
+
+			const latestItem = sortedItems[0];
+			const latestYear = latestItem.급여월.substring(0, 4);
+			const latestMonth = latestItem.급여월.substring(5, 7);
+
+			setSelectedYear(latestYear);
+			setSelectedMonth(latestMonth);
+		}
+	}, [rowItems]);
+
 	useEffect(() => {
 		if (filteredItems.length > 0) {
 			const salaryDate = filteredItems[0].급여지급일;
-			console.log('급여지급일:', salaryDate);
+			// console.log('급여지급일:', salaryDate);
 
 			const supabaseDate = dayjs(salaryDate, 'YYYY-MM-DD');
 			if (supabaseDate.isValid()) {
@@ -77,7 +95,7 @@ export default function PaginatedTable() {
 	const startIndex = (currentPage - 1) * itemsPerPage;
 	const endIndex = startIndex + itemsPerPage;
 	const paginatedData: RowItem[] = filteredItems.slice(startIndex, endIndex);
-	console.log(paginatedData);
+	// console.log(paginatedData);
 
 	const totalPages = Math.ceil(filteredItems.length / itemsPerPage);
 

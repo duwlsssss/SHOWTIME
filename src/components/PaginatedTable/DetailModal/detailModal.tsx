@@ -11,6 +11,8 @@ import {
 	SummaryValue,
 	SummaryLabel,
 } from './detailModal.style';
+import { salaryFormatter } from '@/utils/salaryFormatter';
+
 export default function DetailModal({ data }) {
 	return (
 		<PayrollContainer>
@@ -31,19 +33,21 @@ export default function DetailModal({ data }) {
 					<tbody>
 						<tr>
 							<TableData>기본 급여</TableData>
-							<TableData>{data.지급총액} 원</TableData>
+							<TableData>{salaryFormatter(data.지급총액)} 원</TableData>
 						</tr>
 						<tr>
 							<TableData>세금 공제</TableData>
-							<TableData>-{data.세금공제} 원</TableData>
+							<TableData>-{salaryFormatter(data.세금공제)} 원</TableData>
 						</tr>
 						<tr>
 							<TableData>보험 공제</TableData>
-							<TableData>-{data.보험공제} 원</TableData>
+							<TableData>-{salaryFormatter(data.보험공제)} 원</TableData>
 						</tr>
 						<tr>
 							<TableData>정정 반영 금액</TableData>
-							<TableData>{data.수정금액 && `+${data.수정금액}`} 원</TableData>
+							<TableData>
+								{salaryFormatter(data.수정금액 ? data.수정금액 && `+${data.수정금액}` : '0')} 원
+							</TableData>
 						</tr>
 					</tbody>
 				</PayrollTable>
@@ -52,11 +56,11 @@ export default function DetailModal({ data }) {
 				<h2>합계</h2>
 				<SummaryItem>
 					<SummaryLabel>지급총액</SummaryLabel>
-					<SummaryValue>{data.지급총액} 원</SummaryValue>
+					<SummaryValue>{salaryFormatter(data.지급총액)} 원</SummaryValue>
 				</SummaryItem>
 				<SummaryItem>
 					<SummaryLabel>실수령액</SummaryLabel>
-					<SummaryValue>{data.실지급액} 원</SummaryValue>
+					<SummaryValue>{salaryFormatter(data.실지급액)} 원</SummaryValue>
 				</SummaryItem>
 			</PayrollSummary>
 		</PayrollContainer>
