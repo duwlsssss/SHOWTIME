@@ -9,7 +9,7 @@ export default function useSalaryUserData() {
 
 	useEffect(() => {
 		const fetchAttendanceData = async () => {
-			console.log('급여 데이터 fetch 시작');
+			// console.log('급여 데이터 fetch 시작');
 
 			const { data, error } = await supabase
 				.from('attendance')
