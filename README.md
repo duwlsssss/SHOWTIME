@@ -6,66 +6,13 @@
 
 ## 💁 구성원
 
-<table style="width: 100%; table-layout: fixed; border-collapse: collapse">
-  <thead>
-    <tr>
-      <th style="width: 20%; text-align: center; border-right: 1px solid white;">
-        <img src="https://avatars.githubusercontent.com/u/55516901?v=4"/>
-        <br /> 🐯 박진현
-      </th>
-      <th style="width: 20%; text-align: center; border-right: 1px solid white;">
-        <img src="https://avatars.githubusercontent.com/u/92291790?v=4"/>
-        <br /> 🐰 김여진
-      </th>
-      <th style="width: 20%; text-align: center; border-right: 1px solid white;">
-        <img src="https://avatars.githubusercontent.com/u/109134495?v=4"/>
-        <br /> 🐶 최영애
-      </th>
-      <th style="width: 20%; text-align: center; border-right: 1px solid white;">
-        <img src="https://avatars.githubusercontent.com/u/182200395?v=4"/>
-        <br /> 🐱 전영훈
-      </th>
-      <th style="width: 20%; text-align: center;">
-        <img src="https://avatars.githubusercontent.com/u/35955189?v=4"/>
-        <br /> 🐱 조정무
-      </th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td style="text-align: center; border-right: 1px solid white;">
-        관리자 일정 관리 페이지
-      </td>
-      <td style="text-align: center; border-right: 1px solid white;">
-        layout 설정<br />
-        디자인 토큰, 폰트 설정<br />
-        버튼, 로딩, 에러 공통 컴포넌트 작업<br />
-        redux, redux-persist 작성<br />
-        supabase, redux 활용한 일정 관리 CRUD 구현<br />
-        스케줄 추가, 수정 폼 구현<br />
-        react-calendar 사용해 캘린더와 관련 사용자 인터랙션 구현<br />
-        사용자 일정 관리 페이지<br />
-        메인 페이지 캘린더 영역 작성
-      </td>
-      <td style="text-align: center; border-right: 1px solid white;">
-        모달 공통 컴포넌트 작업<br />
-        급여 정정 신청에 대한 조회, 처리 페이지<br />
-        메인페이지 직원별 급여 목록 조회
-      </td>
-      <td style="text-align: center; border-right: 1px solid white;">
-        페이지네이션, 테이블, 인풋 공통 컴포넌트 작업<br />
-        급여 내역 유저 데이터 조회 기능 구현<br />
-        급여 내역 데이터 정정 신청 기능 구현
-      </td>
-      <td style="text-align: center;">
-        프로젝트 기본 세팅 및 eslint, prettier, git 컨벤션 세팅<br />
-        Firebase 및 supabase 기본 세팅과 사용자와 근무 시간 관련 db 작업<br />
-        로그인 및 회원가입, 프로필 등 사용자 관련 페이지 작성<br />
-        메인페이지 레이아웃, 근무시간 영역 작업
-      </td>
-    </tr>
-  </tbody>
-</table>
+<div align='center'>
+  
+| [<img src="https://avatars.githubusercontent.com/u/55516901?v=4" width="150" height="150"/>](https://github.com/rondido) <br/> 🐯[박진현](https://github.com/rondido) | [<img src="https://avatars.githubusercontent.com/u/92291790?v=4" width="150" height="150"/>](https://github.com/duwlsssss) <br/> 🐰[김여진](https://github.com/duwlsssss) | [<img src="https://avatars.githubusercontent.com/u/109134495?v=4" width="150" height="150"/>](https://github.com/choiyoungae) <br/> 🐶[최영애](https://github.com/choiyoungae) | [<img src="https://avatars.githubusercontent.com/u/182200395?v=4" width="150" height="150"/>](https://github.com/Hoonshi) <br/> 🐱[전영훈](https://github.com/Hoonshi) | [<img src="https://avatars.githubusercontent.com/u/35955189?v=4" width="150" height="150"/>](https://github.com/whwjdan) <br/> 🐱[조정무](https://github.com/whwjdan) |
+| :----------: | :----------: | :-----------: | :-----------: | :-----------: |
+| 관리자 일정 관리 페이지 | layout 설정 <br/> 디자인 토큰, 폰트 설정 <br/> 버튼, 로딩, 에러 <br/> 공통 컴포넌트 작업 <br/> redux, redux-persist 작성 <br/> supabase, redux 활용 <br/> 일정 관리 CRUD 구현 <br/> react-calendar 사용 <br/> 사용자 일정 관리 페이지 | 모달 공통 컴포넌트 작업 <br/> 급여 정정 신청 <br/> 조회 및 처리 페이지 <br/> 직원별 급여 목록 조회 | 페이지네이션, 테이블, <br/> 인풋 공통 컴포넌트 작업 <br/> 급여 내역 조회 및 <br/> 데이터 정정 신청 기능 | 프로젝트 세팅 <br/> eslint, prettier, git 컨벤션 세팅 <br/> Firebase 및 supabase 설정 <br/> 사용자 페이지 작성 <br/> 근무시간 레이아웃 작업 |
+
+</div>
 
 &nbsp;
 
