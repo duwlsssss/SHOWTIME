@@ -1,3 +1,4 @@
+import React, { useCallback } from 'react';
 import * as S from './SearchEmployeeList.styles';
 import { TSchedule } from '@/types/schedule';
 
@@ -7,15 +8,18 @@ interface AdminScheduleCardProps {
 	onSetSearchUserId: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const SearchEmployeeList = ({
+const SearchEmployeeList = React.memo(function SearchEmployeeList({
 	schedulesItem,
 	onSetSearchListOpen,
 	onSetSearchUserId,
-}: AdminScheduleCardProps) => {
-	const handleItemClick = (userId: string) => {
-		onSetSearchUserId(userId);
-		onSetSearchListOpen(false);
-	};
+}: AdminScheduleCardProps) {
+	const handleItemClick = useCallback(
+		(userId: string) => {
+			onSetSearchUserId(userId);
+			onSetSearchListOpen(false);
+		},
+		[onSetSearchUserId, onSetSearchListOpen],
+	);
 
 	return (
 		<S.SearchContainer>
@@ -27,6 +31,6 @@ const SearchEmployeeList = ({
 			</S.SearchWrapper>
 		</S.SearchContainer>
 	);
-};
+});
 
 export default SearchEmployeeList;

@@ -1,8 +1,9 @@
 import styled from 'styled-components';
 import CheckboxItem from './CheckboxItem';
 import { SCHEDULE_FILTER_CATEGORY_LABEL, TScheduleCategory } from '@/types/schedule';
+import React from 'react';
 
-export const CheckboxGroup = () => {
+export const CheckboxGroup = React.memo(function CheckboxGroup() {
 	return (
 		<CheckboxContiner>
 			<h3>카테고리</h3>
@@ -13,7 +14,7 @@ export const CheckboxGroup = () => {
 			</CheckboxUL>
 		</CheckboxContiner>
 	);
-};
+});
 
 const CheckboxContiner = styled.div`
 	display: flex;

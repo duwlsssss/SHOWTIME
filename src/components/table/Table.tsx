@@ -1,6 +1,6 @@
-import { ManageRowItem } from '@/pages/salary-management/SalaryManagement';
 import { TableContainer, Lists, InnerUnorderLists, InnerLists } from './Table.styled';
 import { Button } from '@/components';
+import { ManageRowItem } from '@/types/salary';
 import { salaryFormatter } from '@/utils/salaryFormatter';
 
 type TableProps = {
@@ -50,7 +50,7 @@ export default function Table({
 							{headerItems.slice(0, 4).map((header, idx1) => (
 								<InnerLists key={idx1}>
 									{/* 지급총액과 실지급액에만 포맷팅 적용 */}
-									{header === '지급총액' || header === '실지급액'
+									{header === '지급총액' || header === '실지급액' || header === '지급예정금액'
 										? salaryFormatter(row[header as keyof RowItem] as string)
 										: (row[header as keyof RowItem] ?? '')}
 								</InnerLists>
