@@ -5,53 +5,62 @@ import { ConfirmModal, Modal, ModalPortal } from '@/components';
 import Table, { RowItem } from '@/components/table/Table';
 import Pagination from '@/components/pagination/pagination';
 import SalarySelect from '@/components/salaryselect/SalarySelect';
-import { createClient } from '@supabase/supabase-js';
-import { TMessage } from '@/types/modal';
-import { useAppSelector } from '@/hooks/useRedux';
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-export interface ManageRowItem extends RowItem {
-	신청인: string;
-	급여월: string;
-	급여지급일: string;
-	지급예정금액: number;
-	상태: string;
-	정정신청금액: number;
-	사유: string;
-	처리사유: string | null;
-	신청id: string;
-}
-
-interface ModalConfig {
-	message: TMessage;
-	color: string;
-	onClickLeftBtn: () => void;
-	onClickRightBtn: () => void;
-}
-
-interface AttendanceData {
-	user_name: string;
-	payment_month: string;
-	payment_day: string;
-	total_salary: number;
-	id: string;
-}
-
-interface RequestData {
-	attendance: AttendanceData | AttendanceData[];
-	created_at: string;
-	status: string;
-	id: string;
-	requested_amount: number;
-	reason: string;
-	status_reason: string | null;
-}
+import { useAppDispatch, useAppSelector } from '@/hooks/useRedux';
+import { setMonth, setYear } from '@/redux/actions/scheduleActions';
+import { salaryFormatter } from '@/utils/salaryFormatter';
+import { ManageRowItem, ModalConfig } from '@/types/salary';
+import { updateAttendanceRuest, useAttendanceRequestData } from '@/hooks/useSalaryManageData';
 
 export function SalaryManagement() {
+	const headerItems: string[] = ['신청인', '급여월', '급여지급일', '지급예정금액', '상태'];
+
+	const year = useAppSelector((state) => state.schedule.year);
+	const month = useAppSelector((state) => state.schedule.month);
+	const now = new Date();
+
+	const [selectedYear, setSelectedYear] = useState<string>(
+		year.toString() || now.getFullYear().toString(),
+	);
+
+	const [selectedMonth, setSelectedMonth] = useState<string>(
+		month.toString().padStart(2, '0') || now.getMonth().toString().padStart(2, '0'),
+	);
+
+	const handleSelectChange = (event) => {
+		setFormData({
+			...formData,
+			selectOption: event.target.value,
+		});
+	};
+
+	const handleStatusReasonChange = (event) => {
+		setFormData({
+			...formData,
+			statusReason: event.target.value,
+		});
+	};
+
+	const {
+		currentPage,
+		setCurrentPage,
+		totalPage,
+		attendanceRequestData,
+		handlePageChange,
+		getAttendanceRequestData,
+	} = useAttendanceRequestData();
+
+	useEffect(() => {
+		getAttendanceRequestData(selectedYear, selectedMonth);
+	}, [selectedYear, selectedMonth, currentPage]);
+
+	const dispatch = useAppDispatch();
+
+	useEffect(() => {
+		setCurrentPage(1);
+		dispatch(setYear(Number(selectedYear)));
+		dispatch(setMonth(Number(selectedMonth)));
+	}, [selectedYear, selectedMonth]);
+
 	const getBtnContent = (row: RowItem | ManageRowItem) => {
 		if ('상태' in row) {
 			switch (row.상태) {
@@ -77,7 +86,7 @@ export function SalaryManagement() {
 					return {
 						btnText: '알 수 없음',
 						btnColor: 'gray',
-						onClickBtn: () => console.log(`상태 확인 필요`),
+						onClickBtn: () => {},
 					};
 			}
 		} else {
@@ -88,6 +97,8 @@ export function SalaryManagement() {
 			};
 		}
 	};
+
+	/* 정정신청 상세보기 모달 */
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const [selectedRow, setSelectedRow] = useState<ManageRowItem | null>(null);
@@ -123,48 +134,7 @@ export function SalaryManagement() {
 		requestSalary: 0,
 	});
 
-	const updateAttendanceRuest = async (status) => {
-		if (!formData.requestId || !formData.selectOption) {
-			alert('필수 항목이 비어있습니다.');
-			return;
-		}
-
-		try {
-			if (status === '승인') {
-				// attendance의 overtime_pay 변경
-				const { error: attendanceError } = await supabase
-					.from('attendance')
-					.update({
-						overtime_pay: formData.requestSalary,
-					})
-					.eq('id', `${formData.attendanceId}`);
-
-				if (attendanceError) {
-					console.error('Error updating Attendance data: ', attendanceError);
-				}
-			}
-
-			// attendance_request의 상태 변경
-			const { error: requestError } = await supabase
-				.from('attendance_request')
-				.update({
-					status: formData.selectOption,
-					status_reason: formData.statusReason,
-					updated_at: new Date().toISOString(),
-				})
-				.eq('id', `${formData.requestId}`);
-
-			if (requestError) {
-				console.error('Error updating Request data:', requestError);
-			}
-		} catch (error) {
-			console.error('Error occured: ', error);
-			alert('처리 반영에 오류가 발생했습니다');
-		}
-
-		alert('처리가 완료되었습니다.');
-		location.reload();
-	};
+	/* 정정신청 처리 확인 모달 */
 
 	const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 	const [modalConfig, setModalConfig] = useState({
@@ -185,7 +155,7 @@ export function SalaryManagement() {
 		}
 	}, [formData]);
 
-	// selectOption에 맞는 Modal 설정을 반환하는 함수
+	// selectOption에 맞는 confirmModal 설정을 반환하는 함수
 	const getModalConfig = (selectOption: string): ModalConfig => {
 		switch (selectOption) {
 			case '승인':
@@ -196,7 +166,7 @@ export function SalaryManagement() {
 						rightBtn: '아니오',
 					},
 					color: 'blue',
-					onClickLeftBtn: () => updateAttendanceRuest('승인'),
+					onClickLeftBtn: () => updateAttendanceRuest(formData, '승인'),
 					onClickRightBtn: () => closeConfirmModal(),
 				};
 			case '반려':
@@ -207,7 +177,7 @@ export function SalaryManagement() {
 						rightBtn: '아니오',
 					},
 					color: 'red',
-					onClickLeftBtn: () => updateAttendanceRuest('반려'),
+					onClickLeftBtn: () => updateAttendanceRuest(formData, '반려'),
 					onClickRightBtn: () => closeConfirmModal(),
 				};
 			default:
@@ -229,125 +199,6 @@ export function SalaryManagement() {
 	};
 
 	const closeConfirmModal = () => setIsConfirmModalOpen(false);
-
-	const headerItems: string[] = ['신청인', '급여월', '급여지급일', '지급예정금액', '상태'];
-	const [attendanceRequestData, setAttendanceRequestData] = useState<ManageRowItem[]>([]);
-
-	const year = useAppSelector((state) => state.schedule.year);
-	const month = useAppSelector((state) => state.schedule.month);
-	const now = new Date();
-
-	const [selectedYear, setSelectedYear] = useState<string>(
-		year.toString() || now.getFullYear().toString(),
-	);
-	const [selectedMonth, setSelectedMonth] = useState<string>(
-		month.toString().padStart(2, '0') || now.getMonth().toString().padStart(2, '0'),
-	);
-
-	const handleSelectChange = (event) => {
-		setFormData({
-			...formData,
-			selectOption: event.target.value,
-		});
-	};
-
-	const handleStatusReasonChange = (event) => {
-		setFormData({
-			...formData,
-			statusReason: event.target.value,
-		});
-	};
-
-	//페이지네이션 변수들
-	const [currentPage, setCurrentPage] = useState(1);
-	const [totalPage, setTotalPage] = useState(1);
-
-	function handlePageChange(page: number) {
-		setCurrentPage(page);
-	}
-
-	useEffect(() => {
-		const pageSize = 5;
-
-		const startIndex = (currentPage - 1) * pageSize;
-		const endIndex = startIndex + pageSize;
-		let totalCount = 0;
-
-		const getAttendanceRuestCount = async () => {
-			const { count, error: countError } = await supabase
-				.from('attendance_request')
-				.select(
-					`
-					id,
-					attendance!inner (
-						payment_month
-					)
-				`,
-					{ count: 'exact' },
-				)
-				.like('attendance.payment_month', `${selectedYear}-${selectedMonth}%`);
-			if (countError) {
-				console.error('Error fetching total count:', countError);
-			} else {
-				totalCount = count || 0;
-			}
-			setTotalPage(Math.ceil(totalCount / pageSize));
-		};
-
-		const fetchAttendanceRequestData = async () => {
-			const { data, error } = await supabase
-				.from('attendance_request')
-				.select(
-					`
-					created_at,
-					status,
-					id,
-					requested_amount,
-					reason,
-					status_reason,
-					attendance!inner (
-						user_name,
-						payment_month,
-						payment_day,
-						total_salary,
-						id
-					)
-				`,
-				)
-				.like(
-					'attendance.payment_month',
-					`${selectedYear}-${String(selectedMonth).padStart(2, '0')}%`,
-				)
-				.order('created_at', { ascending: false })
-				.range(startIndex, endIndex - 1);
-			if (error) {
-				console.error('Error fetching data:', error);
-			} else {
-				const reorderedData: ManageRowItem[] = data.map((item: RequestData) => {
-					const attendance = Array.isArray(item.attendance) ? item.attendance[0] : item.attendance;
-					return {
-						신청인: attendance?.user_name,
-						급여월: attendance?.payment_month,
-						급여지급일: attendance?.payment_day,
-						지급예정금액: attendance?.total_salary,
-						id: attendance?.id,
-						상태: item.status,
-						사유: item.reason,
-						정정신청금액: item.requested_amount,
-						처리사유: item.status_reason,
-						신청id: item.id,
-					};
-				});
-				setAttendanceRequestData(reorderedData);
-			}
-		};
-		getAttendanceRuestCount();
-		fetchAttendanceRequestData();
-	}, [selectedYear, selectedMonth, currentPage]);
-
-	useEffect(() => {
-		setCurrentPage(1);
-	}, [selectedYear, selectedMonth]);
 
 	return (
 		<S.SalaryManagementContainer>
@@ -384,11 +235,11 @@ export function SalaryManagement() {
 									<S.Row>
 										<S.DataSet>
 											<S.Label>기존지급예정금액</S.Label>
-											<S.Data>{selectedRow.지급예정금액}</S.Data>
+											<S.Data>{salaryFormatter(selectedRow.지급예정금액.toString())} 원</S.Data>
 										</S.DataSet>
 										<S.DataSet>
-											<S.Label>정정신청반영금액</S.Label>
-											<S.Data>{selectedRow.정정신청금액}</S.Data>
+											<S.Label>정정신청금액</S.Label>
+											<S.Data>{salaryFormatter(selectedRow.정정신청금액.toString())} 원</S.Data>
 										</S.DataSet>
 									</S.Row>
 									<S.Row>
