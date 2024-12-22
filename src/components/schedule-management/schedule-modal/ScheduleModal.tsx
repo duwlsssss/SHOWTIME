@@ -234,7 +234,11 @@ export const ScheduleModal = React.memo(function ScheduleModal({
 	const handleConfirmEdit = async (editAll: boolean) => {
 		if (!pendingScheduleData) return;
 		if (selectedSchedule) {
-			await handleEditSchedule(selectedSchedule, pendingScheduleData, editAll);
+			if (type === 'scheduleAdmin') {
+				await handleEditSchedule(selectedSchedule, pendingScheduleData, editAll);
+			} else {
+				await handleEditSchedule(selectedSchedule, pendingScheduleData, editAll, true);
+			}
 			dispatch(setIsConfirmModalOpen(false));
 			dispatch(setIsScheduleEditModalOpen(false));
 		}

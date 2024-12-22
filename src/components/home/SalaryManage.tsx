@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import * as S from './MainLayout.styles';
 import { createClient } from '@supabase/supabase-js';
 import { useAppSelector } from '@/hooks/useRedux';
+import { salaryFormatter } from '@/utils/salaryFormatter';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -53,7 +54,7 @@ export function SalaryManage() {
 				salaryList.map((data) => (
 					<S.SalaryManageContent key={data.payment_month} onClick={goToSalaryManagePage}>
 						<p>{data.user_name}</p>
-						<p>{data.total_salary.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')} 원</p>
+						<p>{salaryFormatter(String(data.total_salary))} 원</p>
 					</S.SalaryManageContent>
 				))}
 		</S.SalaryManageList>

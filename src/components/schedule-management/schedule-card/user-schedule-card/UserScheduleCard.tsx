@@ -39,7 +39,7 @@ export const UserScheduleCard = ({ schedule, shouldShowTime }: TUserScheduleCard
 	};
 
 	const handleDeleteIconClick = async (schedule: TSchedule) => {
-		const repeatedSchedules = filteredRepeatSchedules(schedule, schedules);
+		const repeatedSchedules = filteredRepeatSchedules(schedule, schedules, true);
 		const isRecurring = repeatedSchedules.length > 1;
 
 		if (isRecurring) {

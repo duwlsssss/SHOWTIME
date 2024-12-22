@@ -64,6 +64,7 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 		prevSchedule: TSchedule,
 		newSchedule: TSchedule,
 		editAll: boolean,
+		isUser?: boolean,
 	) => {
 		await executeWithLoading(async () => {
 			const isRepeatChanged = prevSchedule.repeat !== newSchedule.repeat;
@@ -77,7 +78,9 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 			);
 
 			// 기존 반복 스케줄 계산
-			const repeatSchedules = filteredRepeatSchedules(prevSchedule, schedules);
+			const repeatSchedules = isUser
+				? filteredRepeatSchedules(prevSchedule, schedules, true)
+				: filteredRepeatSchedules(prevSchedule, schedules);
 
 			// 전체 수정
 			if (editAll) {
@@ -154,9 +157,15 @@ export default function useScheduleManage(userId: string, schedules: TSchedule[]
 	};
 
 	// 스케줄 삭제 핸들러
-	const handleDeleteSchedule = async (schedule: TSchedule, deleteAll: boolean) => {
+	const handleDeleteSchedule = async (
+		schedule: TSchedule,
+		deleteAll: boolean,
+		isUser?: boolean,
+	) => {
 		await executeWithLoading(async () => {
-			const repeatSchedules = filteredRepeatSchedules(schedule, schedules);
+			const repeatSchedules = isUser
+				? filteredRepeatSchedules(schedule, schedules, true)
+				: filteredRepeatSchedules(schedule, schedules);
 
 			const scheduleIds = deleteAll
 				? repeatSchedules.map((s) => s.schedule_id)
