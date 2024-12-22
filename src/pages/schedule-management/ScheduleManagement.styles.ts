@@ -12,5 +12,4 @@ export const CalenderSection = styled.section`
 	box-shadow: var(--box-shadow-large);
 	display: flex;
 	justify-content: space-between;
-	height: 100%;
 `;

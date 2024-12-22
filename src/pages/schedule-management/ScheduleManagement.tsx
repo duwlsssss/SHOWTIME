@@ -66,7 +66,6 @@ export function ScheduleManagement() {
 
 	return (
 		<>
-			{/* <Profiler id="LayoutProfiler" onRender={onRenderCallback}> */}
 			<S.ScheduleManagementContainer>
 				<S.CalenderSection>
 					<CheckboxGroup />

@@ -22,7 +22,7 @@ const CheckboxContiner = styled.div`
 	padding: var(--space-large) var(--space-xlarge) var(--space-large) var(--space-medium);
 	gap: var(--space-large);
 	white-space: nowrap;
-	overflow-y: auto;
+	height: 100%;
 
 	h3 {
 		font-size: var(--font-medium);

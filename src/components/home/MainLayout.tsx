@@ -43,7 +43,7 @@ export function MainLayout() {
 			</S.MiddleSection>
 
 			<S.RightSection $isCollapsed={isLeftSectionExpanded}>
-				<WorkingHours />
+				{isAuthInitialized && user?.user?.role === 'user' ? <WorkingHours /> : null}
 
 				<S.PayrollContainer>
 					<S.PayrollTitle>급여 명세서</S.PayrollTitle>

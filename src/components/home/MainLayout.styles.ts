@@ -6,6 +6,8 @@ export const MainContainer = styled.div`
 	justify-content: space-between;
 	height: 100%;
 	max-width: 95vw;
+	position: relative;
+	word-break: keep-all;
 `;
 
 export const ToggleButton = styled.button<ToggleButtonState>`
@@ -38,17 +40,10 @@ export const LeftSection = styled.div<LeftSectionState>`
 		transform: translateX(${(props) => (props.$isExpanded ? '0' : '-100%')});
 		display: ${(props) => (props.$isExpanded ? 'block' : 'none')};
 	}
-	@media (max-height: 850px) {
-		height: 600px;
-	}
 `;
 
 export const MiddleSection = styled.div`
 	flex: 0.5;
-
-	@media (max-height: 850px) {
-		height: 600px;
-	}
 `;
 
 export const RightSection = styled.div<RightSectionState>`
@@ -57,14 +52,9 @@ export const RightSection = styled.div<RightSectionState>`
 	flex-direction: column;
 	gap: var(--space-medium);
 	width: ${({ $isCollapsed }) => ($isCollapsed ? '400px' : '300px')};
-	height: 100%;
 	@media (max-width: 1165px) {
 		display: ${(props) => (props.$isCollapsed ? 'none' : 'flex')};
 		flex: 0.45;
-	}
-
-	@media (max-height: 850px) {
-		height: 600px;
 	}
 `;
 
