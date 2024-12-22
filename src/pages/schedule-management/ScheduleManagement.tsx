@@ -54,7 +54,12 @@ export function ScheduleManagement() {
 	const handleConfirmDelete = async (deleteAll: boolean) => {
 		if (!selectedSchedule) return;
 
-		await handleDeleteSchedule(selectedSchedule, deleteAll);
+		if (isAdmin) {
+			await handleDeleteSchedule(selectedSchedule, deleteAll);
+		} else {
+			await handleDeleteSchedule(selectedSchedule, deleteAll, true);
+		}
+
 		dispatch(setIsScheduleDeleteModalOpen(false));
 		dispatch(setSelectedSchedule(null)); // 선택된 스케줄 초기화
 	};
