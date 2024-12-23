@@ -4,6 +4,7 @@ import { doc, setDoc } from 'firebase/firestore';
 import { auth, db } from '@/firebaseConfig';
 import { RegisterData } from '@/types/register';
 import { AuthErrorCode, AUTH_ERROR_MESSAGES } from '@/types/auth';
+import { supabase } from '../../supabaseConfig';
 
 export const useRegister = () => {
 	const [isLoading, setIsLoading] = useState(false);
@@ -17,8 +18,9 @@ export const useRegister = () => {
 			// Firebase Authentication에 사용자 생성
 			const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.password);
 
-			// Firestore에 추가 사용자 정보 저장
+			// 공통 사용자 데이터 객체
 			const userData = {
+				id: userCredential.user.uid, // Firebase UID를 Supabase의 id로 사용
 				email: data.email,
 				password: data.password,
 				role: data.role,
@@ -31,10 +33,17 @@ export const useRegister = () => {
 			};
 
 			try {
+				// Firestore에 저장
 				await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+
+				// Supabase users 테이블에 저장
+				const { error: supabaseError } = await supabase.from('users').insert([userData]);
+
+				if (supabaseError) throw supabaseError;
+
 				return userCredential.user;
 			} catch (dbErr) {
-				// Firestore 에러 발생 시 Authentication에서 생성된 사용자도 삭제
+				// 에러 발생 시 Firebase Authentication 사용자 삭제
 				await userCredential.user.delete();
 				throw dbErr;
 			}
