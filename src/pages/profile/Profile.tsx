@@ -6,6 +6,7 @@ import { ROLE_OPTIONS, GENDER_OPTIONS } from '@/types/register';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/firebaseConfig';
 import { Navigate } from 'react-router-dom';
+import { supabase } from '../../../supabaseConfig';
 import { useLoginAuthObserver } from '@/hooks/useLoginAuthObserver';
 
 // 날짜 변환 함수 추가
@@ -69,9 +70,20 @@ export function Profile() {
 				phone_number: formData.phoneNumber,
 			});
 
+			// Supabase 업데이트
+			await supabase
+				.from('users')
+				.update({
+					user_name: formData.userName,
+					user_alias: formData.userAlias,
+					gender: formData.gender,
+					phone_number: formData.phoneNumber,
+				})
+				.eq('id', user.id);
+
 			setIsEditing(false);
 		} catch (error) {
-			console.error('프로필 업데이트 ���패:', error);
+			console.error('프로필 업데이트 실패:', error);
 		} finally {
 			setIsSubmitting(false);
 		}
