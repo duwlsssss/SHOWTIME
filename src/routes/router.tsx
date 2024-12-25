@@ -13,10 +13,17 @@ import {
 	NotFound,
 } from '../pages';
 
+import { ErrorBoundary } from 'react-error-boundary';
+import { ErrorFallback } from '@/components';
+
 export const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <Layout />,
+		element: (
+			<ErrorBoundary FallbackComponent={ErrorFallback}>
+				<Layout />
+			</ErrorBoundary>
+		),
 		errorElement: <NotFound />,
 		children: [
 			{
