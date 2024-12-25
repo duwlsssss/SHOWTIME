@@ -19,7 +19,7 @@ import {
 	setIsScheduleEditModalOpen,
 } from '@/redux/actions/modalActions';
 import { setSelectedSchedule, setfilterCategory } from '@/redux/actions/scheduleActions';
-import { getAdminEmployeeSchedules } from '@/redux/actions/employeeActions';
+import { getAdminEmployees } from '@/redux/actions/employeeActions';
 import { Toggle } from '../../toggle/Toggle';
 import { Button } from '../../button/Button';
 import { ModalPortal, ConfirmModal } from '@/components';
@@ -46,13 +46,13 @@ export const ScheduleModal = React.memo(function ScheduleModal({
 	const selectedSchedule = useAppSelector((state) => state.schedule.selectedSchedule);
 	const selectedDate = useAppSelector((state) => state.schedule.selectedDate);
 	const isConfirmModalOpen = useAppSelector((state) => state.modal.isConfirmModalOpen);
-	const employeeSchedules = useAppSelector((state) => state.employee.schedules);
+	const employees = useAppSelector((state) => state.employee.users);
 
 	// 관리자에서 searchUserId로 사용자 이름, 별명 추출
 	const getUserDetailsById = (userId?: string) => {
 		//관리자일때 체크하기
-		if (!userId || !employeeSchedules?.length) return null;
-		return employeeSchedules.find((employee) => employee.user_id === userId);
+		if (!userId || !employees?.length) return null;
+		return employees.find((employee) => employee.id === userId);
 	};
 
 	const isAdminAddMode = type === 'scheduleAdmin' && mode === 'add';
@@ -62,8 +62,8 @@ export const ScheduleModal = React.memo(function ScheduleModal({
 	const selectedEmployee = getUserDetailsById(
 		isAdminAddMode ? searchUserId : selectedSchedule?.user_id,
 	);
-	const userName = type === 'scheduleAdmin' ? selectedEmployee?.user_name : user?.userName;
-	const userAlias = type === 'scheduleAdmin' ? selectedEmployee?.user_alias : user?.userAlias;
+	const userName = type === 'scheduleAdmin' ? selectedEmployee?.userName : user?.userName;
+	const userAlias = type === 'scheduleAdmin' ? selectedEmployee?.userAlias : user?.userAlias;
 	const schedules = useAppSelector((state) => state.schedule.schedules);
 
 	const debouncedSearchTerm = useDebounce(searchTerm, 200);
@@ -269,10 +269,10 @@ export const ScheduleModal = React.memo(function ScheduleModal({
 	useEffect(() => {
 		if (debouncedSearchTerm.length > 0) {
 			setSearchListOpen(true);
-			dispatch(getAdminEmployeeSchedules(debouncedSearchTerm));
+			dispatch(getAdminEmployees(debouncedSearchTerm));
 		} else {
 			setSearchListOpen(false);
-			dispatch(getAdminEmployeeSchedules(''));
+			dispatch(getAdminEmployees(''));
 		}
 	}, [debouncedSearchTerm]);
 
@@ -286,7 +286,7 @@ export const ScheduleModal = React.memo(function ScheduleModal({
 	// 	console.log('current Search', {
 	// 		searchListOpen: searchListOpen,
 	// 		debouncedSearchTerm: debouncedSearchTerm,
-	// 		employeeSchedules: employeeSchedules,
+	// 		employees: employees,
 	// 		searchUserId: searchUserId,
 	// 		mode: mode,
 	// 		type: type,
@@ -336,18 +336,18 @@ export const ScheduleModal = React.memo(function ScheduleModal({
 										/>
 										<S.SearchList
 											$searchListOpen={searchListOpen}
-											$isEmpty={employeeSchedules.length === 0}
+											$isEmpty={employees.length === 0}
 										>
 											{searchListOpen ? (
-												employeeSchedules.length > 0 ? (
-													employeeSchedules.map((value) => (
+												employees.length > 0 ? (
+													employees.map((value) => (
 														<SearchEmployeeList
-															schedulesItem={value}
-															key={value.schedule_id}
+															employeeItem={value}
+															key={value.id}
 															onSetSearchListOpen={setSearchListOpen}
 															onSetSearchUserId={() => {
-																setSearchUserId(value.user_id);
-																setValue('user_id', value.user_name);
+																setSearchUserId(value.id);
+																setValue('user_id', value.userName);
 															}}
 														/>
 													))
