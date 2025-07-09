@@ -1,7 +1,5 @@
 # 🍿 [ShowTime](https://showtime-drab.vercel.app/)
 
-&nbsp;
-
 #### ✔️ 테스트 계정 
 - 관리자: admin10@email.com / 123456
 - 사용자: test10@email.com / 123456
@@ -70,12 +68,6 @@
 
 &nbsp;
 
-## 💬 시스템 아키텍처
-
-![시스템아키텍처](https://github.com/user-attachments/assets/eadc8364-965b-4b75-a850-86ba8a636f97)
-
-&nbsp;
-
 ## 📄 폴더 구조
 
 ```
@@ -139,12 +131,6 @@ Figma 작업 및 기본 마크업 작업 과 레이아웃 작업을 진행하였
 ### 테스트 및 기타 문서 정리(2024.12.14 ~ 2024.12.16) <br/>
 
 개발 기능에 대한 테스트 및 기능에 대한 문서를 정리하였습니다.
-
-&nbsp;
-
-## 📄 프로젝트 ERD
-
-![ERD](https://github.com/user-attachments/assets/3f1e3ded-1311-4bff-b0fa-197ee2323ada)
 
 &nbsp;
 
