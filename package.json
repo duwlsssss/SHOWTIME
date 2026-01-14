@@ -16,8 +16,7 @@
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
 			"npm run format",
-			"eslint --fix",
-			"git add"
+			"eslint --fix"
 		]
 	},
 	"dependencies": {
